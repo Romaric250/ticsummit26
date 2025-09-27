@@ -140,31 +140,6 @@ const Footer = () => {
             ))}
           </div>
 
-          {/* Newsletter Signup */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="mt-12 pt-8 border-t border-gray-800"
-          >
-            <div className="max-w-md mx-auto text-center">
-              <h3 className="text-xl font-semibold mb-4 text-white">Stay Updated</h3>
-              <p className="text-white mb-6">
-                Get the latest news about TIC Summit events and opportunities.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-lg bg-white border border-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                />
-                <Button className="whitespace-nowrap bg-white text-gray-900 hover:bg-white">
-                  Subscribe
-                </Button>
-              </div>
-            </div>
-          </motion.div>
         </div>
 
         {/* Bottom Bar */}
