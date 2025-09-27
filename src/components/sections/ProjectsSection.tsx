@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Project } from "@/types"
+import Link from "next/link"
 
 const ProjectsSection = () => {
   // Mock data - in a real app, this would come from an API
@@ -22,8 +23,7 @@ const ProjectsSection = () => {
       description: "An IoT-based solution that monitors soil moisture, temperature, and humidity to optimize crop yields for local farmers.",
       image: "/api/placeholder/400/300",
       tags: ["IoT", "Agriculture", "Arduino", "Sensors"],
-      year: 2023,
-      featured: true
+      year: 2023
     },
     {
       id: "2", 
@@ -31,8 +31,7 @@ const ProjectsSection = () => {
       description: "A comprehensive online learning platform designed specifically for Cameroonian students with offline capabilities.",
       image: "/api/placeholder/400/300",
       tags: ["Web Development", "Education", "React", "Node.js"],
-      year: 2023,
-      featured: true
+      year: 2023
     },
     {
       id: "3",
@@ -40,8 +39,7 @@ const ProjectsSection = () => {
       description: "Mobile application that connects citizens with waste collection services and promotes recycling initiatives.",
       image: "/api/placeholder/400/300",
       tags: ["Mobile App", "Environment", "Flutter", "Firebase"],
-      year: 2023,
-      featured: false
+      year: 2023
     },
     {
       id: "4",
@@ -49,8 +47,7 @@ const ProjectsSection = () => {
       description: "Wearable device that tracks vital signs and sends alerts to healthcare providers in remote areas.",
       image: "/api/placeholder/400/300",
       tags: ["Hardware", "Healthcare", "Embedded Systems", "Bluetooth"],
-      year: 2023,
-      featured: false
+      year: 2023
     },
     {
       id: "5",
@@ -58,8 +55,7 @@ const ProjectsSection = () => {
       description: "Local marketplace platform connecting small businesses with customers across Cameroon.",
       image: "/api/placeholder/400/300",
       tags: ["E-commerce", "Business", "Vue.js", "MongoDB"],
-      year: 2023,
-      featured: false
+      year: 2023
     },
     {
       id: "6",
@@ -67,8 +63,7 @@ const ProjectsSection = () => {
       description: "AI-powered traffic monitoring and optimization system for urban areas in Yaoundé.",
       image: "/api/placeholder/400/300",
       tags: ["AI/ML", "Urban Planning", "Python", "Computer Vision"],
-      year: 2023,
-      featured: false
+      year: 2023
     }
   ]
 
@@ -132,15 +127,6 @@ const ProjectsSection = () => {
             </div>
           </div>
 
-          {/* Featured Badge */}
-          {project.featured && (
-            <div className="absolute top-4 left-4">
-              <div className="flex items-center space-x-1 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                <Star className="w-4 h-4" />
-                <span>Featured</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Content */}
@@ -234,7 +220,7 @@ const ProjectsSection = () => {
           </motion.p>
         </motion.div>
 
-        {/* Projects Grid */}
+        {/* Featured Projects Grid - Only 3 */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -242,9 +228,39 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
         >
-          {projects.map((project, index) => (
+          {projects.slice(0, 3).map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
+        </motion.div>
+
+        {/* Hall of Fame Link */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <Link href="/hall-of-fame">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center space-x-3 bg-white rounded-2xl px-8 py-4 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                <Star className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                  Hall of Fame
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Explore all {projects.length} amazing projects
+                </p>
+              </div>
+              <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
+            </motion.div>
+          </Link>
         </motion.div>
 
         {/* Call to Action */}

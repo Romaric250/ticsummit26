@@ -5,7 +5,6 @@ export interface Project {
   image: string
   tags: string[]
   year: number
-  featured: boolean
 }
 
 export interface Speaker {
