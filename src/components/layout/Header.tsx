@@ -33,6 +33,7 @@ const Header = () => {
         { name: "Workshops", href: "/schedule/workshops" }
       ]
     },
+    { name: "Recap", href: "/recap" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
     { name: "Blog", href: "/blog" },
   ]

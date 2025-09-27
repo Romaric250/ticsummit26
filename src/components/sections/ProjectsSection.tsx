@@ -172,6 +172,7 @@ const ProjectsSection = () => {
   )
 
   return (
+    
     <section className="py-16 bg-gray-50 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
