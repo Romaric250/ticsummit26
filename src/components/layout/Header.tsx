@@ -43,7 +43,7 @@ const Header = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-4 left-4 right-4 z-50 bg-gray-900 rounded-2xl shadow-lg"
+      className="fixed top-0 left-0 right-0 z-50 bg-gray-900 shadow-lg"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
