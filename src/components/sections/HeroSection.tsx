@@ -408,7 +408,7 @@ const HeroSection = () => {
   )
 }
 
-// Students in Action Carousel Component
+// Creative Students in Action Carousel Component
 export const StudentsInActionCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   
@@ -416,22 +416,26 @@ export const StudentsInActionCarousel = () => {
     {
       src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
       title: "Innovation in Progress",
-      description: "Students working on their tech projects"
+      description: "Students working on their tech projects",
+      category: "Workshop"
     },
     {
       src: "https://8gzcaj94vr.ufs.sh/f/btHfnDl3l94ioly0nL8n3I5tq8OQpHLErU6aMjx2eFAKGYW1",
       title: "Hands-on Learning",
-      description: "Interactive workshops and activities"
+      description: "Interactive workshops and activities",
+      category: "Learning"
     },
     {
       src: "https://4fptvpb3lg.ufs.sh/f/29760ee2-0cf7-41bd-bc1d-95234783d8f6-ald1u5.jpeg",
       title: "Expert Guidance",
-      description: "Learning from industry professionals"
+      description: "Learning from industry professionals",
+      category: "Mentorship"
     },
     {
       src: "https://4fptvpb3lg.ufs.sh/f/2c5a6f75-c02f-49d3-a200-d751795036eb-2ak9.jpg",
       title: "Project Showcase",
-      description: "Amazing student creations"
+      description: "Amazing student creations",
+      category: "Showcase"
     }
   ]
 
@@ -439,7 +443,7 @@ export const StudentsInActionCarousel = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % studentImages.length)
-    }, 3000)
+    }, 4000)
     return () => clearInterval(interval)
   }, [])
 
@@ -452,129 +456,155 @@ export const StudentsInActionCarousel = () => {
   }
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Students in <span className="text-gray-600">Action</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            See our students in action as they work on innovative projects, 
-            learn from experts, and showcase their amazing creations.
-          </p>
-        </motion.div>
-
-        {/* Modified Carousel */}
-        <div className="relative max-w-6xl mx-auto">
-          <div className="relative h-[400px] overflow-hidden rounded-2xl">
-            <AnimatePresence mode="wait">
-              {studentImages.map((image, index) => {
-                if (index !== currentSlide) return null
-                
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ 
-                      opacity: 0, 
-                      scale: 0.9,
-                      x: 100
-                    }}
-                    animate={{ 
-                      opacity: 1, 
-                      scale: 1,
-                      x: 0
-                    }}
-                    exit={{ 
-                      opacity: 0, 
-                      scale: 0.9,
-                      x: -100
-                    }}
-                    transition={{ 
-                      duration: 0.6, 
-                      ease: "easeInOut" as const
-                    }}
-                    className="absolute inset-0"
-                  >
-                    <div className="relative w-full h-full group">
-                      <img 
-                        src={image.src}
-                        alt={image.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent to-transparent" />
-                      
-                      {/* Content */}
-                      <div className="absolute bottom-8 left-8 right-8 text-white">
-                        <motion.h3
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 }}
-                          className="text-3xl font-bold mb-2"
-                        >
-                          {image.title}
-                        </motion.h3>
-                        <motion.p
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 }}
-                          className="text-lg opacity-90"
-                        >
-                          {image.description}
-                        </motion.p>
-                      </div>
+    <div className="relative w-full h-[500px]">
+      {/* Main Image with Creative Layout */}
+      <div className="relative w-full h-full">
+        <AnimatePresence mode="wait">
+          {studentImages.map((image, index) => {
+            if (index !== currentSlide) return null
+            
+            return (
+              <motion.div
+                key={index}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0.8,
+                  rotateY: 15,
+                  z: -50
+                }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  rotateY: 0,
+                  z: 0
+                }}
+                exit={{ 
+                  opacity: 0, 
+                  scale: 0.8,
+                  rotateY: -15,
+                  z: -50
+                }}
+                transition={{ 
+                  duration: 0.8, 
+                  ease: "easeInOut" as const,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                className="absolute inset-0"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {/* Main Image with Creative Mask */}
+                <div className="relative w-full h-full group">
+                  <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl">
+                    <img 
+                      src={image.src}
+                      alt={image.title}
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
+                    />
+                    
+                    {/* Creative Overlay with Geometric Shapes */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900/60 via-transparent to-gray-900/40" />
+                    
+                    {/* Floating Geometric Elements */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">{index + 1}</span>
                     </div>
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
+                    
+                    {/* Category Badge */}
+                    <div className="absolute top-4 left-4">
+                      <span className="bg-white/90 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
+                        {image.category}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </AnimatePresence>
 
-            {/* Navigation Arrows */}
-            <motion.button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-900 hover:bg-white transition-all duration-300 z-20 shadow-lg"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </motion.button>
-
-            <motion.button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-900 hover:bg-white transition-all duration-300 z-20 shadow-lg"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ChevronRight className="w-6 h-6" />
-            </motion.button>
-
-            {/* Slide Indicators */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-              {studentImages.map((_, index) => (
-                <motion.button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentSlide 
-                      ? 'bg-white scale-125' 
-                      : 'bg-white/50 hover:bg-white/70'
-                  }`}
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
-                />
-              ))}
-            </div>
+        {/* Creative Navigation - Circular */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
+          <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+            {studentImages.map((_, index) => (
+              <motion.button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`relative w-8 h-8 rounded-full transition-all duration-300 ${
+                  index === currentSlide 
+                    ? 'bg-gray-900 scale-110' 
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                {index === currentSlide && (
+                  <motion.div
+                    layoutId="activeIndicator"
+                    className="absolute inset-0 bg-gray-900 rounded-full"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+                <span className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${
+                  index === currentSlide ? 'text-white' : 'text-gray-600'
+                }`}>
+                  {index + 1}
+                </span>
+              </motion.button>
+            ))}
           </div>
         </div>
+
+        {/* Creative Arrow Navigation */}
+        <motion.button
+          onClick={prevSlide}
+          className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-900 hover:bg-white transition-all duration-300 z-20 shadow-lg group"
+          whileHover={{ scale: 1.1, x: -2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <ChevronLeft className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        </motion.button>
+
+        <motion.button
+          onClick={nextSlide}
+          className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-900 hover:bg-white transition-all duration-300 z-20 shadow-lg group"
+          whileHover={{ scale: 1.1, x: 2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <ChevronRight className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        </motion.button>
+
+        {/* Minimal Content Overlay */}
+        <div className="absolute bottom-6 left-6 right-6 z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                  {studentImages[currentSlide]?.title}
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  {studentImages[currentSlide]?.description}
+                </p>
+              </div>
+              
+              {/* Minimal Play Button */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors"
+              >
+                <Play className="w-4 h-4 ml-0.5" />
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
       </div>
-    </section>
+    </div>
   )
 }
 
