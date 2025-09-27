@@ -12,6 +12,7 @@ import {
   ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { StudentsInActionCarousel } from "./HeroSection"
 
 const AboutSection = () => {
   const stats = [
@@ -105,7 +106,7 @@ const AboutSection = () => {
         >
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center space-x-2 bg-purple-100 text-purple-600 rounded-full px-4 py-2 mb-6"
+              className="inline-flex items-center space-x-2 bg-blue-100 text-blue-900 rounded-full px-4 py-2 mb-6"
             >
               <Target className="w-4 h-4" />
               <span className="text-sm font-medium">About TIC Summit</span>
@@ -116,7 +117,7 @@ const AboutSection = () => {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
           >
             Empowering the Next
-            <span className="block text-purple-600">
+            <span className="block text-blue-900">
               Generation of Innovators
             </span>
           </motion.h2>
@@ -147,9 +148,9 @@ const AboutSection = () => {
             >
               <motion.div
                 whileHover={{ scale: 1.1 }}
-                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 group-hover:bg-purple-50 transition-colors duration-300 mb-4"
+                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 group-hover:bg-blue-50 transition-colors duration-300 mb-4"
               >
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                <stat.icon className="w-8 h-8 text-blue-900" />
               </motion.div>
               <div className="text-3xl font-bold text-gray-900 mb-2">
                 {stat.value}
@@ -201,33 +202,8 @@ const AboutSection = () => {
             className="relative"
           >
             <div className="relative">
-              <div className="aspect-[4/5] bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-br from-blue-600/30 to-purple-600/30 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <Users className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg font-medium">Students in Action</p>
-                    <p className="text-sm opacity-75">Innovation Workshop</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Floating Elements */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="absolute -top-4 -right-4 bg-white rounded-xl p-4 shadow-lg"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-gray-900 font-semibold">150+</div>
-                    <div className="text-gray-600 text-sm">Projects</div>
-                  </div>
-                </div>
-              </motion.div>
+              {/* Students in Action Carousel */}
+              <StudentsInActionCarousel />
             </div>
           </motion.div>
 
@@ -276,11 +252,11 @@ const AboutSection = () => {
               variants={itemVariants}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white group" size="lg">
+              <Button className="bg-blue-900 hover:bg-blue-800 text-white group" size="lg">
                 Learn More
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="lg" className="border-purple-600 text-purple-600 hover:bg-purple-50">
+              <Button variant="outline" size="lg" className="border-blue-900 text-blue-900 hover:bg-blue-50">
                 View Gallery
               </Button>
             </motion.div>

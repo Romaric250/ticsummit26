@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { colors } from "./src/config/colors";
 
 const config: Config = {
   content: [
@@ -9,6 +10,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Custom brand colors from our config
+        brand: {
+          primary: colors.primary,
+          secondary: colors.secondary,
+          accent: colors.accent,
+          text: colors.text,
+          background: colors.background,
+          border: colors.border,
+        },
+        // Keep existing shadcn colors for compatibility
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

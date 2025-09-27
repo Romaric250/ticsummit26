@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, ChevronDown, Star, ExternalLink } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 
 const Header = () => {
@@ -42,7 +42,7 @@ const Header = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-4 left-4 right-4 z-50 bg-blue-900 rounded-2xl shadow-lg"
+      className="fixed top-4 left-4 right-4 z-50 bg-gray-900 rounded-2xl shadow-lg"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -52,15 +52,15 @@ const Header = () => {
               whileHover={{ scale: 1.05 }}
               className="relative"
             >
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">T</span>
+              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <span className="text-gray-900 font-bold text-sm">T</span>
               </div>
             </motion.div>
             <div className="flex flex-col">
               <span className="font-bold text-lg text-white">
                 TIC Summit
               </span>
-              <span className="text-xs text-blue-200">
+              <span className="text-xs text-white">
                 Innovation Hub
               </span>
             </div>
@@ -72,7 +72,7 @@ const Header = () => {
               <div key={item.name} className="relative group">
                 <Link
                   href={item.href}
-                  className="flex items-center space-x-1 px-3 py-2 text-white hover:text-blue-200 transition-colors"
+                  className="flex items-center space-x-1 px-3 py-2 text-white hover:text-white transition-colors"
                   onMouseEnter={() => item.hasDropdown && setIsScheduleOpen(true)}
                   onMouseLeave={() => item.hasDropdown && setIsScheduleOpen(false)}
                 >
@@ -99,7 +99,7 @@ const Header = () => {
                           <Link
                             key={dropdownItem.name}
                             href={dropdownItem.href}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                           >
                             {dropdownItem.name}
                           </Link>
@@ -114,24 +114,16 @@ const Header = () => {
 
           {/* Right Side Elements */}
           <div className="hidden lg:flex items-center space-x-6">
-            {/* Star Rating */}
-            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2">
-              <Star className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm text-white">Star</span>
-              <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">150+</span>
-              <ExternalLink className="w-3 h-3 text-white/60" />
-            </div>
-
             {/* CTA Buttons */}
             <div className="flex items-center space-x-3">
               <Link
                 href="/login"
-                className="text-white hover:text-blue-200 transition-colors font-medium"
+                className="text-white hover:text-white transition-colors font-medium"
               >
                 Sign In
               </Link>
               <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                className="bg-white hover:bg-white text-gray-900 px-6 py-2 rounded-lg font-medium transition-colors"
               >
                 Sign Up
               </Button>
@@ -159,33 +151,28 @@ const Header = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden bg-white border-t border-gray-100"
+              className="lg:hidden bg-white/95 backdrop-blur-md border-t border-white/20 rounded-b-2xl"
             >
               <div className="px-4 py-6 space-y-4">
                 {navItems.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="block px-3 py-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors"
+                    className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
                   </Link>
                 ))}
-                <div className="pt-4 space-y-3 border-t border-gray-100">
-                  <div className="flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
-                    <Star className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm text-gray-700">Star</span>
-                    <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">150+</span>
-                  </div>
+                <div className="pt-4 space-y-3 border-t border-gray-200">
                   <div className="flex space-x-3">
                     <Link
                       href="/login"
-                      className="flex-1 text-center text-gray-700 hover:text-purple-600 transition-colors font-medium py-2"
+                      className="flex-1 text-center text-gray-700 hover:text-gray-900 transition-colors font-medium py-2"
                     >
                       Sign In
                     </Link>
-                    <Button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium">
+                    <Button className="flex-1 bg-white hover:bg-white text-gray-900 rounded-lg font-medium">
                       Sign Up
                     </Button>
                   </div>

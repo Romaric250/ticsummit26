@@ -1,0 +1,58 @@
+/* CSS Custom Properties for dynamic color theming */
+/* These can be updated via JavaScript to change colors globally */
+
+:root {
+  /* Primary colors */
+  --color-primary-50: #f9fafb;
+  --color-primary-100: #f3f4f6;
+  --color-primary-200: #e5e7eb;
+  --color-primary-300: #d1d5db;
+  --color-primary-400: #9ca3af;
+  --color-primary-500: #6b7280;
+  --color-primary-600: #4b5563;
+  --color-primary-700: #374151;
+  --color-primary-800: #1f2937;
+  --color-primary-900: #111827;
+  
+  /* Secondary colors */
+  --color-secondary-white: #ffffff;
+  --color-secondary-off-white: #f9fafb;
+  
+  /* Text colors */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-light: #9ca3af;
+  --color-text-white: #ffffff;
+  
+  /* Background colors */
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #ffffff;
+  --color-bg-light: #f9fafb;
+  --color-bg-dark: #1f2937;
+  
+  /* Border colors */
+  --color-border-primary: #111827;
+  --color-border-secondary: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  
+  /* Accent colors */
+  --color-accent-success: #10b981;
+  --color-accent-warning: #f59e0b;
+  --color-accent-error: #ef4444;
+  --color-accent-info: #3b82f6;
+}
+
+/* Utility classes for easy color application */
+.bg-primary { background-color: var(--color-bg-primary); }
+.bg-secondary { background-color: var(--color-bg-secondary); }
+.bg-light { background-color: var(--color-bg-light); }
+.bg-dark { background-color: var(--color-bg-dark); }
+
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-light { color: var(--color-text-light); }
+.text-white { color: var(--color-text-white); }
+
+.border-primary { border-color: var(--color-border-primary); }
+.border-secondary { border-color: var(--color-border-secondary); }
+.border-light { border-color: var(--color-border-light); }

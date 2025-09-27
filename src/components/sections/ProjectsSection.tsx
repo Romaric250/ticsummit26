@@ -208,7 +208,7 @@ const ProjectsSection = () => {
         >
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center space-x-2 bg-purple-100 text-purple-600 rounded-full px-4 py-2 mb-6"
+              className="inline-flex items-center space-x-2 bg-blue-100 text-blue-900 rounded-full px-4 py-2 mb-6"
             >
               <Star className="w-4 h-4" />
               <span className="text-sm font-medium">Our Projects</span>
@@ -219,7 +219,7 @@ const ProjectsSection = () => {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
           >
             Innovation Solutions
-            <span className="block text-purple-600">
+            <span className="block text-blue-900">
               Driving the Future
             </span>
           </motion.h2>
@@ -264,11 +264,11 @@ const ProjectsSection = () => {
               Submit your project ideas and compete for amazing prizes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white group" size="lg">
+              <Button className="bg-blue-900 hover:bg-blue-800 text-white group" size="lg">
                 Submit Project
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="lg" className="border-purple-600 text-purple-600 hover:bg-purple-50">
+              <Button variant="outline" size="lg" className="border-blue-900 text-blue-900 hover:bg-blue-50">
                 View All Projects
               </Button>
             </div>

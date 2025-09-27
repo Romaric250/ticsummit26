@@ -57,7 +57,7 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600"></div>
+        <div className="absolute inset-0 bg-gray-800"></div>
         <div className="absolute inset-0 opacity-10">
           <div className="w-full h-full" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -79,16 +79,16 @@ const Footer = () => {
                 viewport={{ once: true }}
               >
                 <Link href="/" className="flex items-center space-x-2 mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">T</span>
+                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <span className="text-gray-900 font-bold text-lg">T</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-xl">TIC Summit</span>
-                    <span className="text-blue-300 text-sm">Innovation Hub</span>
+                    <span className="font-bold text-xl text-white">TIC Summit</span>
+                    <span className="text-white text-sm">Innovation Hub</span>
                   </div>
                 </Link>
                 
-                <p className="text-gray-300 mb-6 max-w-md">
+                <p className="text-white mb-6 max-w-md">
                   Empowering young innovators across Cameroon through technology, 
                   mentorship, and hands-on learning experiences. Join us in building 
                   the future of African tech.
@@ -96,16 +96,16 @@ const Footer = () => {
 
                 {/* Contact Info */}
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-gray-300">
-                    <MapPin className="w-5 h-5 text-blue-400" />
+                  <div className="flex items-center space-x-3 text-white">
+                    <MapPin className="w-5 h-5 text-white" />
                     <span>Yaoundé, Cameroon</span>
                   </div>
-                  <div className="flex items-center space-x-3 text-gray-300">
-                    <Mail className="w-5 h-5 text-blue-400" />
+                  <div className="flex items-center space-x-3 text-white">
+                    <Mail className="w-5 h-5 text-white" />
                     <span>info@ticsummit.org</span>
                   </div>
-                  <div className="flex items-center space-x-3 text-gray-300">
-                    <Phone className="w-5 h-5 text-blue-400" />
+                  <div className="flex items-center space-x-3 text-white">
+                    <Phone className="w-5 h-5 text-white" />
                     <span>+237 XXX XXX XXX</span>
                   </div>
                 </div>
@@ -121,7 +121,7 @@ const Footer = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <h3 className="font-semibold text-lg mb-4 capitalize">
+                <h3 className="font-semibold text-lg mb-4 capitalize text-white">
                   {category}
                 </h3>
                 <ul className="space-y-3">
@@ -129,7 +129,7 @@ const Footer = () => {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                        className="text-white hover:text-white transition-colors duration-200"
                       >
                         {link.name}
                       </Link>
@@ -149,17 +149,17 @@ const Footer = () => {
             className="mt-12 pt-8 border-t border-gray-800"
           >
             <div className="max-w-md mx-auto text-center">
-              <h3 className="text-xl font-semibold mb-4">Stay Updated</h3>
-              <p className="text-gray-300 mb-6">
+              <h3 className="text-xl font-semibold mb-4 text-white">Stay Updated</h3>
+              <p className="text-white mb-6">
                 Get the latest news about TIC Summit events and opportunities.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="flex-1 px-4 py-3 rounded-lg bg-white border border-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                 />
-                <Button variant="gradient" className="whitespace-nowrap">
+                <Button className="whitespace-nowrap bg-white text-gray-900 hover:bg-white">
                   Subscribe
                 </Button>
               </div>
@@ -168,10 +168,10 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800">
+        <div className="border-t border-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-              <div className="text-gray-400 text-sm">
+              <div className="text-white text-sm">
                 © 2024 TIC Summit. All rights reserved.
               </div>
               
@@ -185,9 +185,9 @@ const Footer = () => {
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="p-2 rounded-lg bg-gray-800 hover:bg-blue-600 transition-colors duration-200"
+                    className="p-2 rounded-lg bg-white hover:bg-white transition-colors duration-200"
                   >
-                    <social.icon className="w-5 h-5" />
+                    <social.icon className="w-5 h-5 text-gray-900" />
                   </motion.a>
                 ))}
               </div>
@@ -197,10 +197,10 @@ const Footer = () => {
                 onClick={scrollToTop}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-blue-600 transition-colors duration-200"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white hover:bg-white transition-colors duration-200"
               >
-                <ArrowUp className="w-4 h-4" />
-                <span className="text-sm">Back to Top</span>
+                <ArrowUp className="w-4 h-4 text-gray-900" />
+                <span className="text-sm text-gray-900">Back to Top</span>
               </motion.button>
             </div>
           </div>
