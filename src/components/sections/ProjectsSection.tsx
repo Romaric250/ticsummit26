@@ -206,20 +206,20 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <motion.div
-            variants={itemVariants}
-            className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-6"
-          >
-            <Star className="w-4 h-4" />
-            <span className="text-sm font-medium">Our Projects</span>
-          </motion.div>
+            <motion.div
+              variants={itemVariants}
+              className="inline-flex items-center space-x-2 bg-purple-100 text-purple-600 rounded-full px-4 py-2 mb-6"
+            >
+              <Star className="w-4 h-4" />
+              <span className="text-sm font-medium">Our Projects</span>
+            </motion.div>
 
           <motion.h2
             variants={itemVariants}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
           >
             Innovation Solutions
-            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="block text-purple-600">
               Driving the Future
             </span>
           </motion.h2>
@@ -264,11 +264,11 @@ const ProjectsSection = () => {
               Submit your project ideas and compete for amazing prizes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="gradient" size="lg" className="group">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white group" size="lg">
                 Submit Project
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" className="border-purple-600 text-purple-600 hover:bg-purple-50">
                 View All Projects
               </Button>
             </div>

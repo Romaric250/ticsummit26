@@ -46,7 +46,7 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-50">
       {/* Background Elements */}
       <div className="absolute inset-0">
         {/* Animated Background Pattern */}
@@ -88,34 +88,34 @@ const HeroSection = () => {
           <div className="text-center lg:text-left">
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+              className="inline-flex items-center space-x-2 bg-purple-100 text-purple-700 rounded-full px-4 py-2 mb-6"
             >
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-white/90 text-sm font-medium">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">
                 Registration Now Open
               </span>
             </motion.div>
 
             <motion.h1
               variants={itemVariants}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight"
             >
               <span className="block">TIC Summit</span>
-              <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="block text-purple-600">
                 2025
               </span>
             </motion.h1>
 
             <motion.h2
               variants={itemVariants}
-              className="text-2xl sm:text-3xl text-blue-200 mb-6 font-light"
+              className="text-2xl sm:text-3xl text-gray-600 mb-6 font-light"
             >
               Empowering Young Innovators
             </motion.h2>
 
             <motion.p
               variants={itemVariants}
-              className="text-lg text-gray-300 mb-8 max-w-2xl leading-relaxed"
+              className="text-lg text-gray-600 mb-8 max-w-2xl leading-relaxed"
             >
               Cameroon's largest tech challenge for Secondary and High school students. 
               Connect with industry experts, gain valuable mentorship, and win prizes 
@@ -128,8 +128,7 @@ const HeroSection = () => {
             >
               <Button
                 size="xl"
-                variant="gradient"
-                className="group"
+                className="bg-purple-600 hover:bg-purple-700 text-white group"
               >
                 Apply Now
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -137,8 +136,8 @@ const HeroSection = () => {
               
               <Button
                 size="xl"
-                variant="outlineGradient"
-                className="group"
+                variant="outline"
+                className="group border-purple-600 text-purple-600 hover:bg-purple-50"
               >
                 <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                 Watch Video
@@ -159,14 +158,14 @@ const HeroSection = () => {
                   className="text-center"
                 >
                   <div className="flex justify-center mb-2">
-                    <div className="p-3 bg-white/10 backdrop-blur-sm rounded-lg">
-                      <stat.icon className="w-6 h-6 text-blue-400" />
+                    <div className="p-3 bg-purple-100 rounded-lg">
+                      <stat.icon className="w-6 h-6 text-purple-600" />
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-white mb-1">
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-gray-300">
+                  <div className="text-sm text-gray-600">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -187,13 +186,13 @@ const HeroSection = () => {
                 transition={{ duration: 1, delay: 0.5 }}
                 className="relative z-10"
               >
-                <div className="aspect-[4/5] bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl backdrop-blur-sm border border-white/20 overflow-hidden">
+                <div className="aspect-[4/5] bg-gradient-to-br from-purple-100 to-purple-200 rounded-3xl border border-purple-200 overflow-hidden">
                   {/* Placeholder for hero image */}
-                  <div className="w-full h-full bg-gradient-to-br from-blue-600/30 to-purple-600/30 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <Users className="w-24 h-24 mx-auto mb-4 opacity-50" />
+                  <div className="w-full h-full bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
+                    <div className="text-center text-gray-700">
+                      <Users className="w-24 h-24 mx-auto mb-4 text-purple-400" />
                       <p className="text-lg font-medium">Students in Action</p>
-                      <p className="text-sm opacity-75">Innovation in Progress</p>
+                      <p className="text-sm text-gray-500">Innovation in Progress</p>
                     </div>
                   </div>
                 </div>
@@ -204,15 +203,15 @@ const HeroSection = () => {
                 initial={{ opacity: 0, x: -50, y: 50 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
                 transition={{ duration: 0.8, delay: 1 }}
-                className="absolute -top-4 -left-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                className="absolute -top-4 -left-4 bg-white rounded-xl p-4 border border-purple-200 shadow-lg"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                     <Award className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <div className="text-white font-semibold">150+</div>
-                    <div className="text-gray-300 text-sm">Projects</div>
+                    <div className="text-gray-900 font-semibold">150+</div>
+                    <div className="text-gray-600 text-sm">Projects</div>
                   </div>
                 </div>
               </motion.div>
@@ -221,15 +220,15 @@ const HeroSection = () => {
                 initial={{ opacity: 0, x: 50, y: -50 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.2 }}
-                className="absolute -bottom-4 -right-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                className="absolute -bottom-4 -right-4 bg-white rounded-xl p-4 border border-purple-200 shadow-lg"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <div className="text-white font-semibold">3 Days</div>
-                    <div className="text-gray-300 text-sm">Intensive</div>
+                    <div className="text-gray-900 font-semibold">3 Days</div>
+                    <div className="text-gray-600 text-sm">Intensive</div>
                   </div>
                 </div>
               </motion.div>
@@ -248,12 +247,12 @@ const HeroSection = () => {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center"
+          className="w-6 h-10 border-2 border-purple-300 rounded-full flex justify-center"
         >
           <motion.div
             animate={{ y: [0, 12, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-1 h-3 bg-white/60 rounded-full mt-2"
+            className="w-1 h-3 bg-purple-400 rounded-full mt-2"
           />
         </motion.div>
       </motion.div>

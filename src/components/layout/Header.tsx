@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { Menu, X, ChevronDown, Star, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 
 const Header = () => {
@@ -35,7 +35,6 @@ const Header = () => {
     },
     { name: "Hall of Fame", href: "/hall-of-fame" },
     { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/contact" },
   ]
 
   return (
@@ -43,33 +42,25 @@ const Header = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg"
-          : "bg-transparent"
-      }`}
+      className="fixed top-4 left-4 right-4 z-50 bg-blue-900 rounded-2xl shadow-lg"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
+          <Link href="/" className="flex items-center space-x-3 group">
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="relative"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">T</span>
               </div>
             </motion.div>
             <div className="flex flex-col">
-              <span className={`font-bold text-lg transition-colors ${
-                isScrolled ? "text-gray-900" : "text-white"
-              }`}>
+              <span className="font-bold text-lg text-white">
                 TIC Summit
               </span>
-              <span className={`text-xs transition-colors ${
-                isScrolled ? "text-gray-600" : "text-blue-200"
-              }`}>
+              <span className="text-xs text-blue-200">
                 Innovation Hub
               </span>
             </div>
@@ -81,11 +72,7 @@ const Header = () => {
               <div key={item.name} className="relative group">
                 <Link
                   href={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${
-                    isScrolled
-                      ? "text-gray-700 hover:text-blue-600"
-                      : "text-white hover:text-blue-200"
-                  }`}
+                  className="flex items-center space-x-1 px-3 py-2 text-white hover:text-blue-200 transition-colors"
                   onMouseEnter={() => item.hasDropdown && setIsScheduleOpen(true)}
                   onMouseLeave={() => item.hasDropdown && setIsScheduleOpen(false)}
                 >
@@ -125,32 +112,41 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <Button
-              variant="outlineGradient"
-              size="sm"
-              className="border-white text-white hover:bg-white hover:text-blue-600"
-            >
-              Apply Now
-            </Button>
-            <Button
-              variant="gradient"
-              size="sm"
-            >
-              Donate
-            </Button>
+          {/* Right Side Elements */}
+          <div className="hidden lg:flex items-center space-x-6">
+            {/* Star Rating */}
+            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2">
+              <Star className="w-4 h-4 text-yellow-400" />
+              <span className="text-sm text-white">Star</span>
+              <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">150+</span>
+              <ExternalLink className="w-3 h-3 text-white/60" />
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex items-center space-x-3">
+              <Link
+                href="/login"
+                className="text-white hover:text-blue-200 transition-colors font-medium"
+              >
+                Sign In
+              </Link>
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Sign Up
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-md transition-colors"
+            className="lg:hidden p-2 rounded-md transition-colors text-white"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-white" />
+              <X className="w-6 h-6" />
             ) : (
-              <Menu className="w-6 h-6 text-white" />
+              <Menu className="w-6 h-6" />
             )}
           </button>
         </div>
@@ -163,26 +159,36 @@ const Header = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 shadow-lg"
+              className="lg:hidden bg-white border-t border-gray-100"
             >
               <div className="px-4 py-6 space-y-4">
                 {navItems.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                    className="block px-3 py-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
                   </Link>
                 ))}
-                <div className="pt-4 space-y-2">
-                  <Button variant="outlineGradient" className="w-full">
-                    Apply Now
-                  </Button>
-                  <Button variant="gradient" className="w-full">
-                    Donate
-                  </Button>
+                <div className="pt-4 space-y-3 border-t border-gray-100">
+                  <div className="flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                    <Star className="w-4 h-4 text-yellow-500" />
+                    <span className="text-sm text-gray-700">Star</span>
+                    <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">150+</span>
+                  </div>
+                  <div className="flex space-x-3">
+                    <Link
+                      href="/login"
+                      className="flex-1 text-center text-gray-700 hover:text-purple-600 transition-colors font-medium py-2"
+                    >
+                      Sign In
+                    </Link>
+                    <Button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium">
+                      Sign Up
+                    </Button>
+                  </div>
                 </div>
               </div>
             </motion.div>
