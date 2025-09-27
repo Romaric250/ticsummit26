@@ -95,15 +95,15 @@ const ProjectsSection = () => {
       variants={itemVariants}
       className="group relative"
     >
-      <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border border-gray-100">
+      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-gray-100">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
             <div className="text-center text-gray-600">
-              <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                <span className="text-2xl font-bold">P{index + 1}</span>
+              <div className="w-12 h-12 bg-gray-300 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                <span className="text-lg font-bold">P{index + 1}</span>
               </div>
-              <p className="text-sm font-medium">Project Image</p>
+              <p className="text-xs font-medium">Project Image</p>
             </div>
           </div>
           
@@ -130,29 +130,29 @@ const ProjectsSection = () => {
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-gray-500 font-medium">{project.year}</span>
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-gray-500 font-medium">{project.year}</span>
             <div className="flex items-center space-x-1 text-gray-400">
-              <Calendar className="w-4 h-4" />
-              <span className="text-sm">3 days</span>
+              <Calendar className="w-3 h-3" />
+              <span className="text-xs">3 days</span>
             </div>
           </div>
 
-          <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
             {project.title}
           </h3>
 
-          <p className="text-gray-600 mb-4 line-clamp-2">
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
             {project.description}
           </p>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5 mb-3">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors"
               >
                 {tag}
               </span>
@@ -160,9 +160,9 @@ const ProjectsSection = () => {
           </div>
 
           {/* Author */}
-          <div className="flex items-center space-x-3 text-sm text-gray-500">
-            <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
-              <User className="w-3 h-3" />
+          <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center">
+              <User className="w-2.5 h-2.5" />
             </div>
             <span>Student Team</span>
           </div>
@@ -172,7 +172,7 @@ const ProjectsSection = () => {
   )
 
   return (
-    <section className="py-20 bg-gray-50 relative overflow-hidden">
+    <section className="py-16 bg-gray-50 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600"></div>
@@ -202,7 +202,7 @@ const ProjectsSection = () => {
 
           <motion.h2
             variants={itemVariants}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
           >
             Innovation Solutions
             <span className="block text-blue-900">
@@ -212,7 +212,7 @@ const ProjectsSection = () => {
 
           <motion.p
             variants={itemVariants}
-            className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed"
           >
             Discover the incredible projects created by our talented students during 
             the TIC Summit. Each project represents innovation, creativity, and the 
@@ -226,7 +226,7 @@ const ProjectsSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
         >
           {projects.slice(0, 3).map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
@@ -245,16 +245,16 @@ const ProjectsSection = () => {
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center space-x-3 bg-white rounded-2xl px-8 py-4 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              className="inline-flex items-center space-x-3 bg-white rounded-xl px-6 py-3 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Star className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                <Star className="w-5 h-5 text-white" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                   Hall of Fame
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-xs">
                   Explore all {projects.length} amazing projects
                 </p>
               </div>
@@ -271,11 +271,11 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 max-w-xl mx-auto">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
               Ready to Showcase Your Innovation?
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm text-gray-600 mb-4">
               Join the next TIC Summit and be part of the innovation revolution. 
               Submit your project ideas and compete for amazing prizes.
             </p>
