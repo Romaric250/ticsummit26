@@ -5,8 +5,42 @@ import { ArrowRight, Play, Users, Award, Calendar, ChevronLeft, ChevronRight } f
 import { Button } from "@/components/ui/Button"
 import { useState, useEffect } from "react"
 
+// Animated Counter Hook
+const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
+  const [count, setCount] = useState(start)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!isVisible) return
+
+    let startTime: number
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+      const progress = Math.min((currentTime - startTime) / duration, 1)
+      
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+      const currentCount = Math.floor(start + (end - start) * easeOutQuart)
+      
+      setCount(currentCount)
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+    
+    requestAnimationFrame(animate)
+  }, [end, duration, start, isVisible])
+
+  return { count, setIsVisible }
+}
+
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  
+  // Animated counters
+  const studentsCount = useCountUp(1500, 2500)
+  const schoolsCount = useCountUp(28, 2000)
+  const daysCount = useCountUp(3, 1500)
   
   const heroImages = [
     {
@@ -86,7 +120,7 @@ const HeroSection = () => {
       transition: {
         duration: 4,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   }
@@ -195,27 +229,65 @@ const HeroSection = () => {
               variants={itemVariants}
               className="grid grid-cols-3 gap-8"
             >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="flex justify-center mb-2">
-                    <div className="p-3 bg-white/10 backdrop-blur-sm rounded-lg">
-                      <stat.icon className="w-6 h-6 text-white" />
-                    </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8 }}
+                className="text-center"
+                onViewportEnter={() => studentsCount.setIsVisible(true)}
+              >
+                <div className="flex justify-center mb-2">
+                  <div className="p-3 bg-white/10 backdrop-blur-sm rounded-lg">
+                    <Users className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-2xl font-bold text-white mb-1">
-                    {stat.value}
+                </div>
+                <div className="text-2xl font-bold text-white mb-1">
+                  {studentsCount.count.toLocaleString()}+
+                </div>
+                <div className="text-sm text-white">
+                  Students Reached
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.9 }}
+                className="text-center"
+                onViewportEnter={() => schoolsCount.setIsVisible(true)}
+              >
+                <div className="flex justify-center mb-2">
+                  <div className="p-3 bg-white/10 backdrop-blur-sm rounded-lg">
+                    <Award className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-sm text-white">
-                    {stat.label}
+                </div>
+                <div className="text-2xl font-bold text-white mb-1">
+                  {schoolsCount.count}
+                </div>
+                <div className="text-sm text-white">
+                  Schools Visited
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.0 }}
+                className="text-center"
+                onViewportEnter={() => daysCount.setIsVisible(true)}
+              >
+                <div className="flex justify-center mb-2">
+                  <div className="p-3 bg-white/10 backdrop-blur-sm rounded-lg">
+                    <Calendar className="w-6 h-6 text-white" />
                   </div>
-                </motion.div>
-              ))}
+                </div>
+                <div className="text-2xl font-bold text-white mb-1">
+                  {daysCount.count}
+                </div>
+                <div className="text-sm text-white">
+                  Days of Innovation
+                </div>
+              </motion.div>
             </motion.div>
           </div>
 

@@ -2,6 +2,35 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+
+// Animated Counter Hook
+const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
+  const [count, setCount] = useState(start)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!isVisible) return
+
+    let startTime: number
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+      const progress = Math.min((currentTime - startTime) / duration, 1)
+      
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+      const currentCount = Math.floor(start + (end - start) * easeOutQuart)
+      
+      setCount(currentCount)
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+    
+    requestAnimationFrame(animate)
+  }, [end, duration, start, isVisible])
+
+  return { count, setIsVisible }
+}
 import { 
   Calendar, 
   Users, 
@@ -79,6 +108,12 @@ const RecapPage = () => {
   const [selectedYear, setSelectedYear] = useState(2025)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  // Animated counters for hero stats
+  const yearsCount = useCountUp(6, 2000)
+  const studentsCount = useCountUp(10000, 3000)
+  const projectsCount = useCountUp(1000, 2500)
+  const schoolsCount = useCountUp(100, 2000)
 
   const editions: Edition[] = [
     {
@@ -470,21 +505,35 @@ const RecapPage = () => {
               <motion.div
                 variants={itemVariants}
                 className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-12"
+                onViewportEnter={() => {
+                  yearsCount.setIsVisible(true)
+                  studentsCount.setIsVisible(true)
+                  projectsCount.setIsVisible(true)
+                  schoolsCount.setIsVisible(true)
+                }}
               >
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">6</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+                    {yearsCount.count}
+                  </div>
                   <div className="text-xs md:text-sm text-gray-300">Years</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">10K+</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+                    {studentsCount.count.toLocaleString()}+
+                  </div>
                   <div className="text-xs md:text-sm text-gray-300">Students</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">1K+</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+                    {projectsCount.count.toLocaleString()}+
+                  </div>
                   <div className="text-xs md:text-sm text-gray-300">Projects</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">100+</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+                    {schoolsCount.count}+
+                  </div>
                   <div className="text-xs md:text-sm text-gray-300">Schools</div>
                 </div>
               </motion.div>
@@ -638,22 +687,30 @@ const RecapPage = () => {
                   transition={{ delay: 0.2 }}
                   className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-12"
                 >
-                  {Object.entries(currentEdition.stats).map(([key, value], index) => (
-                    <motion.div
-                      key={key}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      className="bg-white rounded-xl p-4 md:p-6 text-center shadow-sm border border-gray-200"
-                    >
-                      <div className="text-lg md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">
-                        {typeof value === 'number' ? value.toLocaleString() : value}
-                      </div>
-                      <div className="text-xs md:text-sm text-gray-600 capitalize">
-                        {key.replace(/([A-Z])/g, ' $1').trim()}
-                      </div>
-                    </motion.div>
-                  ))}
+                  {Object.entries(currentEdition.stats).map(([key, value], index) => {
+                    const AnimatedStat = () => {
+                      const count = useCountUp(typeof value === 'number' ? value : 0, 2000 + index * 200)
+                      
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 + index * 0.1 }}
+                          className="bg-white rounded-xl p-4 md:p-6 text-center shadow-sm border border-gray-200"
+                          onViewportEnter={() => count.setIsVisible(true)}
+                        >
+                          <div className="text-lg md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">
+                            {typeof value === 'number' ? count.count.toLocaleString() : value}
+                          </div>
+                          <div className="text-xs md:text-sm text-gray-600 capitalize">
+                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                          </div>
+                        </motion.div>
+                      )
+                    }
+                    
+                    return <AnimatedStat key={key} />
+                  })}
                 </motion.div>
 
                 {/* Content Grid */}

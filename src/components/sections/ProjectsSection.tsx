@@ -172,7 +172,7 @@ const ProjectsSection = () => {
   )
 
   return (
-    
+
     <section className="py-16 bg-gray-50 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
@@ -207,7 +207,7 @@ const ProjectsSection = () => {
           >
             Innovation Solutions
             <span className="block text-blue-900">
-              Driving the Future
+              Empowering the Next
             </span>
           </motion.h2>
 

@@ -13,13 +13,49 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { StudentsInActionCarousel } from "./HeroSection"
+import { useState, useEffect } from "react"
+
+// Animated Counter Hook
+const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
+  const [count, setCount] = useState(start)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!isVisible) return
+
+    let startTime: number
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+      const progress = Math.min((currentTime - startTime) / duration, 1)
+      
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+      const currentCount = Math.floor(start + (end - start) * easeOutQuart)
+      
+      setCount(currentCount)
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+    
+    requestAnimationFrame(animate)
+  }, [end, duration, start, isVisible])
+
+  return { count, setIsVisible }
+}
 
 const AboutSection = () => {
+  // Animated counters
+  const studentsCount = useCountUp(1500, 2500)
+  const schoolsCount = useCountUp(28, 2000)
+  const projectsCount = useCountUp(150, 2000)
+  const daysCount = useCountUp(3, 1500)
+
   const stats = [
-    { icon: Users, value: "1500+", label: "Students Reached", color: "text-blue-500" },
-    { icon: Globe, value: "28", label: "Schools Visited", color: "text-green-500" },
-    { icon: Award, value: "150", label: "Successful Projects", color: "text-purple-500" },
-    { icon: Heart, value: "3", label: "Days of Innovation", color: "text-red-500" },
+    { icon: Users, value: "1500+", label: "Students Reached", color: "text-blue-500", count: studentsCount },
+    { icon: Globe, value: "28", label: "Schools Visited", color: "text-green-500", count: schoolsCount },
+    { icon: Award, value: "150", label: "Successful Projects", color: "text-purple-500", count: projectsCount },
+    { icon: Heart, value: "3", label: "Days of Innovation", color: "text-red-500", count: daysCount },
   ]
 
   const features = [
@@ -78,7 +114,7 @@ const AboutSection = () => {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   }
@@ -139,6 +175,12 @@ const AboutSection = () => {
           whileInView="visible"
           viewport={{ once: true }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20"
+          onViewportEnter={() => {
+            studentsCount.setIsVisible(true)
+            schoolsCount.setIsVisible(true)
+            projectsCount.setIsVisible(true)
+            daysCount.setIsVisible(true)
+          }}
         >
           {stats.map((stat, index) => (
             <motion.div
@@ -153,7 +195,7 @@ const AboutSection = () => {
                 <stat.icon className="w-8 h-8 text-blue-900" />
               </motion.div>
               <div className="text-3xl font-bold text-gray-900 mb-2">
-                {stat.value}
+                {stat.count.count.toLocaleString()}{stat.value.includes('+') ? '+' : ''}
               </div>
               <div className="text-gray-600 font-medium">
                 {stat.label}
