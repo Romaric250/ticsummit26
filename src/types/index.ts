@@ -5,6 +5,16 @@ export interface Project {
   image: string
   tags: string[]
   year: number
+  likes: number
+  comments: number
+  views: number
+  author: {
+    name: string
+    avatar: string
+    school: string
+  }
+  slug: string
+  category: string
 }
 
 export interface Speaker {

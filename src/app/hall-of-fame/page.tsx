@@ -169,36 +169,36 @@ const HallOfFamePage = () => {
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+      whileHover={{ y: -3 }}
+      className="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
     >
       {/* Image */}
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden">
         <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
           <div className="text-center text-gray-600">
-            <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
-              <span className="text-3xl font-bold">P{project.id}</span>
+            <div className="w-8 h-8 bg-gray-300 rounded-md mx-auto mb-2 flex items-center justify-center">
+              <span className="text-sm font-bold">P{project.id}</span>
             </div>
-            <p className="text-sm font-medium">Project Image</p>
+            <p className="text-xs font-medium">Project</p>
           </div>
         </div>
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="flex space-x-4">
+          <div className="flex space-x-2">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
+              className="p-1.5 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
             >
-              <Eye className="w-5 h-5" />
+              <Eye className="w-3 h-3" />
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
+              className="p-1.5 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
             >
-              <ExternalLink className="w-5 h-5" />
+              <ExternalLink className="w-3 h-3" />
             </motion.button>
           </div>
         </div>
@@ -207,56 +207,56 @@ const HallOfFamePage = () => {
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-3">
         {/* Author Info */}
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 text-gray-600" />
+        <div className="flex items-center space-x-1.5 mb-2">
+          <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+            <User className="w-3 h-3 text-gray-600" />
           </div>
           <div>
-            <p className="font-medium text-gray-900">{project.author.name}</p>
-            <p className="text-sm text-gray-500">{project.author.school}</p>
+            <p className="font-medium text-gray-900 text-xs">{project.author.name}</p>
+            <p className="text-xs text-gray-500 truncate">{project.author.school}</p>
           </div>
         </div>
 
-        <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">
           {project.title}
         </h3>
 
-        <p className="text-gray-600 mb-4 line-clamp-3">
+        <p className="text-gray-600 mb-2 line-clamp-1 text-xs">
           {project.description}
         </p>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {project.tags.slice(0, 3).map((tag) => (
+        <div className="flex flex-wrap gap-1 mb-2">
+          {project.tags.slice(0, 1).map((tag) => (
             <span
               key={tag}
-              className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors"
+              className="px-1.5 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors"
             >
               {tag}
             </span>
           ))}
-          {project.tags.length > 3 && (
-            <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-              +{project.tags.length - 3}
+          {project.tags.length > 1 && (
+            <span className="px-1.5 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">
+              +{project.tags.length - 1}
             </span>
           )}
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-1">
-              <Heart className="w-4 h-4" />
+        <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-0.5">
+              <Heart className="w-2.5 h-2.5" />
               <span>{project.likes}</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <MessageCircle className="w-4 h-4" />
+            <div className="flex items-center space-x-0.5">
+              <MessageCircle className="w-2.5 h-2.5" />
               <span>{project.comments}</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <Eye className="w-4 h-4" />
+            <div className="flex items-center space-x-0.5">
+              <Eye className="w-2.5 h-2.5" />
               <span>{project.views}</span>
             </div>
           </div>
@@ -264,25 +264,25 @@ const HallOfFamePage = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <Link href={`/projects/${project.slug}`}>
-            <Button className="flex-1 bg-gray-900 hover:bg-gray-800 text-white">
-              View Details
+            <Button size="sm" className="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-xs">
+              View
             </Button>
           </Link>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="p-1.5 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
-            <Heart className="w-5 h-5 text-gray-600" />
+            <Heart className="w-3 h-3 text-gray-600" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="p-1.5 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
-            <Share2 className="w-5 h-5 text-gray-600" />
+            <Share2 className="w-3 h-3 text-gray-600" />
           </motion.button>
         </div>
       </div>
@@ -348,7 +348,7 @@ const HallOfFamePage = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           {filteredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
