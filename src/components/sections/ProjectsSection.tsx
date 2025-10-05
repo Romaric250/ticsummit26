@@ -192,15 +192,15 @@ const ProjectsSection = () => {
 
         {/* Content */}
         <div className="p-3">
-          {/* Author Info */}
-          <div className="flex items-center space-x-1.5 mb-2">
-            <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
-              <User className="w-3 h-3 text-gray-600" />
+          {/* Team Members */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-1.5">
+              <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                <User className="w-3 h-3 text-gray-600" />
+              </div>
+              <span className="text-xs text-gray-500 font-medium">{project.author.name}</span>
             </div>
-            <div>
-              <p className="font-medium text-gray-900 text-xs">{project.author.name}</p>
-              <p className="text-xs text-gray-500 truncate">{project.author.school}</p>
-            </div>
+            <span className="text-xs text-gray-400">{project.year}</span>
           </div>
 
           <h3 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">
@@ -244,7 +244,6 @@ const ProjectsSection = () => {
                 <span>{project.views}</span>
               </div>
             </div>
-            <span className="text-gray-400">{project.year}</span>
           </div>
 
           {/* Actions */}

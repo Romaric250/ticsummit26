@@ -45,9 +45,9 @@ const HeroSection = () => {
   const heroImages = [
     {
       src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
-      title: "TIC Summit 2025",
+      title: "TIC Summit Program",
       subtitle: "Students and Innovation",
-      description: "Cameroon's largest tech challenge"
+      description: "Cameroon's premier tech challenge"
     },
     {
       src: "https://8gzcaj94vr.ufs.sh/f/btHfnDl3l94ioly0nL8n3I5tq8OQpHLErU6aMjx2eFAKGYW1",
@@ -172,7 +172,7 @@ const HeroSection = () => {
             >
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <span className="text-sm font-medium">
-                Registration Now Open
+                6th Edition - Registration Now Open
               </span>
             </motion.div>
 
@@ -181,9 +181,6 @@ const HeroSection = () => {
               className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
             >
               <span className="block">TIC Summit</span>
-              <span className="block text-white">
-                2025
-              </span>
             </motion.h1>
 
             <motion.h2
@@ -197,9 +194,9 @@ const HeroSection = () => {
               variants={itemVariants}
               className="text-lg text-white mb-8 max-w-2xl leading-relaxed"
             >
-              Cameroon's largest tech challenge for Secondary and High school students. 
-              Connect with industry experts, gain valuable mentorship, and win prizes 
-              for your innovative ideas.
+              Cameroon's premier tech innovation program for Secondary and High school students. 
+              Now in its 6th edition, TIC Summit continues to connect young minds with industry experts, 
+              provide valuable mentorship, and celebrate innovative ideas.
             </motion.p>
 
             <motion.div

@@ -354,7 +354,7 @@ const RecapPage = () => {
         {
           name: "Aisha Diallo",
           role: "Innovation Director",
-          quote: "2025 is just the beginning of something extraordinary.",
+          quote: "The future of innovation is just beginning.",
           avatar: "/api/placeholder/60/60"
         }
       ],

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button"
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false)
+  const [isMoreOpen, setIsMoreOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,19 +23,18 @@ const Header = () => {
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { 
-      name: "Schedule", 
-      href: "/schedule",
-      hasDropdown: true,
-      dropdownItems: [
-        { name: "2025 Summit", href: "/schedule/2025" },
-        { name: "Past Events", href: "/schedule/past" },
-        { name: "Workshops", href: "/schedule/workshops" }
-      ]
-    },
     { name: "Recap", href: "/recap" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
     { name: "Blog", href: "/blog" },
+    { 
+      name: "More", 
+      href: "#",
+      hasDropdown: true,
+      dropdownItems: [
+        { name: "Schedule", href: "/schedule" },
+        { name: "Mentors", href: "/mentors" }
+      ]
+    },
   ]
 
   return (
@@ -74,8 +73,8 @@ const Header = () => {
                 <Link
                   href={item.href}
                   className="flex items-center space-x-1 px-3 py-2 text-white hover:text-white transition-colors"
-                  onMouseEnter={() => item.hasDropdown && setIsScheduleOpen(true)}
-                  onMouseLeave={() => item.hasDropdown && setIsScheduleOpen(false)}
+                  onMouseEnter={() => item.hasDropdown && setIsMoreOpen(true)}
+                  onMouseLeave={() => item.hasDropdown && setIsMoreOpen(false)}
                 >
                   <span>{item.name}</span>
                   {item.hasDropdown && (
@@ -86,15 +85,15 @@ const Header = () => {
                 {/* Dropdown Menu */}
                 {item.hasDropdown && (
                   <AnimatePresence>
-                    {isScheduleOpen && (
+                    {isMoreOpen && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.2 }}
                         className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
-                        onMouseEnter={() => setIsScheduleOpen(true)}
-                        onMouseLeave={() => setIsScheduleOpen(false)}
+                        onMouseEnter={() => setIsMoreOpen(true)}
+                        onMouseLeave={() => setIsMoreOpen(false)}
                       >
                         {item.dropdownItems?.map((dropdownItem) => (
                           <Link

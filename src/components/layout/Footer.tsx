@@ -27,7 +27,7 @@ const Footer = () => {
       { name: "Partners", href: "/about/partners" },
     ],
     events: [
-      { name: "TIC Summit 2025", href: "/events/2025" },
+      { name: "Current Summit", href: "/events/current" },
       { name: "Workshops", href: "/events/workshops" },
       { name: "Past Events", href: "/events/past" },
       { name: "Gallery", href: "/gallery" },

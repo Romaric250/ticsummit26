@@ -1,19 +1,19 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'TIC Summit 2024 - Technology Innovation Conference',
-  description: 'Join the premier technology innovation conference featuring industry leaders, hands-on workshops, and cutting-edge insights. March 15-17, 2024 in San Francisco.',
+  title: 'TIC Summit - Technology Innovation Conference',
+  description: 'Cameroon\'s premier tech innovation program for Secondary and High school students. Now in its 6th edition, TIC Summit connects young minds with industry experts and celebrates innovative ideas.',
   keywords: [
     'technology conference',
     'innovation summit',
-    'tech event',
-    'AI conference',
-    'software development',
-    'startup conference',
-    'San Francisco tech',
-    'developer conference',
-    'tech networking',
-    'technology trends'
+    'tech education',
+    'student tech challenge',
+    'Cameroon tech',
+    'secondary school tech',
+    'high school innovation',
+    'tech mentorship',
+    'student projects',
+    'technology education'
   ],
   authors: [{ name: 'TIC Summit Team' }],
   creator: 'TIC Summit',
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'TIC Summit 2024 - Technology Innovation Conference',
-    description: 'Join the premier technology innovation conference featuring industry leaders, hands-on workshops, and cutting-edge insights. March 15-17, 2024 in San Francisco.',
+    title: 'TIC Summit - Technology Innovation Conference',
+    description: 'Cameroon\'s premier tech innovation program for Secondary and High school students. Now in its 6th edition, TIC Summit connects young minds with industry experts.',
     url: 'https://ticsummit.org',
     siteName: 'TIC Summit',
     images: [
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'TIC Summit 2024 - Technology Innovation Conference',
+        alt: 'TIC Summit - Technology Innovation Conference',
       },
     ],
     locale: 'en_US',
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TIC Summit 2024 - Technology Innovation Conference',
-    description: 'Join the premier technology innovation conference featuring industry leaders, hands-on workshops, and cutting-edge insights.',
+    title: 'TIC Summit - Technology Innovation Conference',
+    description: 'Cameroon\'s premier tech innovation program for Secondary and High school students. Now in its 6th edition.',
     images: ['/twitter-image.jpg'],
     creator: '@ticsummit',
     site: '@ticsummit',
@@ -71,20 +71,16 @@ export const metadata: Metadata = {
 export const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Event',
-  name: 'TIC Summit 2024',
-  description: 'Technology Innovation Conference featuring industry leaders, hands-on workshops, and cutting-edge insights.',
-  startDate: '2024-03-15T09:00:00-08:00',
-  endDate: '2024-03-17T18:00:00-08:00',
+  name: 'TIC Summit 2025',
+  description: 'Technology Innovation Conference - Cameroon\'s premier tech innovation program for Secondary and High school students. Now in its 6th edition.',
+  startDate: '2025-03-15T09:00:00+01:00',
+  endDate: '2025-03-17T18:00:00+01:00',
   location: {
     '@type': 'Place',
-    name: 'San Francisco Convention Center',
+    name: 'Cameroon',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '747 Howard St',
-      addressLocality: 'San Francisco',
-      addressRegion: 'CA',
-      postalCode: '94103',
-      addressCountry: 'US',
+      addressCountry: 'CM',
     },
   },
   organizer: {
