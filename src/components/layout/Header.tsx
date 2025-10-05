@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/Button"
@@ -10,6 +11,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMoreOpen, setIsMoreOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +25,7 @@ const Header = () => {
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
+    { name: "Schedule26", href: "/schedule26" },
     { name: "Recap", href: "/recap" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
     { name: "Blog", href: "/blog" },
@@ -31,7 +34,6 @@ const Header = () => {
       href: "#",
       hasDropdown: true,
       dropdownItems: [
-        { name: "Schedule", href: "/schedule" },
         { name: "Mentors", href: "/mentors" }
       ]
     },
@@ -72,13 +74,44 @@ const Header = () => {
               <div key={item.name} className="relative group">
                 <Link
                   href={item.href}
-                  className="flex items-center space-x-1 px-3 py-2 text-white hover:text-white transition-colors"
+                  className={`flex items-center space-x-1 px-3 py-2 transition-colors relative ${
+                    pathname === item.href 
+                      ? 'text-white bg-white/10 rounded-lg' 
+                      : 'text-white hover:text-white'
+                  }`}
                   onMouseEnter={() => item.hasDropdown && setIsMoreOpen(true)}
                   onMouseLeave={() => item.hasDropdown && setIsMoreOpen(false)}
                 >
                   <span>{item.name}</span>
                   {item.hasDropdown && (
                     <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                  )}
+                  {pathname === item.href && (
+                    <motion.div
+                      layoutId="activeNav"
+                      className="absolute inset-0 bg-white/10 rounded-lg"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  {/* Spinning highlight for Schedule26 */}
+                  {pathname === item.href && item.name === "Schedule26" && (
+                    <>
+                      <motion.div
+                        className="absolute inset-0 rounded-lg border-2 border-white/30"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      />
+                      <motion.div
+                        className="absolute -inset-1 rounded-lg border border-white/20"
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      />
+                      <motion.div
+                        className="absolute -inset-2 rounded-lg border border-white/10"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                      />
+                    </>
                   )}
                 </Link>
 
