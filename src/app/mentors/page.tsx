@@ -238,7 +238,7 @@ const MentorsPage = () => {
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 overflow-hidden">
+        <section className="relative py-20 bg-gray-900 overflow-hidden">
           {/* Background Elements */}
           <div className="absolute inset-0">
             <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse" />
@@ -253,16 +253,14 @@ const MentorsPage = () => {
               transition={{ duration: 0.8 }}
               className="text-center text-white"
             >
-              <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <GraduationCap className="w-5 h-5 text-blue-300" />
+              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+                <GraduationCap className="w-5 h-5 text-white" />
                 <span className="text-sm font-medium">Learn from Industry Leaders</span>
               </div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                <span className="block">Meet Our</span>
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-white">
-                  Expert Mentors
-                </span>
+                <span className="block text-white">Meet Our</span>
+                <span className="block text-white">Expert Mentors</span>
               </h1>
 
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
@@ -302,7 +300,7 @@ const MentorsPage = () => {
                       placeholder="Search mentors..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                     />
                   </div>
 
@@ -312,7 +310,7 @@ const MentorsPage = () => {
                     <select
                       value={selectedSpecialty}
                       onChange={(e) => setSelectedSpecialty(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">All Specialties</option>
                       {specialties.map(specialty => (
@@ -327,7 +325,7 @@ const MentorsPage = () => {
                     <select
                       value={selectedLocation}
                       onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">All Locations</option>
                       {locations.map(location => (
@@ -360,7 +358,7 @@ const MentorsPage = () => {
                   <Link href={`/mentors/${mentor.id}`}>
                     <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer">
                       {/* Profile Image */}
-                      <div className="relative h-64 bg-gradient-to-br from-blue-500 to-indigo-600">
+                      <div className="relative h-64 bg-gray-900">
                         <img
                           src={mentor.avatar}
                           alt={mentor.name}
@@ -387,7 +385,7 @@ const MentorsPage = () => {
                         </div>
 
                         {/* Experience Badge */}
-                        <div className="absolute top-4 left-4 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        <div className="absolute top-4 left-4 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
                           {mentor.experience}
                         </div>
                       </div>
@@ -395,10 +393,10 @@ const MentorsPage = () => {
                       {/* Content */}
                       <div className="p-6">
                         <div className="mb-4">
-                          <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                          <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-600 transition-colors">
                             {mentor.name}
                           </h3>
-                          <p className="text-blue-600 font-medium mb-2">{mentor.role}</p>
+                          <p className="text-gray-600 font-medium mb-2">{mentor.role}</p>
                           <div className="flex items-center space-x-4 text-sm text-gray-600">
                             <div className="flex items-center space-x-1">
                               <MapPin className="w-4 h-4" />
@@ -421,7 +419,7 @@ const MentorsPage = () => {
                             {mentor.specialties.slice(0, 3).map((specialty, specIndex) => (
                               <span
                                 key={specIndex}
-                                className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium"
+                                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium"
                               >
                                 {specialty}
                               </span>
@@ -452,7 +450,7 @@ const MentorsPage = () => {
                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                             <span className="text-sm text-gray-600">{mentor.availability}</span>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />
+                          <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     </div>
@@ -478,7 +476,7 @@ const MentorsPage = () => {
         </section>
 
         {/* Call to Action */}
-        <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <section className="py-16 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -493,7 +491,7 @@ const MentorsPage = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   size="xl"
-                  className="bg-white hover:bg-white text-blue-600 group"
+                  className="bg-white hover:bg-white text-gray-900 group"
                 >
                   Find a Mentor
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -501,7 +499,7 @@ const MentorsPage = () => {
                 <Button
                   size="xl"
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-blue-600"
+                  className="border-white text-white hover:bg-white hover:text-gray-900"
                 >
                   Become a Mentor
                 </Button>

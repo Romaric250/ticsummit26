@@ -230,7 +230,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
         </div>
 
         {/* Hero Section */}
-        <section className="relative py-16 bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900">
+        <section className="relative py-16 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -249,7 +249,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                     />
                   </div>
                   <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
-                    <GraduationCap className="w-6 h-6 text-blue-500" />
+                    <GraduationCap className="w-6 h-6 text-gray-900" />
                   </div>
                 </div>
               </div>
@@ -268,7 +268,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl font-bold mb-4">{mentor.name}</h1>
-                <p className="text-2xl text-blue-300 mb-6">{mentor.role}</p>
+                <p className="text-2xl text-white/80 mb-6">{mentor.role}</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                   <div className="flex items-center space-x-3">
@@ -301,11 +301,11 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-                  <Button className="bg-white hover:bg-white text-blue-600 group">
+                  <Button className="bg-white hover:bg-white text-gray-900 group">
                     <MessageCircle className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                     Request Mentorship
                   </Button>
-                  <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+                  <Button variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
                     <Share2 className="mr-2 w-5 h-5" />
                     Share Profile
                   </Button>
@@ -339,7 +339,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                     <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="text-xl font-semibold text-gray-900">{area.title}</h3>
-                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
                           {area.level}
                         </span>
                       </div>
@@ -355,8 +355,8 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                 <div className="space-y-4">
                   {mentor.achievements.map((achievement, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <CheckCircle className="w-4 h-4 text-blue-600" />
+                      <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <CheckCircle className="w-4 h-4 text-gray-600" />
                       </div>
                       <p className="text-gray-600">{achievement}</p>
                     </div>
@@ -369,7 +369,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Mentee Testimonials</h2>
                 <div className="space-y-6">
                   {mentor.testimonials.map((testimonial, index) => (
-                    <div key={index} className="border-l-4 border-blue-500 pl-6">
+                    <div key={index} className="border-l-4 border-gray-500 pl-6">
                       <div className="flex items-center space-x-1 mb-2">
                         {[...Array(testimonial.rating)].map((_, i) => (
                           <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
@@ -518,12 +518,12 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
               </motion.div>
 
               {/* Request Mentorship CTA */}
-              <motion.div variants={itemVariants} className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+              <motion.div variants={itemVariants} className="bg-gray-900 rounded-2xl p-8 text-white">
                 <h3 className="text-xl font-bold mb-4">Ready to Get Mentored?</h3>
                 <p className="text-white/90 mb-6">
                   Connect with {mentor.name.split(' ')[0]} for personalized guidance and support.
                 </p>
-                <Button className="w-full bg-white hover:bg-white text-blue-600">
+                <Button className="w-full bg-white hover:bg-white text-gray-900">
                   Request Mentorship Session
                 </Button>
               </motion.div>
