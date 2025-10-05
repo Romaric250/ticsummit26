@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { AuthButton } from "@/components/auth/AuthButton"
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -147,20 +148,8 @@ const Header = () => {
 
           {/* Right Side Elements */}
           <div className="hidden lg:flex items-center space-x-6">
-            {/* CTA Buttons */}
-            <div className="flex items-center space-x-3">
-              <Link
-                href="/login"
-                className="text-white hover:text-white transition-colors font-medium"
-              >
-                Sign In
-              </Link>
-              <Button
-                className="bg-white hover:bg-white text-gray-900 px-6 py-2 rounded-lg font-medium transition-colors"
-              >
-                Sign Up
-              </Button>
-            </div>
+            {/* Auth Button */}
+            <AuthButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -198,16 +187,8 @@ const Header = () => {
                   </Link>
                 ))}
                 <div className="pt-4 space-y-3 border-t border-gray-200">
-                  <div className="flex space-x-3">
-                    <Link
-                      href="/login"
-                      className="flex-1 text-center text-gray-700 hover:text-gray-900 transition-colors font-medium py-2"
-                    >
-                      Sign In
-                    </Link>
-                    <Button className="flex-1 bg-white hover:bg-white text-gray-900 rounded-lg font-medium">
-                      Sign Up
-                    </Button>
+                  <div className="px-3">
+                    <AuthButton />
                   </div>
                 </div>
               </div>

@@ -1,0 +1,83 @@
+import { createUploadthing, type FileRouter } from "uploadthing/next"
+import { auth } from "@/lib/auth"
+
+const f = createUploadthing()
+
+export const ourFileRouter = {
+  // Profile image uploader
+  profileImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      const session = await auth.api.getSession({
+        headers: new Headers()
+      })
+      
+      if (!session?.user) throw new Error("Unauthorized")
+      
+      return { userId: session.user.id }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
+      
+      return { uploadedBy: metadata.userId }
+    }),
+
+  // Blog post image uploader
+  blogImage: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      const session = await auth.api.getSession({
+        headers: new Headers()
+      })
+      
+      if (!session?.user) throw new Error("Unauthorized")
+      
+      return { userId: session.user.id }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Blog image upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
+      
+      return { uploadedBy: metadata.userId }
+    }),
+
+  // Project image uploader
+  projectImage: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      const session = await auth.api.getSession({
+        headers: new Headers()
+      })
+      
+      if (!session?.user) throw new Error("Unauthorized")
+      
+      return { userId: session.user.id }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Project image upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
+      
+      return { uploadedBy: metadata.userId }
+    }),
+
+  // Document uploader (for project files, resumes, etc.)
+  document: f({ 
+    pdf: { maxFileSize: "16MB", maxFileCount: 1 },
+    "application/pdf": { maxFileSize: "16MB", maxFileCount: 1 }
+  })
+    .middleware(async () => {
+      const session = await auth.api.getSession({
+        headers: new Headers()
+      })
+      
+      if (!session?.user) throw new Error("Unauthorized")
+      
+      return { userId: session.user.id }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Document upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
+      
+      return { uploadedBy: metadata.userId }
+    }),
+} satisfies FileRouter
+
+export type OurFileRouter = typeof ourFileRouter
