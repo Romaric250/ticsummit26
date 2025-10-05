@@ -94,7 +94,7 @@ const Header = () => {
                     />
                   )}
                   {/* Spinning highlight for Schedule26 */}
-                  {pathname === item.href && item.name === "Schedule26" && (
+                  {item.name === "Schedule26" && (
                     <>
                       <motion.div
                         className="absolute inset-0 rounded-lg border-2 border-white/30"
