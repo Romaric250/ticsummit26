@@ -15,7 +15,7 @@ model User {
   email         String    @unique
   name          String?
   image         String?
-  emailVerified DateTime?
+  emailVerified Boolean   @default(false)
   role          UserRole  @default(STUDENT)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -39,8 +39,9 @@ model User {
 model account {
   id                String  @id @map("_id") @db.String
   userId            String  @db.String
-  type              String
-  provider          String
+  type              String @default("oauth")
+  provider          String @default("google")
+  providerId        String
   accountId         String
   refresh_token     String?
   access_token      String?
@@ -52,7 +53,7 @@ model account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, accountId])
+  @@unique([provider, providerId])
   @@map("accounts")
 }
 
