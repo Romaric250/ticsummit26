@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { signIn, signOut, useSession } from "@/lib/auth-client"
 import { Button } from "@/components/ui/Button"
 import { User, LogOut, Settings } from "lucide-react"

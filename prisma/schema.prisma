@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @map("_id") @db.String
   email     String   @unique
   name      String?
   image     String?
@@ -36,8 +36,8 @@ model User {
 }
 
 model account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
+  id                String  @id @map("_id") @db.String
+  userId            String  @db.String
   type              String
   provider          String
   providerAccountId String
@@ -56,9 +56,9 @@ model account {
 }
 
 model session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @map("_id") @db.String
   sessionToken String   @unique
-  userId       String   @db.ObjectId
+  userId       String   @db.String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -66,7 +66,7 @@ model session {
 }
 
 model verification {
-  id         String   @id @map("_id") @db.ObjectId
+  id         String   @id @map("_id") @db.String
   identifier String
   token      String?  @unique
   expiresAt  DateTime
@@ -80,7 +80,7 @@ model verification {
 
 model MentorProfile {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @unique @db.ObjectId
+  userId      String   @unique @db.String
   bio         String?
   specialties String[]
   experience  String?
@@ -102,7 +102,7 @@ model MentorProfile {
 
 model VolunteerProfile {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @unique @db.ObjectId
+  userId      String   @unique @db.String
   bio         String?
   specialties String[]
   experience  String?
@@ -168,7 +168,7 @@ model Like {
   // Relations
   postId   String @db.ObjectId
   post     BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-  userId   String @db.ObjectId
+  userId   String @db.String
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId])
@@ -203,7 +203,7 @@ model Application {
   updatedAt DateTime @updatedAt
 
   // Relations
-  userId String @db.ObjectId
+  userId String @db.String
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("applications")
