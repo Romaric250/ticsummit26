@@ -323,19 +323,18 @@ const HeroSection = () => {
             >
               <Button
                 size="xl"
-                className="bg-white hover:bg-white text-gray-900 group"
+                className="bg-white hover:bg-white text-gray-900 group cursor-pointer"
               >
-                Apply Now
+                <span>Apply Now</span>
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               
               <Button
                 size="xl"
-                variant="outline"
-                className="group border-white text-white hover:bg-white hover:text-gray-900"
+                className="group border-2 border-white bg-transparent text-white hover:bg-white hover:text-gray-900 cursor-pointer"
               >
                 <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-                Watch Video
+                <span>Watch Video</span>
               </Button>
             </motion.div>
 
