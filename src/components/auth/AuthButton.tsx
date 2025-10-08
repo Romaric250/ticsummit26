@@ -4,11 +4,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { signIn, signOut, useSession } from "@/lib/auth-client"
 import { Button } from "@/components/ui/Button"
-import { User, LogOut, Settings } from "lucide-react"
+import { User, LogOut, ChevronDown } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export function AuthButton() {
   const { data: session, isPending } = useSession()
   const [isLoading, setIsLoading] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const handleSignIn = async () => {
     setIsLoading(true)
@@ -43,9 +45,13 @@ export function AuthButton() {
 
   if (session?.user) {
     return (
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden">
+      <div className="relative">
+        {/* User Profile Button */}
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+        >
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-600 flex items-center justify-center">
             {session.user.image ? (
               <img
                 src={session.user.image}
@@ -53,72 +59,65 @@ export function AuthButton() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                <User className="w-4 h-4 text-gray-600" />
-              </div>
+              <span className="text-white font-semibold text-sm">
+                {session.user.name?.charAt(0) || "U"}
+              </span>
             )}
           </div>
-          <div className="hidden sm:block">
-            <p className="text-sm font-medium text-gray-900">
-              {session.user.name || "User"}
-            </p>
-            <p className="text-xs text-gray-500">
-              {session.user.role || "Student"}
-            </p>
-          </div>
-        </div>
+          <ChevronDown className="w-4 h-4 text-white transition-transform" style={{
+            transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+          }} />
+        </button>
 
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-gray-300 text-gray-600 hover:bg-gray-50"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Profile
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSignOut}
-            className="border-gray-300 text-gray-600 hover:bg-gray-50"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
+        {/* Dropdown Menu */}
+        <AnimatePresence>
+          {isDropdownOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
+              {/* User Info */}
+              <div className="px-4 py-3 border-b border-gray-100">
+                <p className="font-semibold text-gray-900 text-sm">
+                  {session.user.name || "User"}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {session.user.email}
+                </p>
+              </div>
+
+              {/* Sign Out */}
+              <button
+                onClick={handleSignOut}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign out</span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     )
   }
 
   return (
-    <div className="flex items-center space-x-3">
-      <Button
-        onClick={handleSignIn}
-        disabled={isLoading}
-        variant="outline"
-        className="border-gray-300 text-gray-600 hover:bg-gray-50"
-      >
-        {isLoading ? (
-          <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin mr-2" />
-        ) : (
-          <User className="w-4 h-4 mr-2" />
-        )}
-        Sign In
-      </Button>
-      <Button
-        onClick={handleSignIn}
-        disabled={isLoading}
-        className="bg-white hover:bg-white text-gray-900"
-      >
-        {isLoading ? (
-          <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin mr-2" />
-        ) : (
-          <User className="w-4 h-4 mr-2" />
-        )}
-        Sign Up
-      </Button>
-    </div>
+    <Button
+      onClick={handleSignIn}
+      disabled={isLoading}
+      className="bg-white hover:bg-white text-gray-900 flex items-center space-x-2"
+    >
+      {isLoading ? (
+        <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+      ) : (
+        <User className="w-4 h-4" />
+      )}
+      <span>Sign up</span>
+    </Button>
   )
 }
 
