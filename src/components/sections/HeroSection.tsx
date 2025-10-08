@@ -166,14 +166,132 @@ const HeroSection = () => {
         >
           {/* Left Content */}
           <div className="text-center lg:text-left">
+            {/* Registration Badge with Confetti */}
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm text-white rounded-full px-4 py-2 mb-6"
+              className="relative inline-block mb-6"
             >
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium">
-                6th Edition - Registration Now Open
-              </span>
+              {/* Confetti Particles */}
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Floating confetti pieces */}
+                {[...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-sm"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                    }}
+                    animate={{
+                      y: [-20, -40, -60],
+                      x: [0, Math.random() * 20 - 10],
+                      rotate: [0, 180, 360],
+                      opacity: [1, 0.8, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                      ease: "easeOut"
+                    }}
+                  />
+                ))}
+                
+                {/* Sparkle effects */}
+                {[...Array(8)].map((_, i) => (
+                  <motion.div
+                    key={`sparkle-${i}`}
+                    className="absolute w-1 h-1 bg-white rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                    }}
+                    animate={{
+                      scale: [0, 1, 0],
+                      opacity: [0, 1, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: i * 0.3,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Main Badge */}
+              <motion.div
+                className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm text-white rounded-full px-4 py-2 border border-white/20 cursor-pointer"
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 0 20px rgba(255, 255, 255, 0.3)"
+                }}
+                animate={{
+                  boxShadow: [
+                    "0 0 0px rgba(59, 130, 246, 0.5)",
+                    "0 0 20px rgba(59, 130, 246, 0.8)",
+                    "0 0 0px rgba(59, 130, 246, 0.5)"
+                  ]
+                }}
+                transition={{
+                  boxShadow: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }}
+              >
+                {/* Pulsing blue dot */}
+                <motion.div 
+                  className="w-2 h-2 bg-blue-400 rounded-full"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [1, 0.7, 1]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Text with subtle animation */}
+                <motion.span 
+                  className="text-sm font-medium"
+                  animate={{
+                    textShadow: [
+                      "0 0 0px rgba(255, 255, 255, 0)",
+                      "0 0 10px rgba(255, 255, 255, 0.3)",
+                      "0 0 0px rgba(255, 255, 255, 0)"
+                    ]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  6th Edition - Registration Now Open
+                </motion.span>
+              </motion.div>
+
+              {/* Celebration burst effect */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                animate={{
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <div className="absolute inset-0 rounded-full border border-blue-400/30" />
+                <div className="absolute inset-1 rounded-full border border-blue-400/20" />
+                <div className="absolute inset-2 rounded-full border border-blue-400/10" />
+              </motion.div>
             </motion.div>
 
             <motion.h1

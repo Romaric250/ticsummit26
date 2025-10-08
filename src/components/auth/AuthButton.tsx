@@ -49,7 +49,7 @@ export function AuthButton() {
         {/* User Profile Button */}
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
         >
           <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-600 flex items-center justify-center">
             {session.user.image ? (
@@ -93,7 +93,7 @@ export function AuthButton() {
               {/* Sign Out */}
               <button
                 onClick={handleSignOut}
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign out</span>
