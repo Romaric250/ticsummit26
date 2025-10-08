@@ -174,17 +174,30 @@ const HeroSection = () => {
               {/* Confetti Particles */}
               <div className="absolute inset-0 pointer-events-none">
                 {/* Floating confetti pieces */}
-                {[...Array(12)].map((_, i) => (
+                {[
+                  { left: 15, top: 20 },
+                  { left: 85, top: 15 },
+                  { left: 25, top: 80 },
+                  { left: 75, top: 70 },
+                  { left: 45, top: 35 },
+                  { left: 65, top: 85 },
+                  { left: 35, top: 60 },
+                  { left: 90, top: 40 },
+                  { left: 10, top: 75 },
+                  { left: 55, top: 25 },
+                  { left: 80, top: 90 },
+                  { left: 30, top: 45 }
+                ].map((position, i) => (
                   <motion.div
                     key={i}
                     className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-sm"
                     style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
+                      left: `${position.left}%`,
+                      top: `${position.top}%`,
                     }}
                     animate={{
                       y: [-20, -40, -60],
-                      x: [0, Math.random() * 20 - 10],
+                      x: [0, (i % 3 - 1) * 10],
                       rotate: [0, 180, 360],
                       opacity: [1, 0.8, 0],
                     }}
@@ -198,13 +211,22 @@ const HeroSection = () => {
                 ))}
                 
                 {/* Sparkle effects */}
-                {[...Array(8)].map((_, i) => (
+                {[
+                  { left: 20, top: 30 },
+                  { left: 70, top: 25 },
+                  { left: 40, top: 80 },
+                  { left: 85, top: 60 },
+                  { left: 15, top: 70 },
+                  { left: 60, top: 40 },
+                  { left: 35, top: 15 },
+                  { left: 90, top: 85 }
+                ].map((position, i) => (
                   <motion.div
                     key={`sparkle-${i}`}
                     className="absolute w-1 h-1 bg-white rounded-full"
                     style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
+                      left: `${position.left}%`,
+                      top: `${position.top}%`,
                     }}
                     animate={{
                       scale: [0, 1, 0],

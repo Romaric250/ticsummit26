@@ -3,77 +3,109 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Save, AlertCircle } from "lucide-react"
+import { ArrowLeft, Save, AlertCircle, Eye } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageUpload } from "@/components/ui/ImageUpload"
-import { TechStackInput } from "@/components/ui/TechStackInput"
+import { TagsInput } from "@/components/ui/TagsInput"
+import { BlogEditor } from "@/components/ui/BlogEditor"
 import Link from "next/link"
 
-interface ProjectFormData {
+interface BlogFormData {
   title: string
-  description: string
+  slug: string
+  excerpt: string
+  content: string
   image: string
-  techStack: string[]
   category: string
-  status: "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED" | "FINALIST" | "WINNER"
-  phase: string
+  tags: string[]
+  featured: boolean
+  published: boolean
+  publishedAt: string
+  readTime: string
 }
 
-const EditProjectPage = ({ params }: { params: { id: string } }) => {
+const EditBlogPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [formData, setFormData] = useState<ProjectFormData>({
+  const [formData, setFormData] = useState<BlogFormData>({
     title: "",
-    description: "",
+    slug: "",
+    excerpt: "",
+    content: "",
     image: "",
-    techStack: [],
     category: "",
-    status: "SUBMITTED",
-    phase: ""
+    tags: [],
+    featured: false,
+    published: false,
+    publishedAt: "",
+    readTime: ""
   })
 
-  const categories = ["Web", "Mobile", "IoT", "AI", "Blockchain", "Other"]
-  const statuses = ["SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED", "FINALIST", "WINNER"]
+  const categories = ["Technology", "AI", "Web Development", "Mobile", "Design", "Business", "Other"]
 
   useEffect(() => {
-    fetchProject()
+    fetchBlogPost()
   }, [params.id])
 
-  const fetchProject = async () => {
+  const fetchBlogPost = async () => {
     try {
-      const response = await fetch(`/api/projects/${params.id}`)
+      const response = await fetch(`/api/blogs/${params.id}`)
       const data = await response.json()
       
       if (data.success) {
-        const project = data.data
+        const post = data.data
         setFormData({
-          title: project.title,
-          description: project.description,
-          image: project.image || "",
-          techStack: project.techStack || [],
-          category: project.category,
-          status: project.status,
-          phase: project.phase || ""
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt,
+          content: post.content,
+          image: post.image || "",
+          category: post.category,
+          tags: post.tags || [],
+          featured: post.featured,
+          published: post.published,
+          publishedAt: post.publishedAt || "",
+          readTime: post.readTime || ""
         })
       }
     } catch (error) {
-      console.error("Error fetching project:", error)
+      console.error("Error fetching blog post:", error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim()
+  }
+
+  const calculateReadTime = (content: string) => {
+    const wordsPerMinute = 200
+    const words = content.split(/\s+/).length
+    const minutes = Math.ceil(words / wordsPerMinute)
+    return `${minutes} min read`
   }
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
     
     if (!formData.title.trim()) {
-      newErrors.title = "Project title is required"
+      newErrors.title = "Blog title is required"
     }
     
-    if (!formData.description.trim()) {
-      newErrors.description = "Project description is required"
+    if (!formData.excerpt.trim()) {
+      newErrors.excerpt = "Blog excerpt is required"
+    }
+    
+    if (!formData.content.trim()) {
+      newErrors.content = "Blog content is required"
     }
     
     if (!formData.category) {
@@ -84,8 +116,23 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleInputChange = (field: keyof ProjectFormData, value: string | string[]) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+  const handleInputChange = (field: keyof BlogFormData, value: string | string[] | boolean) => {
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value }
+      
+      // Auto-generate slug when title changes
+      if (field === "title" && typeof value === "string") {
+        newData.slug = generateSlug(value)
+      }
+      
+      // Auto-calculate read time when content changes
+      if (field === "content" && typeof value === "string") {
+        newData.readTime = calculateReadTime(value)
+      }
+      
+      return newData
+    })
+    
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }))
@@ -102,23 +149,26 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
     setSaving(true)
 
     try {
-      const response = await fetch(`/api/projects/${params.id}`, {
+      const response = await fetch(`/api/blogs/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          publishedAt: formData.published ? (formData.publishedAt || new Date().toISOString()) : null
+        })
       })
 
       const data = await response.json()
       
       if (data.success) {
-        router.push("/admin/hall-of-fame")
+        router.push("/admin/blogs")
       } else {
-        console.error("Error updating project:", data.error)
+        console.error("Error updating blog post:", data.error)
       }
     } catch (error) {
-      console.error("Error updating project:", error)
+      console.error("Error updating blog post:", error)
     } finally {
       setSaving(false)
     }
@@ -139,7 +189,7 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/admin/hall-of-fame">
+              <Link href="/admin/blogs">
                 <Button
                   variant="outline"
                   size="sm"
@@ -151,19 +201,31 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
               </Link>
               <div>
                 <h1 className="text-xl font-semibold text-white">
-                  Edit Project
+                  Edit Blog Post
                 </h1>
                 <p className="text-sm text-gray-400">
-                  Update project information
+                  Update blog post information
                 </p>
               </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                onClick={() => handleInputChange("published", !formData.published)}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                {formData.published ? "Published" : "Draft"}
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Form */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -171,10 +233,10 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
           className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden"
         >
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
-            {/* Project Image */}
+            {/* Blog Image */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-3">
-                Project Image
+                Featured Image
               </label>
               <ImageUpload
                 value={formData.image}
@@ -188,7 +250,7 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
               {/* Title */}
               <div className="lg:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Project Title *
+                  Blog Title *
                 </label>
                 <input
                   type="text"
@@ -197,7 +259,7 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
                   className={`w-full px-3 py-2 text-sm bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
                     errors.title ? "border-red-500" : "border-gray-600 focus:border-blue-500"
                   }`}
-                  placeholder="Enter project title"
+                  placeholder="Enter blog title"
                 />
                 {errors.title && (
                   <div className="flex items-center mt-1 text-sm text-red-400">
@@ -205,6 +267,20 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
                     {errors.title}
                   </div>
                 )}
+              </div>
+
+              {/* Slug */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  URL Slug
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => handleInputChange("slug", e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="url-slug"
+                />
               </div>
 
               {/* Category */}
@@ -234,76 +310,99 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
                 )}
               </div>
 
-              {/* Status */}
+              {/* Read Time */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Status
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleInputChange("status", e.target.value as any)}
-                  className="w-full px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {statuses.map(status => (
-                    <option key={status} value={status}>
-                      {status.replace("_", " ")}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Phase */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Development Phase
+                  Read Time
                 </label>
                 <input
                   type="text"
-                  value={formData.phase}
-                  onChange={(e) => handleInputChange("phase", e.target.value)}
+                  value={formData.readTime}
+                  onChange={(e) => handleInputChange("readTime", e.target.value)}
                   className="w-full px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., Prototype, MVP, Production"
+                  placeholder="e.g., 5 min read"
                 />
               </div>
             </div>
 
-            {/* Description */}
+            {/* Excerpt */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Project Description *
+                Excerpt *
               </label>
               <textarea
-                rows={4}
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
+                rows={3}
+                value={formData.excerpt}
+                onChange={(e) => handleInputChange("excerpt", e.target.value)}
                 className={`w-full px-3 py-2 text-sm bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none ${
-                  errors.description ? "border-red-500" : "border-gray-600 focus:border-blue-500"
+                  errors.excerpt ? "border-red-500" : "border-gray-600 focus:border-blue-500"
                 }`}
-                placeholder="Describe the project, its features, impact, and what makes it special..."
+                placeholder="Brief description of the blog post..."
               />
-              {errors.description && (
+              {errors.excerpt && (
                 <div className="flex items-center mt-1 text-sm text-red-400">
                   <AlertCircle className="w-4 h-4 mr-1" />
-                  {errors.description}
+                  {errors.excerpt}
                 </div>
               )}
             </div>
 
-            {/* Tech Stack */}
+            {/* Tags */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Technology Stack
+                Tags
               </label>
-              <TechStackInput
-                value={formData.techStack}
-                onChange={(techStack) => handleInputChange("techStack", techStack)}
-                placeholder="Add technologies used (e.g., React, Python, etc.)"
+              <TagsInput
+                value={formData.tags}
+                onChange={(tags) => handleInputChange("tags", tags)}
+                placeholder="Add tags (e.g., React, JavaScript, etc.)"
               />
+            </div>
+
+            {/* Content Editor */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Content *
+              </label>
+              <BlogEditor
+                content={formData.content}
+                onChange={(content) => handleInputChange("content", content)}
+                placeholder="Start writing your blog post..."
+              />
+              {errors.content && (
+                <div className="flex items-center mt-2 text-sm text-red-400">
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  {errors.content}
+                </div>
+              )}
+            </div>
+
+            {/* Options */}
+            <div className="flex items-center space-x-6">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={formData.featured}
+                  onChange={(e) => handleInputChange("featured", e.target.checked)}
+                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                />
+                <span className="ml-2 text-sm text-gray-300">Featured Post</span>
+              </label>
+              
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={formData.published}
+                  onChange={(e) => handleInputChange("published", e.target.checked)}
+                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                />
+                <span className="ml-2 text-sm text-gray-300">Publish Now</span>
+              </label>
             </div>
 
             {/* Submit Button */}
             <div className="flex justify-end space-x-3 pt-6 border-t border-gray-700">
-              <Link href="/admin/hall-of-fame">
+              <Link href="/admin/blogs">
                 <Button
                   type="button"
                   variant="outline"
@@ -325,7 +424,7 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
                 ) : (
                   <>
                     <Save className="w-4 h-4 mr-2" />
-                    Save Changes
+                    {formData.published ? "Update & Publish" : "Save Changes"}
                   </>
                 )}
               </Button>
@@ -337,4 +436,4 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
   )
 }
 
-export default EditProjectPage
+export default EditBlogPage
