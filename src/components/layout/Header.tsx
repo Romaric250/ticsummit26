@@ -7,12 +7,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { AuthButton } from "@/components/auth/AuthButton"
+import { useSession } from "@/lib/auth-client"
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMoreOpen, setIsMoreOpen] = useState(false)
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +37,8 @@ const Header = () => {
       href: "#",
       hasDropdown: true,
       dropdownItems: [
-        { name: "Mentors", href: "/mentors" }
+        { name: "Mentors", href: "/mentors" },
+        ...(session?.user?.role === "ADMIN" ? [{ name: "Admin Dashboard", href: "/admin" }] : [])
       ]
     },
   ]
