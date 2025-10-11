@@ -189,7 +189,7 @@ model Like {
 }
 
 model Project {
-  id          String   @id @map("_id") @db.String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
   image       String?
