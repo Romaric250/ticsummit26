@@ -26,8 +26,10 @@ interface Project {
   description: string
   image?: string
   techStack: string[]
+  members: string[]
   category: string
   status: string
+  slug?: string
   createdAt: string
   author: {
     id: string
@@ -249,22 +251,44 @@ const HallOfFamePage = () => {
                         )}
                       </div>
 
-                      {/* Author */}
+                      {/* Members */}
                       <div className="flex items-center space-x-2 mb-4">
                         <User className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-400 text-sm">
-                          {project.author.name}
-                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {project.members.slice(0, 3).map((member, index) => (
+                            <span key={index} className="text-gray-400 text-sm">
+                              {member}
+                              {index < Math.min(project.members.length, 3) - 1 && ", "}
+                            </span>
+                          ))}
+                          {project.members.length > 3 && (
+                            <span className="text-gray-400 text-sm">
+                              +{project.members.length - 3} more
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Actions */}
                       <div className="flex space-x-2">
-                        <Button
-                          className="flex-1 bg-white hover:bg-white text-gray-900 cursor-pointer"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </Button>
+                        {project.slug ? (
+                          <Link href={`/hall-of-fame/${project.slug}`}>
+                            <Button
+                              className="flex-1 bg-white hover:bg-white text-gray-900 cursor-pointer"
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              View Details
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Button
+                            className="flex-1 bg-white hover:bg-white text-gray-900 cursor-pointer"
+                            disabled
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            View Details
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
                           className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"

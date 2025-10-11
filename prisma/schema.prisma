@@ -194,9 +194,11 @@ model Project {
   description String
   image       String?
   techStack   String[]
+  members     String[]
   category    String
   status      ProjectStatus @default(SUBMITTED)
   phase       String?
+  slug        String?  @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

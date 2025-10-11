@@ -7,6 +7,7 @@ import { ArrowLeft, Save, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageUpload } from "@/components/ui/ImageUpload"
 import { TechStackInput } from "@/components/ui/TechStackInput"
+import { MembersInput } from "@/components/ui/MembersInput"
 import Link from "next/link"
 
 interface ProjectFormData {
@@ -14,6 +15,7 @@ interface ProjectFormData {
   description: string
   image: string
   techStack: string[]
+  members: string[]
   category: string
   status: "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED" | "FINALIST" | "WINNER"
   phase: string
@@ -29,6 +31,7 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
     description: "",
     image: "",
     techStack: [],
+    members: [],
     category: "",
     status: "SUBMITTED",
     phase: ""
@@ -298,6 +301,15 @@ const EditProjectPage = ({ params }: { params: { id: string } }) => {
                 value={formData.techStack}
                 onChange={(techStack) => handleInputChange("techStack", techStack)}
                 placeholder="Add technologies used (e.g., React, Python, etc.)"
+              />
+            </div>
+
+            {/* Members */}
+            <div className="space-y-2">
+              <MembersInput
+                value={formData.members}
+                onChange={(members) => handleInputChange("members", members)}
+                placeholder="Add team members (e.g., John Doe, Jane Smith)"
               />
             </div>
 

@@ -56,7 +56,13 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, image, techStack, category, status, phase } = body
+    const { title, description, image, techStack, members, category, status, phase } = body
+
+    // Generate slug from title if title changed
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
 
     const project = await prisma.project.update({
       where: { id: params.id },
@@ -65,9 +71,11 @@ export async function PUT(
         description,
         image,
         techStack,
+        members,
         category,
         status,
-        phase
+        phase,
+        slug
       },
       include: {
         author: {

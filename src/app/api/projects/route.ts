@@ -4,23 +4,52 @@ import { auth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
-// GET all projects
-export async function GET() {
+// GET all projects or single project by slug
+export async function GET(request: NextRequest) {
   try {
-    const projects = await prisma.project.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            image: true
+    const { searchParams } = new URL(request.url)
+    const slug = searchParams.get('slug')
+    
+    if (slug) {
+      // Get single project by slug
+      const project = await prisma.project.findFirst({
+        where: { slug },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true
+            }
           }
         }
-      }
-    })
+      })
 
-    return NextResponse.json({ success: true, data: projects })
+      if (!project) {
+        return NextResponse.json(
+          { success: false, error: "Project not found" },
+          { status: 404 }
+        )
+      }
+
+      return NextResponse.json({ success: true, data: [project] })
+    } else {
+      // Get all projects
+      const projects = await prisma.project.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true
+            }
+          }
+        }
+      })
+
+      return NextResponse.json({ success: true, data: projects })
+    }
   } catch (error) {
     console.error("Error fetching projects:", error)
     return NextResponse.json(
@@ -43,7 +72,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, image, techStack, category, status, phase } = body
+    const { title, description, image, techStack, members, category, status, phase } = body
+
+    // Generate slug from title
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
 
     const project = await prisma.project.create({
       data: {
@@ -51,9 +86,11 @@ export async function POST(request: NextRequest) {
         description,
         image,
         techStack,
+        members,
         category,
         status: status || "SUBMITTED",
         phase,
+        slug,
         authorId: session.user.id
       },
       include: {
