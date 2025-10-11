@@ -125,9 +125,16 @@ const ProjectDetailPage = () => {
 
   const incrementViews = async (projectId: string) => {
     try {
-      await fetch(`/api/projects/views?projectId=${projectId}`, {
+      const response = await fetch(`/api/projects/views?projectId=${projectId}`, {
         method: 'POST'
       })
+      const data = await response.json()
+      if (data.success) {
+        console.log('Views incremented successfully:', data.data.views)
+        setViewsCount(data.data.views)
+      } else {
+        console.error('Views increment failed:', data.error)
+      }
     } catch (error) {
       console.error("Error incrementing views:", error)
     }
@@ -176,11 +183,15 @@ const ProjectDetailPage = () => {
       const data = await response.json()
       
       if (data.success) {
+        console.log('Like toggled successfully:', data.data)
         setLiked(data.data.liked)
         setLikesCount(data.data.likes)
       } else if (data.error === "Authentication required") {
+        console.log('Authentication required, redirecting...')
         // Redirect to sign in
         window.location.href = '/auth/signin'
+      } else {
+        console.error('Like toggle failed:', data.error)
       }
     } catch (error) {
       console.error("Error toggling like:", error)
