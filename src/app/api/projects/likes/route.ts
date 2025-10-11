@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       // Like: create new like and increment count
       await prisma.like.create({
         data: {
+          id: `like_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           userId: session.user.id,
           postId: projectId
         }

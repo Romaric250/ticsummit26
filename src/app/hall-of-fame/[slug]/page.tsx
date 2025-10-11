@@ -313,194 +313,204 @@ const ProjectDetailPage = () => {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Left Column - Images */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Main Content - Left Side */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-2"
+              className="lg:col-span-3 space-y-8"
             >
-              <ImageSlider images={project.images} title={project.title} />
+              {/* Image Slider */}
+              <div className="bg-gray-800 rounded-xl p-6">
+                <ImageSlider images={project.images} title={project.title} />
+              </div>
+
+              {/* Project Description */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="bg-gray-800 rounded-xl p-8"
+              >
+                <h2 className="text-2xl font-bold text-white mb-6">About This Project</h2>
+                <div className="prose prose-invert max-w-none">
+                  <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
+                    {project.description}
+                  </p>
+                </div>
+              </motion.div>
             </motion.div>
 
-            {/* Right Column - Project Details */}
+            {/* Sidebar - Right Side */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="space-y-8"
+              className="lg:col-span-1 space-y-6"
             >
               {/* Action Buttons */}
-              <div className="space-y-4">
-                <Button
-                  onClick={handleLike}
-                  disabled={isLiking}
-                  className={`w-full py-3 text-lg font-medium transition-all duration-200 ${
-                    liked 
-                      ? 'bg-red-600 hover:bg-red-700 text-white' 
-                      : 'bg-gray-600 hover:bg-gray-700 text-white'
-                  }`}
-                >
-                  <Heart className={`w-5 h-5 mr-2 ${liked ? 'fill-current' : ''}`} />
-                  {isLiking ? 'Processing...' : liked ? 'Liked' : 'Like Project'}
-                </Button>
-
-                {project.demoUrl && (
-                  <Button
-                    asChild
-                    className="w-full py-3 text-lg font-medium bg-gray-600 hover:bg-gray-700 text-white"
-                  >
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center"
-                    >
-                      <ExternalLink className="w-5 h-5 mr-2" />
-                      View Live Demo
-                    </a>
-                  </Button>
-                )}
-
-                <Button
-                  variant="outline"
-                  className="w-full py-3 text-lg font-medium border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  <Share2 className="w-5 h-5 mr-2" />
-                  Share Project
-                </Button>
-              </div>
-
-              {/* Team Members */}
               <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Team Members
-                </h3>
+                <h3 className="text-xl font-semibold text-white mb-4">Actions</h3>
                 <div className="space-y-3">
-                  {project.members.map((member, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">
-                          {member.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                      <span className="text-gray-300">{member}</span>
-                    </div>
-                  ))}
+                  <Button
+                    onClick={handleLike}
+                    disabled={isLiking}
+                    className={`w-full py-3 text-lg font-medium transition-all duration-200 ${
+                      liked 
+                        ? 'bg-red-600 hover:bg-red-700 text-white' 
+                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
+                  >
+                    <Heart className={`w-5 h-5 mr-2 ${liked ? 'fill-current' : ''}`} />
+                    {isLiking ? 'Processing...' : liked ? 'Liked' : 'Like Project'}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="w-full py-3 text-lg font-medium border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    <Share2 className="w-5 h-5 mr-2" />
+                    Share Project
+                  </Button>
                 </div>
               </div>
 
-              {/* Tech Stack */}
+              {/* Project Details */}
               <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <Code className="w-5 h-5" />
-                  Tech Stack
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.techStack.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-gray-600 text-white text-sm rounded-full"
-                    >
-                      {tech}
-                    </span>
-                  ))}
+                <h3 className="text-xl font-semibold text-white mb-4">Project Details</h3>
+                <div className="space-y-4">
+                  {/* Team Members */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      Team Members
+                    </h4>
+                    <div className="space-y-2">
+                      {project.members.map((member, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-medium">
+                              {member.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-gray-300 text-sm">{member}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tech Stack */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+                      <Code className="w-4 h-4" />
+                      Tech Stack
+                    </h4>
+                    <div className="flex flex-wrap gap-1">
+                      {project.techStack.map((tech, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-gray-600 text-white text-xs rounded-full"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Project Phase */}
+                  {project.phase && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-400 mb-1">Project Phase</h4>
+                      <p className="text-gray-300 text-sm">{project.phase}</p>
+                    </div>
+                  )}
+
+                  {/* Year */}
+                  {project.year && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-400 mb-1">Year</h4>
+                      <p className="text-gray-300 text-sm">{project.year}</p>
+                    </div>
+                  )}
+
+                  {/* Demo URL */}
+                  {project.demoUrl && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-400 mb-1">Demo</h4>
+                      <a
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-gray-400 hover:text-gray-300 transition-colors text-sm"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        View Live Demo
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Project Phase */}
-              {project.phase && (
+              {/* Similar Projects */}
+              {similarProjects.length > 0 && (
                 <div className="bg-gray-800 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold text-white mb-3">Project Phase</h3>
-                  <p className="text-gray-300">{project.phase}</p>
+                  <h3 className="text-xl font-semibold text-white mb-4">Similar Projects</h3>
+                  <div className="space-y-4">
+                    {similarProjects.map((similarProject) => (
+                      <motion.div
+                        key={similarProject.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer group"
+                        onClick={() => {
+                          if (similarProject.slug) {
+                            window.location.href = `/hall-of-fame/${similarProject.slug}`
+                          }
+                        }}
+                      >
+                        {/* Project Image */}
+                        <div className="relative h-24 bg-gray-600 rounded-lg mb-3 overflow-hidden">
+                          {similarProject.images && similarProject.images.length > 0 ? (
+                            <img
+                              src={similarProject.images[0]}
+                              alt={similarProject.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Award className="w-8 h-8 text-gray-500" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Project Info */}
+                        <h4 className="text-white font-medium text-sm mb-2 line-clamp-2 group-hover:text-gray-200 transition-colors">
+                          {similarProject.title}
+                        </h4>
+                        
+                        <div className="flex items-center justify-between text-xs text-gray-400">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                              <Eye className="w-3 h-3" />
+                              <span>{similarProject.views}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Heart className="w-3 h-3" />
+                              <span>{similarProject.likes}</span>
+                            </div>
+                          </div>
+                          <span className="text-gray-500">{similarProject.category}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               )}
             </motion.div>
           </div>
 
-          {/* Similar Projects Section */}
-          {similarProjects.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-16"
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-4">Similar Projects</h2>
-                <p className="text-gray-400">Discover more amazing projects in the same category</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {similarProjects.map((similarProject) => (
-                  <motion.div
-                    key={similarProject.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="bg-gray-800 rounded-xl overflow-hidden hover:bg-gray-700 transition-all duration-200 group cursor-pointer"
-                    onClick={() => {
-                      if (similarProject.slug) {
-                        window.location.href = `/hall-of-fame/${similarProject.slug}`
-                      }
-                    }}
-                  >
-                    {/* Project Image */}
-                    <div className="relative h-48 bg-gray-700">
-                      {similarProject.images && similarProject.images.length > 0 ? (
-                        <img
-                          src={similarProject.images[0]}
-                          alt={similarProject.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Award className="w-12 h-12 text-gray-500" />
-                        </div>
-                      )}
-                      
-                      {/* Year Badge */}
-                      {similarProject.year && (
-                        <div className="absolute top-3 left-3">
-                          <span className="px-2 py-1 bg-gray-600 text-white text-xs font-medium rounded-full">
-                            {similarProject.year}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Project Info */}
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
-                        {similarProject.title}
-                      </h3>
-                      
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                        {similarProject.description}
-                      </p>
-
-                      {/* Stats */}
-                      <div className="flex items-center justify-between text-sm text-gray-400">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            <span>{similarProject.views}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Heart className="w-4 h-4" />
-                            <span>{similarProject.likes}</span>
-                          </div>
-                        </div>
-                        <span className="text-gray-500">{similarProject.category}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
         </div>
       </div>
     </Layout>
