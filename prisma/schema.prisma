@@ -192,13 +192,15 @@ model Project {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
-  image       String?
+  images      String[]
   techStack   String[]
   members     String[]
   category    String
   status      ProjectStatus @default(SUBMITTED)
   phase       String?
   slug        String?  @unique
+  year        Int?
+  demoUrl     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

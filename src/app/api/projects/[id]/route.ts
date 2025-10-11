@@ -7,11 +7,12 @@ const prisma = new PrismaClient()
 // GET single project
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const project = await prisma.project.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         author: {
           select: {
@@ -43,9 +44,10 @@ export async function GET(
 // PUT update project
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth.api.getSession({ headers: request.headers })
     
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -56,7 +58,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, image, techStack, members, category, status, phase } = body
+    const { title, description, images, techStack, members, category, status, phase, year, demoUrl } = body
 
     // Generate slug from title if title changed
     const slug = title
@@ -65,16 +67,18 @@ export async function PUT(
       .replace(/(^-|-$)/g, '')
 
     const project = await prisma.project.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         description,
-        image,
+        images,
         techStack,
         members,
         category,
         status,
         phase,
+        year,
+        demoUrl,
         slug
       },
       include: {
@@ -101,9 +105,10 @@ export async function PUT(
 // DELETE project
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth.api.getSession({ headers: request.headers })
     
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -114,7 +119,7 @@ export async function DELETE(
     }
 
     await prisma.project.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ success: true, message: "Project deleted successfully" })

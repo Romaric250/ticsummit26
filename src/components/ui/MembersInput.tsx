@@ -81,14 +81,14 @@ export const MembersInput = ({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ delay: index * 0.05 }}
-                className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600 text-white text-sm rounded-full"
+                className="inline-flex items-center gap-2 px-3 py-1 bg-gray-600 text-white text-sm rounded-full"
               >
                 <span>{member}</span>
                 {!disabled && (
                   <button
                     type="button"
                     onClick={() => handleRemoveMember(member)}
-                    className="hover:bg-blue-700 rounded-full p-0.5 transition-colors"
+                    className="hover:bg-gray-700 rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>

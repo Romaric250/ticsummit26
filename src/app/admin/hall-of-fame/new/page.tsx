@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageUpload } from "@/components/ui/ImageUpload"
+import { MultipleImageUpload } from "@/components/ui/MultipleImageUpload"
 import { TechStackInput } from "@/components/ui/TechStackInput"
 import { MembersInput } from "@/components/ui/MembersInput"
 import Link from "next/link"
@@ -13,12 +14,14 @@ import Link from "next/link"
 interface ProjectFormData {
   title: string
   description: string
-  image: string
+  images: string[]
   techStack: string[]
   members: string[]
   category: string
   status: "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED" | "FINALIST" | "WINNER"
   phase: string
+  year: number | null
+  demoUrl: string
 }
 
 const AddProjectPage = () => {
@@ -28,16 +31,19 @@ const AddProjectPage = () => {
   const [formData, setFormData] = useState<ProjectFormData>({
     title: "",
     description: "",
-    image: "",
+    images: [],
     techStack: [],
     members: [],
     category: "",
     status: "SUBMITTED",
-    phase: ""
+    phase: "",
+    year: null,
+    demoUrl: ""
   })
 
   const categories = ["Web", "Mobile", "IoT", "AI", "Blockchain", "Other"]
   const statuses = ["SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED", "FINALIST", "WINNER"]
+  const years = [2021, 2022, 2023, 2024, 2025]
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -52,6 +58,10 @@ const AddProjectPage = () => {
     
     if (!formData.category) {
       newErrors.category = "Please select a category"
+    }
+    
+    if (!formData.year) {
+      newErrors.year = "Year is required"
     }
     
     setErrors(newErrors)
@@ -137,15 +147,13 @@ const AddProjectPage = () => {
           className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden"
         >
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
-            {/* Project Image */}
+            {/* Project Images */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Project Image
-              </label>
-              <ImageUpload
-                value={formData.image}
-                onChange={(url) => handleInputChange("image", url)}
+              <MultipleImageUpload
+                value={formData.images}
+                onChange={(urls) => handleInputChange("images", urls)}
                 disabled={loading}
+                maxFiles={10}
               />
             </div>
 
@@ -273,6 +281,42 @@ const AddProjectPage = () => {
                 value={formData.members}
                 onChange={(members) => handleInputChange("members", members)}
                 placeholder="Add team members (e.g., John Doe, Jane Smith)"
+              />
+            </div>
+
+            {/* Year */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Year <span className="text-red-400">*</span>
+              </label>
+              <select
+                value={formData.year || ""}
+                onChange={(e) => handleInputChange("year", e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select Year</option>
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+              {errors.year && (
+                <p className="text-red-400 text-sm mt-1">{errors.year}</p>
+              )}
+            </div>
+
+            {/* Demo URL */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Demo URL
+              </label>
+              <input
+                type="url"
+                value={formData.demoUrl}
+                onChange={(e) => handleInputChange("demoUrl", e.target.value)}
+                placeholder="https://your-project-demo.com"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 

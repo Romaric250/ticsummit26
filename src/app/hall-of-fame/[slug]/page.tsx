@@ -17,6 +17,7 @@ import {
   Users
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { ImageSlider } from "@/components/ui/ImageSlider"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 
@@ -24,13 +25,15 @@ interface Project {
   id: string
   title: string
   description: string
-  image?: string
+  images: string[]
   techStack: string[]
   members: string[]
   category: string
   status: string
   slug?: string
   phase?: string
+  year?: number
+  demoUrl?: string
   createdAt: string
   author: {
     id: string
@@ -81,7 +84,7 @@ const ProjectDetailPage = () => {
       case "APPROVED":
         return "bg-green-600 text-green-100"
       case "UNDER_REVIEW":
-        return "bg-blue-600 text-blue-100"
+        return "bg-gray-600 text-gray-100"
       case "REJECTED":
         return "bg-red-600 text-red-100"
       default:
@@ -117,7 +120,7 @@ const ProjectDetailPage = () => {
           <div className="text-center">
             <h1 className="text-white text-2xl mb-4">Project Not Found</h1>
             <Link href="/hall-of-fame">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="bg-gray-600 hover:bg-gray-700 text-white">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Hall of Fame
               </Button>
@@ -146,24 +149,14 @@ const ProjectDetailPage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Project Image */}
+            {/* Project Images */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="relative"
             >
-              {project.image ? (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-96 object-cover rounded-lg shadow-2xl"
-                />
-              ) : (
-                <div className="w-full h-96 bg-gray-800 rounded-lg flex items-center justify-center">
-                  <Code className="w-16 h-16 text-gray-600" />
-                </div>
-              )}
+              <ImageSlider images={project.images} title={project.title} />
               
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
@@ -185,12 +178,6 @@ const ProjectDetailPage = () => {
               <div>
                 <h1 className="text-3xl font-bold text-white mb-2">{project.title}</h1>
                 <div className="flex items-center gap-4 text-gray-400">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span className="text-sm">
-                      {new Date(project.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
                   <div className="flex items-center gap-1">
                     <Code className="w-4 h-4" />
                     <span className="text-sm">{project.category}</span>
@@ -214,7 +201,7 @@ const ProjectDetailPage = () => {
                   {project.members.map((member, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded-full"
+                      className="px-3 py-1 bg-gray-600 text-white text-sm rounded-full"
                     >
                       {member}
                     </span>
@@ -248,9 +235,33 @@ const ProjectDetailPage = () => {
                 </div>
               )}
 
+              {/* Year */}
+              {project.year && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Year</h3>
+                  <p className="text-gray-300">{project.year}</p>
+                </div>
+              )}
+
+              {/* Demo URL */}
+              {project.demoUrl && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Demo</h3>
+                  <a
+                    href={project.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    View Live Demo
+                  </a>
+                </div>
+              )}
+
               {/* Actions */}
               <div className="flex gap-3 pt-6">
-                <Button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white">
                   <Heart className="w-4 h-4 mr-2" />
                   Like Project
                 </Button>
