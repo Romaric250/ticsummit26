@@ -32,6 +32,8 @@ interface Project {
   slug?: string
   year?: number
   demoUrl?: string
+  views: number
+  likes: number
   createdAt: string
   author: {
     id: string
@@ -300,6 +302,21 @@ const HallOfFamePage = () => {
                           </a>
                         </div>
                       )}
+
+                      {/* Stats */}
+                      <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1">
+                            <Eye className="w-4 h-4" />
+                            <span>{project.views || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-4 h-4" />
+                            <span>{project.likes || 0}</span>
+                          </div>
+                        </div>
+                        <span className="text-gray-500">{project.category}</span>
+                      </div>
 
                       {/* Actions */}
                       <div className="flex space-x-2">
