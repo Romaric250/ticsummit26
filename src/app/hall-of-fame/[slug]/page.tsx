@@ -19,7 +19,8 @@ import {
   Eye,
   Sparkles,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageSlider } from "@/components/ui/ImageSlider"
@@ -83,6 +84,7 @@ const ProjectDetailPage = () => {
   const [isLiking, setIsLiking] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [showShareModal, setShowShareModal] = useState(false)
 
   useEffect(() => {
     if (slug) {
@@ -261,27 +263,9 @@ const ProjectDetailPage = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-900">
-        {/* Back Button */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link href="/hall-of-fame">
-              <Button 
-                variant="outline" 
-                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Hall of Fame
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content - Left Side */}
             <motion.div
@@ -309,10 +293,13 @@ const ProjectDetailPage = () => {
                   {project.title}
                 </h1>
                 
-                {/* Project Description */}
-                <p className="text-lg text-gray-300 leading-relaxed">
-                  {project.description}
-                </p>
+              {/* About Project */}
+              <h2 className="text-lg font-semibold text-white mb-3">About Project</h2>
+              
+              {/* Project Description */}
+              <p className="text-lg text-gray-300 leading-relaxed">
+                {project.description}
+              </p>
               </div>
 
               {/* Project Stats */}
@@ -352,26 +339,27 @@ const ProjectDetailPage = () => {
             >
               {/* Action Buttons */}
               <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-4">ACTIONS</h3>
+                <h3 className="text-sm font-semibold text-white mb-4">ACTIONS</h3>
                 <div className="space-y-3">
                   <Button
                     onClick={handleLike}
                     disabled={isLiking}
-                    className={`w-full py-3 text-lg font-medium transition-all duration-200 ${
+                    className={`w-full py-2 text-sm font-medium transition-all duration-200 ${
                       liked 
                         ? 'bg-red-600 hover:bg-red-700 text-white' 
                         : 'bg-purple-600 hover:bg-purple-700 text-white'
                     }`}
                   >
-                    <Heart className={`w-5 h-5 mr-2 ${liked ? 'fill-current' : ''}`} />
+                    <Heart className={`w-4 h-4 mr-2 ${liked ? 'fill-current' : ''}`} />
                     {isLiking ? 'Processing...' : liked ? 'Liked' : 'Like Project'}
                   </Button>
 
                   <Button
+                    onClick={() => setShowShareModal(true)}
                     variant="outline"
-                    className="w-full py-3 text-lg font-medium border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    className="w-full py-2 text-sm font-medium border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                   >
-                    <Share2 className="w-5 h-5 mr-2" />
+                    <Share2 className="w-4 h-4 mr-2" />
                     Share Project
                   </Button>
                 </div>
@@ -379,7 +367,7 @@ const ProjectDetailPage = () => {
 
               {/* Project Details */}
               <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-4">PROJECT DETAILS</h3>
+                <h3 className="text-sm font-semibold text-white mb-4">PROJECT DETAILS</h3>
                 <div className="space-y-4">
                   {/* Team Members */}
                   <div>
@@ -461,22 +449,16 @@ const ProjectDetailPage = () => {
               {/* Similar Projects */}
               {similarProjects.length > 0 && (
                 <div className="bg-gray-800 rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-semibold text-white">SIMILAR PROJECTS</h3>
-                    <div className="flex items-center gap-2">
-                      <ChevronLeft className="w-4 h-4 text-gray-400" />
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </div>
-                  </div>
+                  <h3 className="text-sm font-semibold text-white mb-4">SIMILAR PROJECTS</h3>
                   
-                  <div className="space-y-4">
-                    {similarProjects.map((similarProject) => (
+                  <div className="space-y-3">
+                    {similarProjects.slice(0, 3).map((similarProject) => (
                       <motion.div
                         key={similarProject.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer group"
+                        className="bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer group"
                         onClick={() => {
                           if (similarProject.slug) {
                             window.location.href = `/hall-of-fame/${similarProject.slug}`
@@ -484,7 +466,7 @@ const ProjectDetailPage = () => {
                         }}
                       >
                         {/* Project Image */}
-                        <div className="relative h-24 bg-gray-600 rounded-lg mb-3 overflow-hidden">
+                        <div className="relative h-20 bg-gray-600 rounded-lg mb-2 overflow-hidden">
                           {similarProject.images && similarProject.images.length > 0 ? (
                             <Image
                               src={similarProject.images[0]}
@@ -494,36 +476,35 @@ const ProjectDetailPage = () => {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Award className="w-8 h-8 text-gray-500" />
+                              <Award className="w-6 h-6 text-gray-500" />
                             </div>
                           )}
                         </div>
 
                         {/* Project Info */}
-                        <h4 className="text-white font-medium text-sm mb-2 line-clamp-2 group-hover:text-gray-200 transition-colors">
-                          {similarProject.title}
-                        </h4>
-                        
-                        <p className="text-gray-400 text-xs mb-2">
-                          Made with {similarProject.techStack[0] || 'Typescript'}
-                        </p>
+                        <div className="space-y-1">
+                          <h4 className="text-white font-medium text-sm line-clamp-1 group-hover:text-gray-200 transition-colors">
+                            {similarProject.title}
+                          </h4>
+                          {similarProject.year && (
+                            <p className="text-gray-400 text-xs">
+                              {similarProject.year}
+                            </p>
+                          )}
+                        </div>
                       </motion.div>
                     ))}
                   </div>
                   
-                  {/* Pagination Dots */}
-                  <div className="flex justify-center gap-2 mt-4">
-                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
-                  </div>
-                  
                   {/* View All Button */}
-                  <Button
-                    variant="outline"
-                    className="w-full mt-4 py-2 text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    View All Projects
-                  </Button>
+                  <Link href="/hall-of-fame">
+                    <Button
+                      variant="outline"
+                      className="w-full mt-4 py-2 text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      View All Projects
+                    </Button>
+                  </Link>
                 </div>
               )}
             </motion.div>
@@ -531,6 +512,92 @@ const ProjectDetailPage = () => {
 
         </div>
       </div>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-gray-800 rounded-xl p-6 w-full max-w-md"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Share Project</h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Project URL
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={`${window.location.origin}/hall-of-fame/${project?.slug}`}
+                    readOnly
+                    className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                  <Button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/hall-of-fame/${project?.slug}`)
+                    }}
+                    className="px-4 py-2 text-sm"
+                  >
+                    Copy
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => {
+                    const url = `${window.location.origin}/hall-of-fame/${project?.slug}`
+                    window.open(`https://twitter.com/intent/tweet?text=Check out this amazing project: ${project?.title}&url=${encodeURIComponent(url)}`, '_blank')
+                  }}
+                  className="py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  Twitter
+                </Button>
+                <Button
+                  onClick={() => {
+                    const url = `${window.location.origin}/hall-of-fame/${project?.slug}`
+                    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+                  }}
+                  className="py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  LinkedIn
+                </Button>
+                <Button
+                  onClick={() => {
+                    const url = `${window.location.origin}/hall-of-fame/${project?.slug}`
+                    const text = `Check out this amazing project: ${project?.title}`
+                    window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank')
+                  }}
+                  className="py-2 text-sm bg-green-600 hover:bg-green-700 text-white"
+                >
+                  WhatsApp
+                </Button>
+                <Button
+                  onClick={() => {
+                    const url = `${window.location.origin}/hall-of-fame/${project?.slug}`
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
+                  }}
+                  className="py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Facebook
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </Layout>
   )
 }
