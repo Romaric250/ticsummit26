@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useParams } from "next/navigation"
+import Image from "next/image"
 import { 
   ArrowLeft, 
   Calendar, 
@@ -15,7 +16,10 @@ import {
   Award,
   Code,
   Users,
-  Eye
+  Eye,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageSlider } from "@/components/ui/ImageSlider"
@@ -78,6 +82,7 @@ const ProjectDetailPage = () => {
   const [viewsCount, setViewsCount] = useState(0)
   const [isLiking, setIsLiking] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
     if (slug) {
@@ -182,6 +187,18 @@ const ProjectDetailPage = () => {
     }
   }
 
+  const nextImage = () => {
+    if (project && project.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev + 1) % project.images.length)
+    }
+  }
+
+  const prevImage = () => {
+    if (project && project.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev - 1 + project.images.length) % project.images.length)
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "WINNER":
@@ -244,71 +261,23 @@ const ProjectDetailPage = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-900">
-        {/* Hero Section with Project Header */}
-        <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Back Button */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
-            >
-              <Link href="/hall-of-fame">
-                <Button 
-                  variant="outline" 
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Hall of Fame
-                </Button>
-              </Link>
-            </motion.div>
-
-            {/* Project Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-center mb-12"
-            >
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(project.status)}`}>
-                  {getStatusIcon(project.status)}
-                  {project.status.replace('_', ' ')}
-                </span>
-                {project.year && (
-                  <span className="px-3 py-1 bg-gray-600 text-white text-sm font-medium rounded-full">
-                    {project.year}
-                  </span>
-                )}
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-                {project.title}
-              </h1>
-              
-              <p className="text-xl text-gray-300 mb-6 max-w-3xl mx-auto">
-                {project.description}
-              </p>
-
-              {/* Stats */}
-              <div className="flex items-center justify-center gap-8 text-gray-400">
-                <div className="flex items-center gap-2">
-                  <Eye className="w-5 h-5" />
-                  <span className="text-lg font-medium">{viewsCount.toLocaleString()} views</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Heart className={`w-5 h-5 ${liked ? 'text-red-500' : ''}`} />
-                  <span className="text-lg font-medium">{likesCount.toLocaleString()} likes</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Code className="w-5 h-5" />
-                  <span className="text-lg font-medium">{project.category}</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+        {/* Back Button */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Link href="/hall-of-fame">
+              <Button 
+                variant="outline" 
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Hall of Fame
+              </Button>
+            </Link>
+          </motion.div>
         </div>
 
         {/* Main Content */}
@@ -321,24 +290,56 @@ const ProjectDetailPage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="lg:col-span-3 space-y-8"
             >
-              {/* Image Slider */}
-              <div className="bg-gray-800 rounded-xl p-6">
-                <ImageSlider images={project.images} title={project.title} />
+              {/* Project Title */}
+              <div className="space-y-4">
+                {/* Status Badges */}
+                <div className="flex items-center gap-3">
+                  <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(project.status)}`}>
+                    {getStatusIcon(project.status)}
+                    {project.status.replace('_', ' ')}
+                  </span>
+                  {project.year && (
+                    <span className="px-3 py-1 bg-gray-600 text-white text-sm font-medium rounded-full">
+                      {project.year}
+                    </span>
+                  )}
+                </div>
+                
+                <h1 className="text-4xl lg:text-5xl font-bold text-purple-400 leading-tight">
+                  {project.title}
+                </h1>
+                
+                {/* Project Description */}
+                <p className="text-lg text-gray-300 leading-relaxed">
+                  {project.description}
+                </p>
               </div>
 
-              {/* Project Description */}
+              {/* Project Stats */}
+              <div className="flex items-center gap-6 text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4" />
+                  <span>{project.views.toLocaleString()} views</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Heart className="w-4 h-4" />
+                  <span>{project.likes} likes</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>{project.category}</span>
+                </div>
+              </div>
+
+
+              {/* Image Slider */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="bg-gray-800 rounded-xl p-8"
+                className="bg-gray-800 rounded-xl p-6"
               >
-                <h2 className="text-2xl font-bold text-white mb-6">About This Project</h2>
-                <div className="prose prose-invert max-w-none">
-                  <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
-                    {project.description}
-                  </p>
-                </div>
+                <ImageSlider images={project.images} title={project.title} />
               </motion.div>
             </motion.div>
 
@@ -351,7 +352,7 @@ const ProjectDetailPage = () => {
             >
               {/* Action Buttons */}
               <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Actions</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">ACTIONS</h3>
                 <div className="space-y-3">
                   <Button
                     onClick={handleLike}
@@ -359,7 +360,7 @@ const ProjectDetailPage = () => {
                     className={`w-full py-3 text-lg font-medium transition-all duration-200 ${
                       liked 
                         ? 'bg-red-600 hover:bg-red-700 text-white' 
-                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                        : 'bg-purple-600 hover:bg-purple-700 text-white'
                     }`}
                   >
                     <Heart className={`w-5 h-5 mr-2 ${liked ? 'fill-current' : ''}`} />
@@ -378,7 +379,7 @@ const ProjectDetailPage = () => {
 
               {/* Project Details */}
               <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Project Details</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">PROJECT DETAILS</h3>
                 <div className="space-y-4">
                   {/* Team Members */}
                   <div>
@@ -389,12 +390,17 @@ const ProjectDetailPage = () => {
                     <div className="space-y-2">
                       {project.members.map((member, index) => (
                         <div key={index} className="flex items-center gap-2">
-                          <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-medium">
-                              {member.charAt(0).toUpperCase()}
-                            </span>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            index === 0 ? 'bg-purple-600' : 'bg-blue-500'
+                          }`}>
+                            <User className="w-4 h-4 text-white" />
                           </div>
-                          <span className="text-gray-300 text-sm">{member}</span>
+                          <div>
+                            <span className="text-white text-sm font-medium">{member}</span>
+                            <p className="text-gray-400 text-xs">
+                              {index === 0 ? 'Lead Developer' : 'Designer'}
+                            </p>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -422,7 +428,7 @@ const ProjectDetailPage = () => {
                   {project.phase && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-1">Project Phase</h4>
-                      <p className="text-gray-300 text-sm">{project.phase}</p>
+                      <p className="text-white text-sm">{project.phase}</p>
                     </div>
                   )}
 
@@ -430,7 +436,7 @@ const ProjectDetailPage = () => {
                   {project.year && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-1">Year</h4>
-                      <p className="text-gray-300 text-sm">{project.year}</p>
+                      <p className="text-white text-sm">{project.year}</p>
                     </div>
                   )}
 
@@ -455,7 +461,14 @@ const ProjectDetailPage = () => {
               {/* Similar Projects */}
               {similarProjects.length > 0 && (
                 <div className="bg-gray-800 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">Similar Projects</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-semibold text-white">SIMILAR PROJECTS</h3>
+                    <div className="flex items-center gap-2">
+                      <ChevronLeft className="w-4 h-4 text-gray-400" />
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                  
                   <div className="space-y-4">
                     {similarProjects.map((similarProject) => (
                       <motion.div
@@ -473,10 +486,11 @@ const ProjectDetailPage = () => {
                         {/* Project Image */}
                         <div className="relative h-24 bg-gray-600 rounded-lg mb-3 overflow-hidden">
                           {similarProject.images && similarProject.images.length > 0 ? (
-                            <img
+                            <Image
                               src={similarProject.images[0]}
                               alt={similarProject.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-200"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
@@ -490,22 +504,26 @@ const ProjectDetailPage = () => {
                           {similarProject.title}
                         </h4>
                         
-                        <div className="flex items-center justify-between text-xs text-gray-400">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              <span>{similarProject.views}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Heart className="w-3 h-3" />
-                              <span>{similarProject.likes}</span>
-                            </div>
-                          </div>
-                          <span className="text-gray-500">{similarProject.category}</span>
-                        </div>
+                        <p className="text-gray-400 text-xs mb-2">
+                          Made with {similarProject.techStack[0] || 'Typescript'}
+                        </p>
                       </motion.div>
                     ))}
                   </div>
+                  
+                  {/* Pagination Dots */}
+                  <div className="flex justify-center gap-2 mt-4">
+                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                  </div>
+                  
+                  {/* View All Button */}
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4 py-2 text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    View All Projects
+                  </Button>
                 </div>
               )}
             </motion.div>

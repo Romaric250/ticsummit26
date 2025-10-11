@@ -154,7 +154,6 @@ model BlogPost {
   authorId String @db.String
   author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments Comment[]
-  likes    Like[]
 
   @@map("blog_posts")
 }
@@ -180,7 +179,6 @@ model Like {
 
   // Relations
   postId   String @db.String
-  post     BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   userId   String @db.String
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -198,7 +196,7 @@ model Project {
   category    String
   status      ProjectStatus @default(SUBMITTED)
   phase       String?
-  slug        String?  @unique
+  slug        String?
   year        Int?
   demoUrl     String?
   views       Int      @default(0)
