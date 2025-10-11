@@ -17,6 +17,7 @@ import {
   ChevronDown
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { HallOfFameSkeleton } from "@/components/ui/ProjectSkeleton"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 
@@ -80,9 +81,7 @@ const HallOfFamePage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-        </div>
+        <HallOfFameSkeleton count={6} />
       </Layout>
     )
   }

@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageSlider } from "@/components/ui/ImageSlider"
+import { ProjectDetailSkeleton } from "@/components/ui/ProjectSkeleton"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 
@@ -243,12 +244,7 @@ const ProjectDetailPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading project...</p>
-          </div>
-        </div>
+        <ProjectDetailSkeleton />
       </Layout>
     )
   }
@@ -458,10 +454,10 @@ const ProjectDetailPage = () => {
               </div>
 
               {/* Similar Projects */}
-              {similarProjects.length > 0 && (
-                <div className="bg-gray-800 rounded-xl p-6">
-                  <h3 className="text-sm font-semibold text-white mb-4">SIMILAR PROJECTS</h3>
-                  
+              <div className="bg-gray-800 rounded-xl p-6">
+                <h3 className="text-sm font-semibold text-white mb-4">SIMILAR PROJECTS</h3>
+                
+                {similarProjects.length > 0 ? (
                   <div className="space-y-3">
                     {similarProjects.slice(0, 3).map((similarProject) => (
                       <motion.div
@@ -506,18 +502,30 @@ const ProjectDetailPage = () => {
                       </motion.div>
                     ))}
                   </div>
-                  
-                  {/* View All Button */}
-                  <Link href="/hall-of-fame">
-                    <Button
-                      variant="outline"
-                      className="w-full mt-4 py-2 text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
-                    >
-                      View All Projects
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="bg-gray-700 rounded-lg p-3 animate-pulse">
+                        <div className="h-20 bg-gray-600 rounded-lg mb-2"></div>
+                        <div className="space-y-1">
+                          <div className="h-4 bg-gray-600 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-600 rounded w-1/4"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* View All Button */}
+                <Link href="/hall-of-fame">
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4 py-2 text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    View All Projects
+                  </Button>
+                </Link>
+              </div>
             </motion.div>
           </div>
 
