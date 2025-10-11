@@ -30,6 +30,7 @@ model User {
   blogPosts        BlogPost[]
   comments         Comment[]
   likes            Like[]
+  views            View[]
   projects         Project[]
   applications     Application[]
 
@@ -178,12 +179,27 @@ model Like {
   createdAt DateTime @default(now())
 
   // Relations
-  postId   String @db.String
-  userId   String @db.String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String @db.String
+  userId    String @db.String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])
+  @@unique([projectId, userId])
   @@map("likes")
+}
+
+model View {
+  id        String   @id @map("_id") @db.String
+  createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  // Relations
+  projectId String @db.String
+  userId    String? @db.String
+  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, ipAddress])
+  @@map("views")
 }
 
 model Project {

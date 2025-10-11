@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
-// Increment views (no auth required)
+// Increment views (no auth required, but tracks unique views)
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -17,13 +17,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Increment views count
+    // Get client IP and user agent
+    const ipAddress = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request.headers.get('user-agent') || 'unknown'
+
+    console.log(`Checking views for project ${projectId}, IP: ${ipAddress}`)
+
+    // Check if this IP has already viewed this project
+    const existingView = await prisma.view.findFirst({
+      where: {
+        projectId: projectId,
+        ipAddress: ipAddress
+      }
+    })
+
+    if (existingView) {
+      console.log(`Already viewed by IP ${ipAddress}`)
+      // Already viewed, return current count
+      const project = await prisma.project.findUnique({
+        where: { id: projectId },
+        select: { views: true }
+      })
+      return NextResponse.json({ 
+        success: true, 
+        data: { views: project?.views || 0 },
+        message: "Already viewed"
+      })
+    }
+
+    console.log(`New view from IP ${ipAddress}, creating view record`)
+
+    // Create new view record
+    await prisma.view.create({
+      data: {
+        id: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        projectId: projectId,
+        ipAddress: ipAddress,
+        userAgent: userAgent
+      }
+    })
+
+    // Get current views count and increment manually (MongoDB increment might not work)
+    const currentProject = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { views: true }
+    })
+    
+    const newViewsCount = (currentProject?.views || 0) + 1
+    
     const project = await prisma.project.update({
       where: { id: projectId },
       data: {
-        views: {
-          increment: 1
-        }
+        views: newViewsCount
       },
       select: {
         id: true,
@@ -31,9 +78,11 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log(`View recorded successfully, new count: ${project.views}`)
     return NextResponse.json({ 
       success: true, 
-      data: { views: project.views } 
+      data: { views: project.views },
+      message: "View recorded"
     })
   } catch (error) {
     console.error("Error incrementing views:", error)

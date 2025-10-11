@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const existingLike = await prisma.like.findFirst({
       where: {
         userId: session.user.id,
-        postId: projectId
+        projectId: projectId
       }
     })
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         data: {
           id: `like_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           userId: session.user.id,
-          postId: projectId
+          projectId: projectId
         }
       })
       
@@ -68,6 +68,25 @@ export async function POST(request: NextRequest) {
           likes: {
             increment: 1
           }
+        },
+        select: {
+          id: true,
+          likes: true
+        }
+      })
+    }
+
+    // Double-check: count actual likes in database to ensure accuracy
+    const actualLikesCount = await prisma.like.count({
+      where: { projectId: projectId }
+    })
+
+    // If there's a mismatch, fix it
+    if (actualLikesCount !== project.likes) {
+      project = await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          likes: actualLikesCount
         },
         select: {
           id: true,
@@ -118,11 +137,16 @@ export async function GET(request: NextRequest) {
     const existingLike = await prisma.like.findFirst({
       where: {
         userId: session.user.id,
-        postId: projectId
+        projectId: projectId
       }
     })
 
-    // Get current likes count
+    // Get actual likes count from database
+    const actualLikesCount = await prisma.like.count({
+      where: { projectId: projectId }
+    })
+
+    // Update project likes count if it's different
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       select: {
@@ -131,10 +155,19 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    if (project && actualLikesCount !== project.likes) {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          likes: actualLikesCount
+        }
+      })
+    }
+
     return NextResponse.json({ 
       success: true, 
       data: { 
-        likes: project?.likes || 0,
+        likes: actualLikesCount,
         liked: !!existingLike
       } 
     })
