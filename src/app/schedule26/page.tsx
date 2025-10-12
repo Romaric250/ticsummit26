@@ -490,7 +490,7 @@ const Schedule26Page = () => {
                   }}
                 >
                   <motion.div 
-                    className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700 relative"
+                    className="bg-white rounded-2xl p-8 shadow-xl border border-gray-200 relative"
                     animate={{ 
                       boxShadow: [
                         "0 0 20px rgba(59, 130, 246, 0.3)",
@@ -521,38 +521,38 @@ const Schedule26Page = () => {
                       })()}
                     </div>
                     <div>
-                      <h3 className="text-3xl font-bold text-white">{timeline[activePhase].title}</h3>
-                      <p className="text-gray-400">{timeline[activePhase].duration}</p>
+                      <h3 className="text-3xl font-bold text-gray-900">{timeline[activePhase].title}</h3>
+                      <p className="text-gray-600">{timeline[activePhase].duration}</p>
                     </div>
                   </div>
                   
                   {/* Description */}
-                  <p className="text-gray-300 text-lg mb-8 leading-relaxed">
+                  <p className="text-gray-600 text-lg mb-8 leading-relaxed">
                     {timeline[activePhase].description}
                   </p>
                   
                   {/* Stats */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                    <div className="bg-gray-700 rounded-xl p-4 sm:p-6 text-center">
-                      <div className="text-2xl sm:text-3xl font-bold text-white mb-2">12+</div>
-                      <div className="text-gray-400 text-xs sm:text-sm">Schools Visited</div>
+                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 text-center">
+                      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">12+</div>
+                      <div className="text-gray-600 text-xs sm:text-sm">Schools Visited</div>
                     </div>
-                    <div className="bg-gray-700 rounded-xl p-4 sm:p-6 text-center">
-                      <div className="text-2xl sm:text-3xl font-bold text-white mb-2">2,500+</div>
-                      <div className="text-gray-400 text-xs sm:text-sm">Students Reached</div>
+                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 text-center">
+                      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">2,500+</div>
+                      <div className="text-gray-600 text-xs sm:text-sm">Students Reached</div>
                     </div>
-                    <div className="bg-gray-700 rounded-xl p-4 sm:p-6 text-center sm:col-span-2 lg:col-span-1">
-                      <div className="text-2xl sm:text-3xl font-bold text-white mb-2">18</div>
-                      <div className="text-gray-400 text-xs sm:text-sm">Days Remaining</div>
+                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 text-center sm:col-span-2 lg:col-span-1">
+                      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">18</div>
+                      <div className="text-gray-600 text-xs sm:text-sm">Days Remaining</div>
                     </div>
                   </div>
                   
                   {/* Activities */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
                     {timeline[activePhase].details.map((detail, index) => (
-                      <div key={index} className="flex items-start space-x-3 bg-gray-700 rounded-lg p-4">
+                      <div key={index} className="flex items-start space-x-3 bg-gray-100 rounded-lg p-4">
                         <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${timeline[activePhase].color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
-                        <span className="text-gray-300 text-sm leading-relaxed">{detail}</span>
+                        <span className="text-gray-700 text-sm leading-relaxed">{detail}</span>
                       </div>
                     ))}
                   </div>
