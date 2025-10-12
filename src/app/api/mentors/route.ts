@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     // Add search filters
     if (search) {
       whereClause.OR = [
-        { user: { name: { contains: search, mode: 'insensitive' } } },
+        { name: { contains: search, mode: 'insensitive' } },
         { bio: { contains: search, mode: 'insensitive' } },
         { specialties: { has: search } },
         { company: { contains: search, mode: 'insensitive' } }
@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
       languages,
       achievements,
       socialLinks,
+      yearJoined,
       isActive = true
     } = body
 
@@ -138,6 +139,7 @@ export async function POST(request: NextRequest) {
         languages: languages || [],
         achievements: achievements || [],
         socialLinks: socialLinks || {},
+        yearJoined: yearJoined ? parseInt(yearJoined) : null,
         isActive
       }
     })

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { motion } from "framer-motion"
 import { 
   ArrowLeft,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
+import { toast } from "sonner"
 import Layout from "@/components/layout/Layout"
 import { useRouter } from "next/navigation"
 import { useUploadThing } from "@/lib/uploadthing"
@@ -26,7 +27,10 @@ import Image from "next/image"
 
 interface Mentor {
   id: string
-  userId: string
+  slug: string
+  name: string
+  email: string
+  profileImage?: string
   bio?: string
   specialties: string[]
   experience?: string
@@ -35,19 +39,15 @@ interface Mentor {
   education?: string
   languages: string[]
   achievements: string[]
+  yearJoined?: number
   socialLinks?: any
   isActive: boolean
   createdAt: string
   updatedAt: string
-  user: {
-    id: string
-    name: string
-    email: string
-    image?: string
-  }
 }
 
-const EditMentorPage = ({ params }: { params: { id: string } }) => {
+const EditMentorPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [mentor, setMentor] = useState<Mentor | null>(null)
@@ -71,6 +71,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
     education: "",
     languages: [] as string[],
     achievements: [] as string[],
+    yearJoined: "",
     socialLinks: {
       linkedin: "",
       twitter: "",
@@ -86,12 +87,12 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     fetchMentor()
-  }, [params.id])
+  }, [id])
 
   const fetchMentor = async () => {
     try {
       setInitialLoading(true)
-      const response = await fetch(`/api/mentors/${params.id}`)
+      const response = await fetch(`/api/mentors/${id}`)
       const data = await response.json()
       
              if (data.success) {
@@ -110,6 +111,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                  education: mentorData.education || "",
                  languages: mentorData.languages || [],
                  achievements: mentorData.achievements || [],
+                 yearJoined: mentorData.yearJoined?.toString() || "",
                  socialLinks: mentorData.socialLinks || {
                    linkedin: "",
                    twitter: "",
@@ -142,7 +144,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
       }
     } catch (error) {
       console.error("Error uploading image:", error)
-      alert("Failed to upload image. Please try again.")
+      toast.error("Failed to upload image. Please try again.")
     } finally {
       setImageUploading(false)
     }
@@ -152,13 +154,13 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
     e.preventDefault()
     
     if (!formData.name || !formData.email || !formData.slug || formData.specialties.length === 0) {
-      alert("Please fill in all required fields (name, email, slug, and at least one specialty)")
+      toast.error("Please fill in all required fields (name, email, slug, and at least one specialty)")
       return
     }
 
     try {
       setLoading(true)
-      const response = await fetch(`/api/mentors/${params.id}`, {
+      const response = await fetch(`/api/mentors/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -175,13 +177,14 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
       const data = await response.json()
       
       if (data.success) {
+        toast.success("Mentor updated successfully!")
         router.push("/admin/mentors")
       } else {
-        alert(`Failed to update mentor: ${data.error}`)
+        toast.error(`Failed to update mentor: ${data.error}`)
       }
     } catch (error) {
       console.error("Error updating mentor:", error)
-      alert("Failed to update mentor. Please try again.")
+      toast.error("Failed to update mentor. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -283,7 +286,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                 </Link>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Edit Mentor</h1>
-                  <p className="text-gray-600 mt-1">{mentor.user.name}</p>
+                  <p className="text-gray-600 mt-1">{mentor.name}</p>
                 </div>
               </div>
             </div>
@@ -308,7 +311,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Enter mentor name"
                     required
                   />
@@ -322,7 +325,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Enter mentor email"
                     required
                   />
@@ -336,7 +339,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="text"
                     value={formData.slug}
                     onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Enter URL slug (e.g., john-doe)"
                     required
                   />
@@ -422,7 +425,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     value={formData.bio}
                     onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Tell us about the mentor..."
                   />
                 </div>
@@ -435,7 +438,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="text"
                     value={formData.experience}
                     onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="e.g., 10+ years"
                   />
                 </div>
@@ -448,7 +451,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="text"
                     value={formData.company}
                     onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Current company"
                   />
                 </div>
@@ -461,7 +464,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="text"
                     value={formData.location}
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="City, Country"
                   />
                 </div>
@@ -474,8 +477,23 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                     type="text"
                     value={formData.education}
                     onChange={(e) => setFormData(prev => ({ ...prev, education: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="e.g., PhD Computer Science, MIT"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Year Joined (Optional)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.yearJoined}
+                    onChange={(e) => setFormData(prev => ({ ...prev, yearJoined: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    placeholder="e.g., 2025"
+                    min="2000"
+                    max="2030"
                   />
                 </div>
               </div>
@@ -491,7 +509,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                   value={newSpecialty}
                   onChange={(e) => setNewSpecialty(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSpecialty())}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   placeholder="Add specialty..."
                 />
                 <Button type="button" onClick={addSpecialty} size="sm">
@@ -528,7 +546,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                   value={newLanguage}
                   onChange={(e) => setNewLanguage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   placeholder="Add language..."
                 />
                 <Button type="button" onClick={addLanguage} size="sm">
@@ -565,7 +583,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                   value={newAchievement}
                   onChange={(e) => setNewAchievement(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAchievement())}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   placeholder="Add achievement..."
                 />
                 <Button type="button" onClick={addAchievement} size="sm">
@@ -608,7 +626,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                       ...prev,
                       socialLinks: { ...prev.socialLinks, linkedin: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="https://linkedin.com/in/username"
                   />
                 </div>
@@ -624,7 +642,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                       ...prev,
                       socialLinks: { ...prev.socialLinks, twitter: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="https://twitter.com/username"
                   />
                 </div>
@@ -640,7 +658,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                       ...prev,
                       socialLinks: { ...prev.socialLinks, github: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="https://github.com/username"
                   />
                 </div>
@@ -656,7 +674,7 @@ const EditMentorPage = ({ params }: { params: { id: string } }) => {
                       ...prev,
                       socialLinks: { ...prev.socialLinks, website: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="https://example.com"
                   />
                 </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect, use } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { 
   ArrowLeft,
   MapPin, 
@@ -50,7 +50,14 @@ import {
   BookOpenCheck,
   FileText,
   ExternalLink,
-  Loader
+  Loader,
+  X,
+  Mail,
+  Phone,
+  Linkedin,
+  Twitter,
+  Facebook,
+  MessageSquare
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
@@ -71,6 +78,7 @@ interface Mentor {
   education?: string
   languages: string[]
   achievements: string[]
+  yearJoined?: number
   socialLinks?: any
   isActive: boolean
   createdAt: string
@@ -81,6 +89,14 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
   const [mentor, setMentor] = useState<Mentor | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showRequestModal, setShowRequestModal] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [requestForm, setRequestForm] = useState({
+    name: '',
+    email: '',
+    message: '',
+    subject: ''
+  })
 
   useEffect(() => {
     fetchMentor()
@@ -247,17 +263,24 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                     </div>
                     <div>
                       <p className="text-white/80 text-sm">Joined</p>
-                      <p className="text-white font-medium">{new Date(mentor.createdAt).getFullYear()}</p>
+                      <p className="text-white font-medium">{mentor.yearJoined || new Date(mentor.createdAt).getFullYear()}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-                  <Button className="bg-white hover:bg-white text-gray-900 group">
+                  <Button 
+                    className="bg-white hover:bg-white text-gray-900 group"
+                    onClick={() => setShowRequestModal(true)}
+                  >
                     <MessageCircle className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                     Request Mentorship
                   </Button>
-                  <Button variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+                  <Button 
+                    variant="outline" 
+                    className="border-white text-white hover:bg-transparent hover:text-white"
+                    onClick={() => setShowShareModal(true)}
+                  >
                     <Share2 className="mr-2 w-5 h-5" />
                     Share Profile
                   </Button>
@@ -327,7 +350,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Calendar className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-600">Joined {new Date(mentor.createdAt).getFullYear()}</span>
+                    <span className="text-gray-600">Joined {mentor.yearJoined || new Date(mentor.createdAt).getFullYear()}</span>
                   </div>
                 </div>
               </motion.div>
@@ -420,7 +443,10 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                 <p className="text-white/90 mb-6">
                   Connect with {mentor.name.split(' ')[0]} for personalized guidance and support.
                 </p>
-                <Button className="w-full bg-white hover:bg-white text-gray-900">
+                <Button 
+                  className="w-full bg-white hover:bg-white text-gray-900"
+                  onClick={() => setShowRequestModal(true)}
+                >
                   Request Mentorship Session
                 </Button>
               </motion.div>
@@ -428,6 +454,200 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
           </motion.div>
         </div>
       </div>
+
+      {/* Request Mentorship Modal */}
+      <AnimatePresence>
+        {showRequestModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-xl p-6 w-full max-w-md"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Request Mentorship</h3>
+                <button
+                  onClick={() => setShowRequestModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    value={requestForm.name}
+                    onChange={(e) => setRequestForm({...requestForm, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={requestForm.email}
+                    onChange={(e) => setRequestForm({...requestForm, email: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    value={requestForm.subject}
+                    onChange={(e) => setRequestForm({...requestForm, subject: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    placeholder="Mentorship Request"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    value={requestForm.message}
+                    onChange={(e) => setRequestForm({...requestForm, message: e.target.value})}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    placeholder="Tell {mentor?.name} about your goals and what kind of mentorship you're looking for..."
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    onClick={() => setShowRequestModal(false)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      // Here you would typically send the email or save the request
+                      const mailtoLink = `mailto:${mentor?.email}?subject=${encodeURIComponent(requestForm.subject || 'Mentorship Request')}&body=${encodeURIComponent(
+                        `Hi ${mentor?.name},\n\nMy name is ${requestForm.name} and I'm interested in mentorship.\n\n${requestForm.message}\n\nBest regards,\n${requestForm.name}\n${requestForm.email}`
+                      )}`
+                      window.open(mailtoLink)
+                      setShowRequestModal(false)
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    disabled={!requestForm.name || !requestForm.email || !requestForm.message}
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Request
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Share Modal */}
+      <AnimatePresence>
+        {showShareModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-gray-800 rounded-xl p-6 w-full max-w-md"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Share Mentor Profile</h3>
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Profile URL
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`}
+                      readOnly
+                      className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`)
+                      }}
+                      className="px-4 py-2 text-sm"
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => {
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
+                      window.open(`https://twitter.com/intent/tweet?text=Check out this amazing mentor: ${mentor?.name}&url=${encodeURIComponent(url)}`, '_blank')
+                    }}
+                    className="py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    <Twitter className="w-4 h-4 mr-2" />
+                    Twitter
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
+                      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+                    }}
+                    className="py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Linkedin className="w-4 h-4 mr-2" />
+                    LinkedIn
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
+                      window.open(`https://wa.me/?text=Check out this amazing mentor: ${mentor?.name} - ${encodeURIComponent(url)}`, '_blank')
+                    }}
+                    className="py-2 text-sm bg-green-500 hover:bg-green-600 text-white"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    WhatsApp
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
+                      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
+                    }}
+                    className="py-2 text-sm bg-blue-700 hover:bg-blue-800 text-white"
+                  >
+                    <Facebook className="w-4 h-4 mr-2" />
+                    Facebook
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </Layout>
   )
 }

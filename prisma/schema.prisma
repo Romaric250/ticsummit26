@@ -106,6 +106,7 @@ model MentorProfile {
   languages   String[]
   achievements String[]
   socialLinks Json?
+  yearJoined  Int?     // Added year joined field
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

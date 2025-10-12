@@ -7,11 +7,12 @@ const prisma = new PrismaClient()
 // Get single mentor by slug (public)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const mentor = await prisma.mentorProfile.findUnique({
-      where: { slug: params.id }, // Using slug instead of id
+      where: { slug: id }, // Using slug instead of id
     })
 
     if (!mentor) {
@@ -38,9 +39,10 @@ export async function GET(
 // Update mentor (admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth.api.getSession({ headers: request.headers })
 
     if (!session?.user) {
@@ -69,12 +71,13 @@ export async function PUT(
       languages,
       achievements,
       socialLinks,
+      yearJoined,
       isActive
     } = body
 
     // Check if mentor exists
     const existingMentor = await prisma.mentorProfile.findUnique({
-      where: { slug: params.id }
+      where: { slug: id }
     })
 
     if (!existingMentor) {
@@ -85,7 +88,7 @@ export async function PUT(
     }
 
     const mentor = await prisma.mentorProfile.update({
-      where: { slug: params.id },
+      where: { slug: id },
       data: {
         name,
         email,
@@ -100,6 +103,7 @@ export async function PUT(
         languages,
         achievements,
         socialLinks,
+        yearJoined: yearJoined ? parseInt(yearJoined) : null,
         isActive,
         updatedAt: new Date()
       }
@@ -122,9 +126,10 @@ export async function PUT(
 // Delete mentor (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth.api.getSession({ headers: request.headers })
 
     if (!session?.user) {
@@ -140,7 +145,7 @@ export async function DELETE(
 
     // Check if mentor exists
     const existingMentor = await prisma.mentorProfile.findUnique({
-      where: { slug: params.id }
+      where: { slug: id }
     })
 
     if (!existingMentor) {
@@ -151,7 +156,7 @@ export async function DELETE(
     }
 
     await prisma.mentorProfile.delete({
-      where: { slug: params.id }
+      where: { slug: id }
     })
 
     return NextResponse.json({

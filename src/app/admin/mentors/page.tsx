@@ -15,15 +15,21 @@ import {
   Building,
   Calendar,
   Star,
-  MoreVertical
+  MoreVertical,
+  X
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
+import { toast } from "sonner"
+import { AnimatePresence } from "framer-motion"
 
 interface Mentor {
   id: string
-  userId: string
+  slug: string
+  name: string
+  email: string
+  profileImage?: string
   bio?: string
   specialties: string[]
   experience?: string
@@ -32,16 +38,11 @@ interface Mentor {
   education?: string
   languages: string[]
   achievements: string[]
+  yearJoined?: number
   socialLinks?: any
   isActive: boolean
   createdAt: string
   updatedAt: string
-  user: {
-    id: string
-    name: string
-    email: string
-    image?: string
-  }
 }
 
 const AdminMentorsPage = () => {
@@ -50,6 +51,8 @@ const AdminMentorsPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedLocation, setSelectedLocation] = useState("")
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [mentorToDelete, setMentorToDelete] = useState<Mentor | null>(null)
   const [showActiveOnly, setShowActiveOnly] = useState(true)
 
   useEffect(() => {
@@ -104,13 +107,19 @@ const AdminMentorsPage = () => {
     }
   }
 
-  const handleDelete = async (mentorId: string) => {
-    if (!confirm("Are you sure you want to delete this mentor? This action cannot be undone.")) {
-      return
+  const handleDelete = (mentorId: string) => {
+    const mentor = mentors.find(m => m.id === mentorId)
+    if (mentor) {
+      setMentorToDelete(mentor)
+      setShowDeleteModal(true)
     }
+  }
+
+  const confirmDelete = async () => {
+    if (!mentorToDelete) return
 
     try {
-      const response = await fetch(`/api/mentors/${mentorId}`, {
+      const response = await fetch(`/api/mentors/${mentorToDelete.slug}`, {
         method: 'DELETE'
       })
 
@@ -118,20 +127,24 @@ const AdminMentorsPage = () => {
       
       if (data.success) {
         // Remove from local state
-        setMentors(prev => prev.filter(mentor => mentor.id !== mentorId))
+        setMentors(prev => prev.filter(mentor => mentor.id !== mentorToDelete.id))
+        toast.success("Mentor deleted successfully!")
       } else {
         console.error("Failed to delete mentor:", data.error)
-        alert("Failed to delete mentor. Please try again.")
+        toast.error("Failed to delete mentor. Please try again.")
       }
     } catch (error) {
       console.error("Error deleting mentor:", error)
-      alert("Failed to delete mentor. Please try again.")
+      toast.error("Failed to delete mentor. Please try again.")
+    } finally {
+      setShowDeleteModal(false)
+      setMentorToDelete(null)
     }
   }
 
   const filteredMentors = mentors.filter(mentor => {
     const matchesSearch = !searchTerm || 
-      mentor.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mentor.bio?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mentor.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mentor.specialties.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -318,10 +331,10 @@ const AdminMentorsPage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                          {mentor.user.image ? (
+                          {mentor.profileImage ? (
                             <img
-                              src={mentor.user.image}
-                              alt={mentor.user.name}
+                              src={mentor.profileImage}
+                              alt={mentor.name}
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           ) : (
@@ -329,8 +342,8 @@ const AdminMentorsPage = () => {
                           )}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-900">{mentor.user.name}</h3>
-                          <p className="text-sm text-gray-600">{mentor.user.email}</p>
+                          <h3 className="font-semibold text-gray-900">{mentor.name}</h3>
+                          <p className="text-sm text-gray-600">{mentor.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -345,7 +358,7 @@ const AdminMentorsPage = () => {
                         >
                           {mentor.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                         </button>
-                        <Link href={`/admin/mentors/${mentor.id}`}>
+                        <Link href={`/admin/mentors/${mentor.slug}`}>
                           <button className="p-1 text-blue-600 hover:bg-blue-50 rounded" title="Edit">
                             <Edit className="w-4 h-4" />
                           </button>
@@ -415,6 +428,63 @@ const AdminMentorsPage = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-xl p-6 w-full max-w-md"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Delete Mentor</h3>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <Trash2 className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{mentorToDelete?.name}</p>
+                    <p className="text-sm text-gray-600">{mentorToDelete?.email}</p>
+                  </div>
+                </div>
+                
+                <p className="text-gray-700">
+                  Are you sure you want to delete this mentor? This action cannot be undone and will permanently remove all mentor data.
+                </p>
+                
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    onClick={() => setShowDeleteModal(false)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={confirmDelete}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Mentor
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </Layout>
   )
 }
