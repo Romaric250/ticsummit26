@@ -23,6 +23,7 @@ import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 import { AnimatePresence } from "framer-motion"
+import { MentorListSkeleton } from "@/components/ui/MentorSkeleton"
 
 interface Mentor {
   id: string
@@ -160,10 +161,50 @@ const AdminMentorsPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading mentors...</p>
+        <div className="min-h-screen bg-gray-50 pt-20">
+          {/* Header */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Mentors Management</h1>
+                  <p className="text-gray-600 mt-1">Manage mentor profiles and information</p>
+                </div>
+                <div className="h-10 bg-gray-300 rounded w-32 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search and Filter */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="h-10 bg-gray-300 rounded flex-1 animate-pulse"></div>
+                <div className="h-10 bg-gray-300 rounded w-40 animate-pulse"></div>
+                <div className="h-10 bg-gray-300 rounded w-32 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="bg-gray-100 rounded-lg p-4 animate-pulse">
+                    <div className="h-8 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Mentors Grid */}
+          <div className="bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <MentorListSkeleton count={6} />
+            </div>
           </div>
         </div>
       </Layout>

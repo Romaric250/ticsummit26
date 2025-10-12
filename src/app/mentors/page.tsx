@@ -50,6 +50,7 @@ import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
 import Image from "next/image"
+import { MentorListSkeleton } from "@/components/ui/MentorSkeleton"
 
 interface Mentor {
   id: string
@@ -249,10 +250,7 @@ const MentorsPage = () => {
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-                <p className="text-gray-400">Loading mentors...</p>
-              </div>
+              <MentorListSkeleton count={6} />
             ) : error ? (
               <div className="text-center py-12">
                 <div className="text-red-500 mb-4">

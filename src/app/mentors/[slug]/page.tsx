@@ -63,6 +63,8 @@ import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
 import Image from "next/image"
+import { toast } from "sonner"
+import { MentorDetailSkeleton } from "@/components/ui/MentorSkeleton"
 
 interface Mentor {
   id: string
@@ -128,12 +130,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <Loader className="w-12 h-12 animate-spin text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-400">Loading mentor...</p>
-          </div>
-        </div>
+        <MentorDetailSkeleton />
       </Layout>
     )
   }
