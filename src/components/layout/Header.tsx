@@ -38,6 +38,7 @@ const Header = () => {
       hasDropdown: true,
       dropdownItems: [
         { name: "Mentors", href: "/mentors" },
+        { name: "Alumni", href: "/alumni" },
         ...(session?.user?.role === "ADMIN" ? [{ name: "Admin Dashboard", href: "/admin" }] : [])
       ]
     },
@@ -180,14 +181,33 @@ const Header = () => {
             >
               <div className="px-4 py-6 space-y-4">
                 {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
+                  <div key={item.name}>
+                    {item.hasDropdown ? (
+                      <div className="space-y-2">
+                        <div className="px-3 py-2 text-gray-500 font-medium text-sm">
+                          {item.name}
+                        </div>
+                        {item.dropdownItems?.map((dropdownItem) => (
+                          <Link
+                            key={dropdownItem.name}
+                            href={dropdownItem.href}
+                            className="block px-6 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {dropdownItem.name}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    )}
+                  </div>
                 ))}
                 <div className="pt-4 space-y-3 border-t border-gray-200">
                   <div className="px-3">

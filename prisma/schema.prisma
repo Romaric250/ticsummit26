@@ -114,6 +114,26 @@ model MentorProfile {
   @@map("mentor_profiles")
 }
 
+model AlumniProfile {
+  id          String   @id @map("_id") @db.String
+  slug        String   @unique
+  name        String
+  email       String
+  profileImage String?
+  bio         String?
+  graduationYear Int?
+  currentRole String?
+  company     String?
+  location    String?
+  achievements String[]
+  socialLinks Json?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("alumni_profiles")
+}
+
 model VolunteerProfile {
   id          String   @id @map("_id") @db.String
   userId      String   @unique @db.String

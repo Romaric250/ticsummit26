@@ -35,6 +35,26 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
+import Link from "next/link"
+import Image from "next/image"
+
+interface Alumni {
+  id: string
+  slug: string
+  name: string
+  email: string
+  profileImage?: string
+  bio?: string
+  graduationYear?: number
+  currentRole?: string
+  company?: string
+  location?: string
+  achievements: string[]
+  socialLinks?: any
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
 
 // Animated Counter Hook
 const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
@@ -71,6 +91,30 @@ const AboutPage = () => {
   const teenagersCount = useCountUp(5000, 3500)
   const prizeCount = useCountUp(2, 2000)
   const clubsCount = useCountUp(25, 2500)
+
+  // Alumni state
+  const [featuredAlumni, setFeaturedAlumni] = useState<Alumni[]>([])
+  const [alumniLoading, setAlumniLoading] = useState(true)
+
+  useEffect(() => {
+    fetchFeaturedAlumni()
+  }, [])
+
+  const fetchFeaturedAlumni = async () => {
+    try {
+      setAlumniLoading(true)
+      const response = await fetch("/api/alumni/featured?limit=3")
+      const data = await response.json()
+      
+      if (data.success) {
+        setFeaturedAlumni(data.data)
+      }
+    } catch (error) {
+      console.error("Error fetching featured alumni:", error)
+    } finally {
+      setAlumniLoading(false)
+    }
+  }
 
   const timeline = [
     {
@@ -121,24 +165,6 @@ const AboutPage = () => {
       label: "TIC clubs established across Cameroon",
       icon: Globe,
       count: clubsCount
-    }
-  ]
-
-  const alumni = [
-    {
-      name: "Marie Nguema",
-      role: "Software Engineer at Google",
-      quote: "TIC Summit opened doors I never knew existed."
-    },
-    {
-      name: "Jean Paul Mballa",
-      role: "Founder of TechStart Cameroon",
-      quote: "The mentorship I received changed my entire career path."
-    },
-    {
-      name: "Sarah Mboumou",
-      role: "Product Manager at Microsoft",
-      quote: "TIC Summit taught me that innovation has no limits."
     }
   ]
 
@@ -332,45 +358,91 @@ const AboutPage = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {alumni.map((person, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center"
-                >
-                  <div className="w-20 h-20 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">
-                      {person.name.charAt(0)}
-                    </span>
+            {alumniLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center animate-pulse">
+                    <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto mb-6"></div>
+                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded mb-4 w-3/4 mx-auto"></div>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-300 rounded"></div>
+                      <div className="h-3 bg-gray-300 rounded w-5/6 mx-auto"></div>
+                    </div>
                   </div>
-                  
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {person.name}
-                  </h3>
-                  
-                  <p className="text-blue-600 font-semibold mb-4">
-                    {person.role}
-                  </p>
-                  
-                  <blockquote className="text-gray-700 italic">
-                    "{person.quote}"
-                  </blockquote>
-                </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : featuredAlumni.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {featuredAlumni.map((alumnus, index) => (
+                  <motion.div
+                    key={alumnus.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center hover:shadow-xl transition-shadow"
+                  >
+                    <div className="w-20 h-20 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden">
+                      {alumnus.profileImage ? (
+                        <Image
+                          src={alumnus.profileImage}
+                          alt={alumnus.name}
+                          width={80}
+                          height={80}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-white font-bold text-2xl">
+                          {alumnus.name.charAt(0)}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {alumnus.name}
+                    </h3>
+                    
+                    {alumnus.currentRole && (
+                      <p className="text-blue-600 font-semibold mb-2">
+                        {alumnus.currentRole}
+                      </p>
+                    )}
+                    
+                    {alumnus.company && (
+                      <p className="text-gray-600 text-sm mb-4">
+                        {alumnus.company}
+                      </p>
+                    )}
+                    
+                    {alumnus.bio && (
+                      <blockquote className="text-gray-700 italic text-sm">
+                        "{alumnus.bio.length > 100 ? `${alumnus.bio.substring(0, 100)}...` : alumnus.bio}"
+                      </blockquote>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <Users className="w-16 h-16 mx-auto" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-600 mb-2">No alumni yet</h3>
+                <p className="text-gray-500">Check back soon for inspiring success stories!</p>
+              </div>
+            )}
 
             <div className="text-center mt-12">
-              <Button
-                size="lg"
-                className="bg-gray-900 hover:bg-gray-800 text-white group"
-              >
-                View All Alumni
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <Link href="/alumni">
+                <Button
+                  size="lg"
+                  className="bg-gray-900 hover:bg-gray-800 text-white group"
+                >
+                  View All Alumni
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
