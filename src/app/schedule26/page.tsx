@@ -246,7 +246,7 @@ const Schedule26Page = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pb-24">
         {/* Hero Section */}
         <section className="relative py-20 bg-gray-900 overflow-hidden">
           {/* Background Elements */}
@@ -296,7 +296,7 @@ const Schedule26Page = () => {
         </section>
 
         {/* Timeline Overview */}
-        <section className="py-16 bg-gray-900">
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -304,8 +304,8 @@ const Schedule26Page = () => {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl font-bold text-white mb-4">Timeline Overview</h2>
-              <p className="text-lg text-white/80 max-w-2xl mx-auto">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Timeline Overview</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Visual representation of the complete TIC Summit 2026 journey
               </p>
             </motion.div>
@@ -313,7 +313,13 @@ const Schedule26Page = () => {
             {/* Timeline */}
             <div className="relative max-w-4xl mx-auto">
               {/* Timeline Line */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-600"></div>
+              <motion.div 
+                className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-300"
+                initial={{ scaleY: 0 }}
+                animate={{ scaleY: 1 }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+                style={{ originY: 0 }}
+              ></motion.div>
               
               {/* Timeline Items */}
               <div className="space-y-16">
@@ -327,35 +333,90 @@ const Schedule26Page = () => {
                   >
                     {/* Timeline Card */}
                     <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
-                      <div className="bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-700">
+                      <motion.div 
+                        className="bg-white rounded-2xl p-6 shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 !bg-white"
+                        whileHover={{ scale: 1.02, y: -5 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                      >
                         {/* Date Badge */}
-                        <div className="inline-block bg-gray-700 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">
+                        <motion.div 
+                          className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium mb-4"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
+                        >
                           {phase.duration}
-                        </div>
+                        </motion.div>
                         
                         {/* Title */}
-                        <h3 className="text-2xl font-bold text-white mb-3">{phase.title}</h3>
+                        <motion.h3 
+                          className="text-2xl font-bold text-gray-900 mb-3"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                        >
+                          {phase.title}
+                        </motion.h3>
                         
                         {/* Description */}
-                        <p className="text-gray-300 mb-4">{phase.description}</p>
+                        <motion.p 
+                          className="text-gray-600 mb-4"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
+                        >
+                          {phase.description}
+                        </motion.p>
                         
                         {/* Activities */}
-                        <div className="space-y-2">
+                        <motion.div 
+                          className="space-y-2"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 + 0.5 }}
+                        >
                           {phase.details.slice(0, 3).map((detail, detailIndex) => (
-                            <div key={detailIndex} className="flex items-center space-x-2">
+                            <motion.div 
+                              key={detailIndex} 
+                              className="flex items-center space-x-2"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 + 0.6 + detailIndex * 0.1 }}
+                            >
                               <div className={`w-2 h-2 rounded-full ${phase.color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
-                              <span className="text-gray-300 text-sm">{detail}</span>
-                            </div>
+                              <span className="text-gray-600 text-sm">{detail}</span>
+                            </motion.div>
                           ))}
-                        </div>
-                      </div>
+                        </motion.div>
+                      </motion.div>
                     </div>
                     
                     {/* Timeline Node */}
                     <div className="flex-shrink-0 w-16 h-16 flex items-center justify-center">
-                      <div className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}>
-                        <span className="text-white font-bold text-lg">{index + 1}</span>
-                      </div>
+                      <motion.div 
+                        className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ 
+                          duration: 0.6, 
+                          delay: index * 0.1 + 0.3,
+                          type: "spring",
+                          stiffness: 200,
+                          damping: 15
+                        }}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        <motion.span 
+                          className="text-white font-bold text-lg"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 + 0.6 }}
+                        >
+                          {index + 1}
+                        </motion.span>
+                      </motion.div>
                     </div>
                     
                     {/* Spacer */}
@@ -377,15 +438,80 @@ const Schedule26Page = () => {
               className="text-center"
             >
               {/* LIVE NOW Badge */}
-              <div className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium mb-6">
-                LIVE NOW
-              </div>
+              <motion.div 
+                className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium mb-6 relative overflow-hidden"
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  boxShadow: [
+                    "0 0 0 0 rgba(59, 130, 246, 0.4)",
+                    "0 0 0 10px rgba(59, 130, 246, 0)",
+                    "0 0 0 0 rgba(59, 130, 246, 0)"
+                  ]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <motion.span
+                  animate={{ opacity: [1, 0.7, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  LIVE NOW
+                </motion.span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                />
+              </motion.div>
               
               <h2 className="text-4xl font-bold text-white mb-8">Current Phase</h2>
               
               {/* Current Phase Card */}
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700">
+              <div className="max-w-4xl mx-auto relative overflow-hidden">
+                {/* Animated Border */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl"
+                  animate={{
+                    background: [
+                      "linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6)",
+                      "linear-gradient(45deg, #8b5cf6, #06b6d4, #3b82f6, #8b5cf6)",
+                      "linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4)",
+                      "linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6)"
+                    ]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  style={{
+                    padding: "2px",
+                    background: "linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6)",
+                    backgroundSize: "400% 400%"
+                  }}
+                >
+                  <motion.div 
+                    className="bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-700 relative"
+                    animate={{ 
+                      boxShadow: [
+                        "0 0 20px rgba(59, 130, 246, 0.3)",
+                        "0 0 40px rgba(59, 130, 246, 0.6)",
+                        "0 0 20px rgba(59, 130, 246, 0.3)"
+                      ]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    {/* Pulsing Background Effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 rounded-2xl"
+                      animate={{ 
+                        opacity: [0.3, 0.6, 0.3],
+                        scale: [1, 1.01, 1]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
                   {/* Phase Header */}
                   <div className="flex items-center space-x-4 mb-6">
                     <div className={`w-16 h-16 ${timeline[activePhase].color} rounded-2xl flex items-center justify-center`}>
@@ -406,27 +532,27 @@ const Schedule26Page = () => {
                   </p>
                   
                   {/* Stats */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-gray-700 rounded-xl p-6 text-center">
-                      <div className="text-3xl font-bold text-white mb-2">12+</div>
-                      <div className="text-gray-400 text-sm">Schools Visited</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <div className="bg-gray-700 rounded-xl p-4 sm:p-6 text-center">
+                      <div className="text-2xl sm:text-3xl font-bold text-white mb-2">12+</div>
+                      <div className="text-gray-400 text-xs sm:text-sm">Schools Visited</div>
                     </div>
-                    <div className="bg-gray-700 rounded-xl p-6 text-center">
-                      <div className="text-3xl font-bold text-white mb-2">2,500+</div>
-                      <div className="text-gray-400 text-sm">Students Reached</div>
+                    <div className="bg-gray-700 rounded-xl p-4 sm:p-6 text-center">
+                      <div className="text-2xl sm:text-3xl font-bold text-white mb-2">2,500+</div>
+                      <div className="text-gray-400 text-xs sm:text-sm">Students Reached</div>
                     </div>
-                    <div className="bg-gray-700 rounded-xl p-6 text-center">
-                      <div className="text-3xl font-bold text-white mb-2">18</div>
-                      <div className="text-gray-400 text-sm">Days Remaining</div>
+                    <div className="bg-gray-700 rounded-xl p-4 sm:p-6 text-center sm:col-span-2 lg:col-span-1">
+                      <div className="text-2xl sm:text-3xl font-bold text-white mb-2">18</div>
+                      <div className="text-gray-400 text-xs sm:text-sm">Days Remaining</div>
                     </div>
                   </div>
                   
                   {/* Activities */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
                     {timeline[activePhase].details.map((detail, index) => (
-                      <div key={index} className="flex items-center space-x-3 bg-gray-700 rounded-lg p-4">
-                        <div className={`w-2 h-2 rounded-full ${timeline[activePhase].color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
-                        <span className="text-gray-300">{detail}</span>
+                      <div key={index} className="flex items-start space-x-3 bg-gray-700 rounded-lg p-4">
+                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${timeline[activePhase].color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
+                        <span className="text-gray-300 text-sm leading-relaxed">{detail}</span>
                       </div>
                     ))}
                   </div>
@@ -437,14 +563,16 @@ const Schedule26Page = () => {
                       Do you want to volunteer? Apply here
                     </Button>
                   </div>
-                </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </section>
 
         {/* Call to Action */}
-        <section className="py-16 bg-gray-900">
+        <section className="py-16 pb-48 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
