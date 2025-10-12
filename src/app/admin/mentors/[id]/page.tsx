@@ -1,0 +1,710 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { 
+  ArrowLeft,
+  Save,
+  User,
+  Building,
+  MapPin,
+  Calendar,
+  GraduationCap,
+  Globe,
+  Award,
+  Plus,
+  X,
+  Users,
+  Loader
+} from "lucide-react"
+import { Button } from "@/components/ui/Button"
+import Link from "next/link"
+import Layout from "@/components/layout/Layout"
+import { useRouter } from "next/navigation"
+import { useUploadThing } from "@/lib/uploadthing"
+import Image from "next/image"
+
+interface Mentor {
+  id: string
+  userId: string
+  bio?: string
+  specialties: string[]
+  experience?: string
+  company?: string
+  location?: string
+  education?: string
+  languages: string[]
+  achievements: string[]
+  socialLinks?: any
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+  user: {
+    id: string
+    name: string
+    email: string
+    image?: string
+  }
+}
+
+const EditMentorPage = ({ params }: { params: { id: string } }) => {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [mentor, setMentor] = useState<Mentor | null>(null)
+  const [initialLoading, setInitialLoading] = useState(true)
+  
+  // Image upload
+  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [imageUploading, setImageUploading] = useState(false)
+  const { startUpload } = useUploadThing("mentorImage")
+  
+  // Form data
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    slug: "",
+    bio: "",
+    specialties: [] as string[],
+    experience: "",
+    company: "",
+    location: "",
+    education: "",
+    languages: [] as string[],
+    achievements: [] as string[],
+    socialLinks: {
+      linkedin: "",
+      twitter: "",
+      github: "",
+      website: ""
+    },
+    isActive: true
+  })
+
+  const [newSpecialty, setNewSpecialty] = useState("")
+  const [newLanguage, setNewLanguage] = useState("")
+  const [newAchievement, setNewAchievement] = useState("")
+
+  useEffect(() => {
+    fetchMentor()
+  }, [params.id])
+
+  const fetchMentor = async () => {
+    try {
+      setInitialLoading(true)
+      const response = await fetch(`/api/mentors/${params.id}`)
+      const data = await response.json()
+      
+             if (data.success) {
+               const mentorData = data.data
+               setMentor(mentorData)
+               setProfileImage(mentorData.profileImage || null)
+               setFormData({
+                 name: mentorData.name || "",
+                 email: mentorData.email || "",
+                 slug: mentorData.slug || "",
+                 bio: mentorData.bio || "",
+                 specialties: mentorData.specialties || [],
+                 experience: mentorData.experience || "",
+                 company: mentorData.company || "",
+                 location: mentorData.location || "",
+                 education: mentorData.education || "",
+                 languages: mentorData.languages || [],
+                 achievements: mentorData.achievements || [],
+                 socialLinks: mentorData.socialLinks || {
+                   linkedin: "",
+                   twitter: "",
+                   github: "",
+                   website: ""
+                 },
+                 isActive: mentorData.isActive
+               })
+             } else {
+        console.error("Failed to fetch mentor:", data.error)
+        router.push("/admin/mentors")
+      }
+    } catch (error) {
+      console.error("Error fetching mentor:", error)
+      router.push("/admin/mentors")
+    } finally {
+      setInitialLoading(false)
+    }
+  }
+
+  const handleImageUpload = async (files: File[]) => {
+    if (files.length === 0) return
+
+    try {
+      setImageUploading(true)
+      const uploadedFiles = await startUpload(files)
+      
+      if (uploadedFiles && uploadedFiles[0]) {
+        setProfileImage(uploadedFiles[0].url)
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      alert("Failed to upload image. Please try again.")
+    } finally {
+      setImageUploading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.name || !formData.email || !formData.slug || formData.specialties.length === 0) {
+      alert("Please fill in all required fields (name, email, slug, and at least one specialty)")
+      return
+    }
+
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/mentors/${params.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          slug: formData.slug,
+          profileImage,
+          ...formData
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        router.push("/admin/mentors")
+      } else {
+        alert(`Failed to update mentor: ${data.error}`)
+      }
+    } catch (error) {
+      console.error("Error updating mentor:", error)
+      alert("Failed to update mentor. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const addSpecialty = () => {
+    if (newSpecialty.trim() && !formData.specialties.includes(newSpecialty.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        specialties: [...prev.specialties, newSpecialty.trim()]
+      }))
+      setNewSpecialty("")
+    }
+  }
+
+  const removeSpecialty = (specialty: string) => {
+    setFormData(prev => ({
+      ...prev,
+      specialties: prev.specialties.filter(s => s !== specialty)
+    }))
+  }
+
+  const addLanguage = () => {
+    if (newLanguage.trim() && !formData.languages.includes(newLanguage.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        languages: [...prev.languages, newLanguage.trim()]
+      }))
+      setNewLanguage("")
+    }
+  }
+
+  const removeLanguage = (language: string) => {
+    setFormData(prev => ({
+      ...prev,
+      languages: prev.languages.filter(l => l !== language)
+    }))
+  }
+
+  const addAchievement = () => {
+    if (newAchievement.trim() && !formData.achievements.includes(newAchievement.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        achievements: [...prev.achievements, newAchievement.trim()]
+      }))
+      setNewAchievement("")
+    }
+  }
+
+  const removeAchievement = (achievement: string) => {
+    setFormData(prev => ({
+      ...prev,
+      achievements: prev.achievements.filter(a => a !== achievement)
+    }))
+  }
+
+  if (initialLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Loader className="w-12 h-12 animate-spin text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-400">Loading mentor...</p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (!mentor) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-400">Mentor not found</p>
+            <Link href="/admin/mentors">
+              <Button className="mt-4">Back to Mentors</Button>
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  return (
+    <Layout>
+      <div className="min-h-screen bg-gray-50 pt-20">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Link href="/admin/mentors">
+                  <Button variant="outline" size="sm">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Edit Mentor</h1>
+                  <p className="text-gray-600 mt-1">{mentor.user.name}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Basic Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <User className="w-5 h-5 mr-2" />
+                Basic Information
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter mentor name"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter mentor email"
+                    required
+                  />
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Slug *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter URL slug (e.g., john-doe)"
+                    required
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    This will be used in the URL: /mentors/{formData.slug || 'slug'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Image */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Image</h2>
+              
+              <div className="flex items-center space-x-6">
+                {/* Image Preview */}
+                <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                  {profileImage ? (
+                    <Image
+                      src={profileImage}
+                      alt="Profile preview"
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-8 h-8 text-gray-400" />
+                  )}
+                </div>
+                
+                {/* Upload Button */}
+                <div>
+                  <input
+                    type="file"
+                    id="profileImage"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const files = e.target.files
+                      if (files) {
+                        handleImageUpload(Array.from(files))
+                      }
+                    }}
+                    className="hidden"
+                    disabled={imageUploading}
+                  />
+                  <label
+                    htmlFor="profileImage"
+                    className={`inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer ${
+                      imageUploading 
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {imageUploading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400 mr-2"></div>
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <User className="w-4 h-4 mr-2" />
+                        {profileImage ? 'Change Image' : 'Upload Image'}
+                      </>
+                    )}
+                  </label>
+                  <p className="text-sm text-gray-500 mt-1">
+                    JPG, PNG up to 4MB
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Basic Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Tell us about the mentor..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Experience
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.experience}
+                    onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., 10+ years"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Company
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Current company"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.location}
+                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="City, Country"
+                  />
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Education
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.education}
+                    onChange={(e) => setFormData(prev => ({ ...prev, education: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., PhD Computer Science, MIT"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Specialties */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Specialties</h2>
+              
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  value={newSpecialty}
+                  onChange={(e) => setNewSpecialty(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSpecialty())}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Add specialty..."
+                />
+                <Button type="button" onClick={addSpecialty} size="sm">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {formData.specialties.map((specialty, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                  >
+                    {specialty}
+                    <button
+                      type="button"
+                      onClick={() => removeSpecialty(specialty)}
+                      className="ml-2 text-blue-600 hover:text-blue-800"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Languages */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Languages</h2>
+              
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  value={newLanguage}
+                  onChange={(e) => setNewLanguage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Add language..."
+                />
+                <Button type="button" onClick={addLanguage} size="sm">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {formData.languages.map((language, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full"
+                  >
+                    {language}
+                    <button
+                      type="button"
+                      onClick={() => removeLanguage(language)}
+                      className="ml-2 text-green-600 hover:text-green-800"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Achievements */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Achievements</h2>
+              
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  value={newAchievement}
+                  onChange={(e) => setNewAchievement(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAchievement())}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Add achievement..."
+                />
+                <Button type="button" onClick={addAchievement} size="sm">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="space-y-2">
+                {formData.achievements.map((achievement, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-yellow-50 border border-yellow-200 rounded"
+                  >
+                    <span className="text-yellow-800">{achievement}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeAchievement(achievement)}
+                      className="text-yellow-600 hover:text-yellow-800"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Social Links</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    LinkedIn
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.socialLinks.linkedin}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, linkedin: e.target.value }
+                    }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://linkedin.com/in/username"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Twitter
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.socialLinks.twitter}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, twitter: e.target.value }
+                    }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://twitter.com/username"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    GitHub
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.socialLinks.github}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, github: e.target.value }
+                    }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://github.com/username"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Website
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.socialLinks.website}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, website: e.target.value }
+                    }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://example.com"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label htmlFor="isActive" className="ml-2 text-sm font-medium text-gray-700">
+                  Active mentor (visible to students)
+                </label>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <div className="flex justify-end space-x-4">
+              <Link href="/admin/mentors">
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </Link>
+              <Button type="submit" disabled={loading} className="bg-gray-900 hover:bg-gray-800 text-white">
+                {loading ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin mr-2" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Update Mentor
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Layout>
+  )
+}
+
+export default EditMentorPage

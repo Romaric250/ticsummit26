@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   Users, 
@@ -49,160 +49,66 @@ import {
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
+import Image from "next/image"
 
-// Mentor data with creative profiles
-const mentors = [
-  {
-    id: "dr-patricia-tech-visionary",
-    name: "Dr. Patricia Nguema",
-    role: "Senior Tech Executive",
-    location: "Douala",
-    experience: "15+ years",
-    specialties: ["Strategic Planning", "Tech Leadership", "Innovation Management"],
-    bio: "Visionary leader with 15+ years transforming organizations through technology. Dr. Patricia mentors the next generation of tech leaders, sharing insights from building successful tech companies across Africa.",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
-    badges: ["Tech Executive", "Innovation Leader", "Industry Pioneer"],
-    stats: { mentees: 200, sessions: 150, rating: 4.9 },
-    interests: ["Digital Transformation", "Leadership", "Emerging Tech"],
-    availability: "By Appointment",
-    joinDate: "2020",
-    company: "TechVision Africa",
-    education: "PhD Computer Science, MIT",
-    achievements: [
-      "Founded 3 successful tech startups",
-      "Led digital transformation for 50+ companies",
-      "Published 20+ research papers",
-      "Speaker at major tech conferences"
-    ]
-  },
-  {
-    id: "marcus-ai-pioneer",
-    name: "Marcus Fon",
-    role: "AI Research Director",
-    location: "Yaoundé",
-    experience: "12+ years",
-    specialties: ["Machine Learning", "AI Ethics", "Research & Development"],
-    bio: "AI researcher passionate about ethical technology development. Marcus guides students through the complex world of artificial intelligence, emphasizing responsible innovation and human-centered design.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-    badges: ["AI Expert", "Research Leader", "Ethics Advocate"],
-    stats: { mentees: 150, sessions: 120, rating: 4.8 },
-    interests: ["Deep Learning", "Computer Vision", "Ethical AI"],
-    availability: "Weekends",
-    joinDate: "2021",
-    company: "AI Research Institute",
-    education: "PhD Artificial Intelligence, Stanford",
-    achievements: [
-      "Published 30+ AI research papers",
-      "Led breakthrough AI projects",
-      "Advocate for ethical AI development",
-      "Mentored 150+ AI researchers"
-    ]
-  },
-  {
-    id: "grace-startup-guru",
-    name: "Grace Tchoumi",
-    role: "Startup Advisor & Investor",
-    location: "Bamenda",
-    experience: "10+ years",
-    specialties: ["Startup Strategy", "Fundraising", "Product Development"],
-    bio: "Serial entrepreneur and investor who helps young innovators turn their ideas into successful businesses. Grace brings real-world experience from building and scaling multiple tech startups.",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
-    badges: ["Startup Expert", "Investor", "Serial Entrepreneur"],
-    stats: { mentees: 180, sessions: 200, rating: 4.9 },
-    interests: ["Venture Capital", "Product Strategy", "Market Analysis"],
-    availability: "Flexible",
-    joinDate: "2020",
-    company: "Venture Partners Africa",
-    education: "MBA Entrepreneurship, Wharton",
-    achievements: [
-      "Founded 5 successful startups",
-      "Invested in 50+ early-stage companies",
-      "Helped raise $100M+ in funding",
-      "Mentored 200+ entrepreneurs"
-    ]
-  },
-  {
-    id: "prof-jean-cyber-expert",
-    name: "Prof. Jean Mballa",
-    role: "Cybersecurity Professor",
-    location: "Limbe",
-    experience: "20+ years",
-    specialties: ["Cybersecurity", "Digital Forensics", "Risk Management"],
-    bio: "Distinguished professor and cybersecurity expert with decades of experience protecting organizations from digital threats. Prof. Jean mentors students in the critical field of cybersecurity.",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-    badges: ["Security Expert", "Professor", "Digital Guardian"],
-    stats: { mentees: 120, sessions: 100, rating: 4.7 },
-    interests: ["Penetration Testing", "Incident Response", "Security Architecture"],
-    availability: "Academic Calendar",
-    joinDate: "2019",
-    company: "University of Limbe",
-    education: "PhD Cybersecurity, Carnegie Mellon",
-    achievements: [
-      "20+ years in cybersecurity research",
-      "Published 40+ security papers",
-      "Led major security initiatives",
-      "Trained 500+ security professionals"
-    ]
-  },
-  {
-    id: "sophie-design-innovator",
-    name: "Sophie Nkeng",
-    role: "Design Innovation Lead",
-    location: "Buea",
-    experience: "8+ years",
-    specialties: ["Design Thinking", "User Experience", "Creative Strategy"],
-    bio: "Design innovator who believes great technology starts with great design. Sophie mentors students in human-centered design, helping them create solutions that truly serve users.",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face",
-    badges: ["Design Leader", "UX Expert", "Innovation Catalyst"],
-    stats: { mentees: 90, sessions: 80, rating: 4.8 },
-    interests: ["Design Systems", "User Research", "Creative Process"],
-    availability: "Flexible",
-    joinDate: "2022",
-    company: "Design Studio Africa",
-    education: "MFA Design, Parsons",
-    achievements: [
-      "Led design for 100+ products",
-      "Won international design awards",
-      "Created design education programs",
-      "Mentored 100+ designers"
-    ]
-  },
-  {
-    id: "david-blockchain-visionary",
-    name: "David Nguema",
-    role: "Blockchain Technology Lead",
-    location: "Garoua",
-    experience: "6+ years",
-    specialties: ["Blockchain", "Cryptocurrency", "DeFi"],
-    bio: "Blockchain pioneer who's been building decentralized solutions since the early days of crypto. David mentors students in the revolutionary world of blockchain technology and Web3.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
-    badges: ["Blockchain Expert", "Web3 Pioneer", "DeFi Innovator"],
-    stats: { mentees: 80, sessions: 70, rating: 4.6 },
-    interests: ["Smart Contracts", "DeFi Protocols", "NFTs"],
-    availability: "Evenings",
-    joinDate: "2023",
-    company: "Blockchain Solutions Cameroon",
-    education: "MS Computer Science, ETH Zurich",
-    achievements: [
-      "Built 20+ blockchain applications",
-      "Launched successful DeFi protocols",
-      "Speaker at blockchain conferences",
-      "Mentored 100+ blockchain developers"
-    ]
-  }
-]
+interface Mentor {
+  id: string
+  slug: string
+  name: string
+  email: string
+  profileImage?: string
+  bio?: string
+  specialties: string[]
+  experience?: string
+  company?: string
+  location?: string
+  education?: string
+  languages: string[]
+  achievements: string[]
+  socialLinks?: any
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
 
 const MentorsPage = () => {
+  const [mentors, setMentors] = useState<Mentor[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedSpecialty, setSelectedSpecialty] = useState("")
   const [selectedLocation, setSelectedLocation] = useState("")
 
+  useEffect(() => {
+    fetchMentors()
+  }, [])
+
+  const fetchMentors = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await fetch("/api/mentors")
+      const data = await response.json()
+      
+      if (data.success) {
+        setMentors(data.data)
+      } else {
+        setError("Failed to load mentors")
+      }
+    } catch (err) {
+      console.error("Error fetching mentors:", err)
+      setError("Failed to load mentors")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const specialties = [...new Set(mentors.flatMap(m => m.specialties))]
-  const locations = [...new Set(mentors.map(m => m.location))]
+  const locations = [...new Set(mentors.map(m => m.location).filter(Boolean))]
 
   const filteredMentors = mentors.filter(mentor => {
     const matchesSearch = mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         mentor.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         mentor.bio?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          mentor.specialties.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
     
     const matchesSpecialty = !selectedSpecialty || mentor.specialties.includes(selectedSpecialty)
@@ -270,11 +176,11 @@ const MentorsPage = () => {
               <div className="flex flex-wrap justify-center gap-6 text-white/80">
                 <div className="flex items-center space-x-2">
                   <Users className="w-5 h-5" />
-                  <span>{mentors.length} Expert Mentors</span>
+                  <span>{loading ? "..." : `${mentors.length} Expert Mentors`}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Award className="w-5 h-5" />
-                  <span>500+ Students Mentored</span>
+                  <span>{loading ? "..." : `${mentors.filter(m => m.isActive).length} Active Mentors`}</span>
                 </div>
               </div>
             </motion.div>
@@ -342,124 +248,154 @@ const MentorsPage = () => {
         {/* Mentors Grid */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {filteredMentors.map((mentor, index) => (
-                <motion.div
-                  key={mentor.id}
-                  variants={itemVariants}
-                  whileHover={{ y: -5 }}
-                  className="group"
-                >
-                  <Link href={`/mentors/${mentor.id}`}>
-                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer">
-                      {/* Profile Image */}
-                      <div className="relative h-64 bg-gray-900">
-                        <img
-                          src={mentor.avatar}
-                          alt={mentor.name}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                        
-                        {/* Badges */}
-                        <div className="absolute top-4 right-4 flex flex-col space-y-2">
-                          {mentor.badges.slice(0, 2).map((badge, badgeIndex) => (
-                            <span
-                              key={badgeIndex}
-                              className="bg-white/90 text-gray-900 px-2 py-1 rounded-full text-xs font-medium"
-                            >
-                              {badge}
-                            </span>
-                          ))}
-                        </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+                <p className="text-gray-400">Loading mentors...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="text-red-500 mb-4">
+                  <Users className="w-12 h-12 mx-auto mb-2" />
+                  <p className="text-lg font-semibold">Failed to load mentors</p>
+                  <p className="text-sm text-gray-600">{error}</p>
+                </div>
+                <Button onClick={fetchMentors} className="bg-blue-600 hover:bg-blue-700 text-white">
+                  Try Again
+                </Button>
+              </div>
+            ) : (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {filteredMentors.map((mentor, index) => (
+                  <motion.div
+                    key={mentor.id}
+                    variants={itemVariants}
+                    whileHover={{ y: -5 }}
+                    className="group"
+                  >
+                           <Link href={`/mentors/${mentor.slug}`}>
+                             <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer">
+                               {/* Profile Image */}
+                               <div className="relative h-64 bg-gray-900">
+                                 {mentor.profileImage ? (
+                                   <Image
+                                     src={mentor.profileImage}
+                                     alt={mentor.name}
+                                     fill
+                                     className="object-cover"
+                                   />
+                                 ) : (
+                                   <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                                     <Users className="w-16 h-16 text-gray-400" />
+                                   </div>
+                                 )}
+                                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                                 
+                                 {/* Experience Badge */}
+                                 {mentor.experience && (
+                                   <div className="absolute top-4 left-4 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                     {mentor.experience}
+                                   </div>
+                                 )}
 
-                        {/* Rating */}
-                        <div className="absolute bottom-4 left-4 flex items-center space-x-1 bg-white/90 rounded-full px-2 py-1">
-                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                          <span className="text-sm font-medium text-gray-900">{mentor.stats.rating}</span>
-                        </div>
+                                 {/* Active Status */}
+                                 <div className="absolute top-4 right-4">
+                                   <div className={`w-3 h-3 rounded-full ${mentor.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                                 </div>
+                               </div>
 
-                        {/* Experience Badge */}
-                        <div className="absolute top-4 left-4 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
-                          {mentor.experience}
-                        </div>
-                      </div>
+                               {/* Content */}
+                               <div className="p-6">
+                                 <div className="mb-4">
+                                   <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-600 transition-colors">
+                                     {mentor.name}
+                                   </h3>
+                                   <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+                                     {mentor.location && (
+                                       <div className="flex items-center space-x-1">
+                                         <MapPin className="w-4 h-4" />
+                                         <span>{mentor.location}</span>
+                                       </div>
+                                     )}
+                                     {mentor.company && (
+                                       <div className="flex items-center space-x-1">
+                                         <Building className="w-4 h-4" />
+                                         <span>{mentor.company}</span>
+                                       </div>
+                                     )}
+                                   </div>
+                                 </div>
 
-                      {/* Content */}
-                      <div className="p-6">
-                        <div className="mb-4">
-                          <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-600 transition-colors">
-                            {mentor.name}
-                          </h3>
-                          <p className="text-gray-600 font-medium mb-2">{mentor.role}</p>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            <div className="flex items-center space-x-1">
-                              <MapPin className="w-4 h-4" />
-                              <span>{mentor.location}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Building className="w-4 h-4" />
-                              <span>{mentor.company}</span>
-                            </div>
-                          </div>
-                        </div>
+                                 {mentor.bio && (
+                                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                                     {mentor.bio}
+                                   </p>
+                                 )}
 
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                          {mentor.bio}
-                        </p>
+                                 {/* Specialties */}
+                                 <div className="mb-4">
+                                   <div className="flex flex-wrap gap-2">
+                                     {mentor.specialties.slice(0, 3).map((specialty, specIndex) => (
+                                       <span
+                                         key={specIndex}
+                                         className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium"
+                                       >
+                                         {specialty}
+                                       </span>
+                                     ))}
+                                     {mentor.specialties.length > 3 && (
+                                       <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+                                         +{mentor.specialties.length - 3} more
+                                       </span>
+                                     )}
+                                   </div>
+                                 </div>
 
-                        {/* Specialties */}
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-2">
-                            {mentor.specialties.slice(0, 3).map((specialty, specIndex) => (
-                              <span
-                                key={specIndex}
-                                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium"
-                              >
-                                {specialty}
-                              </span>
-                            ))}
-                            {mentor.specialties.length > 3 && (
-                              <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
-                                +{mentor.specialties.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                                 {/* Languages */}
+                                 {mentor.languages.length > 0 && (
+                                   <div className="mb-4">
+                                     <div className="flex flex-wrap gap-1">
+                                       {mentor.languages.slice(0, 2).map((language, langIndex) => (
+                                         <span
+                                           key={langIndex}
+                                           className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium"
+                                         >
+                                           {language}
+                                         </span>
+                                       ))}
+                                       {mentor.languages.length > 2 && (
+                                         <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs font-medium">
+                                           +{mentor.languages.length - 2}
+                                         </span>
+                                       )}
+                                     </div>
+                                   </div>
+                                 )}
 
-                        {/* Stats */}
-                        <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-                          <div className="flex items-center space-x-1">
-                            <Users className="w-4 h-4" />
-                            <span>{mentor.stats.mentees} mentees</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{mentor.stats.sessions} sessions</span>
-                          </div>
-                        </div>
+                                 {/* Status */}
+                                 <div className="flex items-center justify-between">
+                                   <div className="flex items-center space-x-2">
+                                     <div className={`w-2 h-2 rounded-full ${mentor.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                                     <span className="text-sm text-gray-600">
+                                       {mentor.isActive ? 'Available' : 'Unavailable'}
+                                     </span>
+                                   </div>
+                                   <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
+                                 </div>
+                               </div>
+                             </div>
+                           </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
 
-                        {/* Availability */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span className="text-sm text-gray-600">{mentor.availability}</span>
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {filteredMentors.length === 0 && (
+            {!loading && !error && filteredMentors.length === 0 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -469,7 +405,11 @@ const MentorsPage = () => {
                   <Search className="w-16 h-16 mx-auto" />
                 </div>
                 <h3 className="text-xl font-medium text-gray-600 mb-2">No mentors found</h3>
-                <p className="text-gray-500">Try adjusting your search criteria</p>
+                <p className="text-gray-500">
+                  {searchTerm || selectedSpecialty || selectedLocation 
+                    ? "Try adjusting your search criteria" 
+                    : "No mentors have been added yet"}
+                </p>
               </motion.div>
             )}
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   ArrowLeft,
@@ -49,141 +49,86 @@ import {
   GraduationCap,
   BookOpenCheck,
   FileText,
-  ExternalLink
+  ExternalLink,
+  Loader
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
+import Image from "next/image"
 
-// Mock data - in real app, this would come from API/database
-const mentorData = {
-  "dr-patricia-tech-visionary": {
-    id: "dr-patricia-tech-visionary",
-    name: "Dr. Patricia Nguema",
-    role: "Senior Tech Executive",
-    location: "Douala",
-    experience: "15+ years",
-    specialties: ["Strategic Planning", "Tech Leadership", "Innovation Management"],
-    bio: "Visionary leader with 15+ years transforming organizations through technology. Dr. Patricia mentors the next generation of tech leaders, sharing insights from building successful tech companies across Africa. Her expertise spans from startup strategy to enterprise transformation.",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
-    badges: ["Tech Executive", "Innovation Leader", "Industry Pioneer"],
-    stats: { mentees: 200, sessions: 150, rating: 4.9 },
-    interests: ["Digital Transformation", "Leadership", "Emerging Tech"],
-    availability: "By Appointment",
-    joinDate: "2020",
-    company: "TechVision Africa",
-    education: "PhD Computer Science, MIT",
-    languages: ["English", "French", "Duala"],
-    achievements: [
-      "Founded 3 successful tech startups",
-      "Led digital transformation for 50+ companies",
-      "Published 20+ research papers",
-      "Speaker at major tech conferences"
-    ],
-    testimonials: [
-      {
-        name: "Sarah Mboum",
-        role: "Tech Entrepreneur",
-        text: "Dr. Patricia's mentorship transformed my approach to leadership. Her insights on scaling tech companies are invaluable.",
-        rating: 5
-      },
-      {
-        name: "David Fon",
-        role: "Startup Founder",
-        text: "Her strategic guidance helped me navigate the complexities of building a tech company in Africa.",
-        rating: 5
-      }
-    ],
-    expertise: [
-      {
-        title: "Strategic Planning",
-        description: "Helping leaders develop comprehensive strategies for growth and innovation",
-        level: "Expert"
-      },
-      {
-        title: "Tech Leadership",
-        description: "Building and leading high-performing tech teams",
-        level: "Expert"
-      },
-      {
-        title: "Innovation Management",
-        description: "Creating cultures of innovation and managing change",
-        level: "Expert"
-      }
-    ],
-    social: {
-      linkedin: "https://linkedin.com/in/dr-patricia-nguema",
-      twitter: "https://twitter.com/dr_patricia_tech",
-      website: "https://techvisionafrica.com"
-    }
-  },
-  "marcus-ai-pioneer": {
-    id: "marcus-ai-pioneer",
-    name: "Marcus Fon",
-    role: "AI Research Director",
-    location: "Yaoundé",
-    experience: "12+ years",
-    specialties: ["Machine Learning", "AI Ethics", "Research & Development"],
-    bio: "AI researcher passionate about ethical technology development. Marcus guides students through the complex world of artificial intelligence, emphasizing responsible innovation and human-centered design. His research focuses on making AI accessible and beneficial for African communities.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-    badges: ["AI Expert", "Research Leader", "Ethics Advocate"],
-    stats: { mentees: 150, sessions: 120, rating: 4.8 },
-    interests: ["Deep Learning", "Computer Vision", "Ethical AI"],
-    availability: "Weekends",
-    joinDate: "2021",
-    company: "AI Research Institute",
-    education: "PhD Artificial Intelligence, Stanford",
-    languages: ["English", "French"],
-    achievements: [
-      "Published 30+ AI research papers",
-      "Led breakthrough AI projects",
-      "Advocate for ethical AI development",
-      "Mentored 150+ AI researchers"
-    ],
-    testimonials: [
-      {
-        name: "Grace Tchoumi",
-        role: "AI Researcher",
-        text: "Marcus's approach to ethical AI development opened my eyes to the importance of responsible innovation.",
-        rating: 5
-      }
-    ],
-    expertise: [
-      {
-        title: "Machine Learning",
-        description: "Advanced ML algorithms and model development",
-        level: "Expert"
-      },
-      {
-        title: "AI Ethics",
-        description: "Ensuring AI systems are fair, transparent, and beneficial",
-        level: "Expert"
-      },
-      {
-        title: "Research & Development",
-        description: "Leading cutting-edge AI research projects",
-        level: "Expert"
-      }
-    ],
-    social: {
-      linkedin: "https://linkedin.com/in/marcus-fon",
-      twitter: "https://twitter.com/marcus_ai",
-      github: "https://github.com/marcus-fon"
-    }
-  }
-  // Add more mentors as needed
+interface Mentor {
+  id: string
+  slug: string
+  name: string
+  email: string
+  profileImage?: string
+  bio?: string
+  specialties: string[]
+  experience?: string
+  company?: string
+  location?: string
+  education?: string
+  languages: string[]
+  achievements: string[]
+  socialLinks?: any
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
-  const mentor = mentorData[params.slug as keyof typeof mentorData]
+  const [mentor, setMentor] = useState<Mentor | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchMentor()
+  }, [params.slug])
+
+  const fetchMentor = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // First, try to find mentor by slug in the database
+      // For now, we'll use the slug as the ID since we don't have slug field in our schema yet
+      const response = await fetch(`/api/mentors/${params.slug}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setMentor(data.data)
+      } else {
+        setError("Mentor not found")
+      }
+    } catch (err) {
+      console.error("Error fetching mentor:", err)
+      setError("Failed to load mentor")
+    } finally {
+      setLoading(false)
+    }
+  }
   
-  if (!mentor) {
+  if (loading) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <Loader className="w-12 h-12 animate-spin text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-400">Loading mentor...</p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+  
+  if (error || !mentor) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Mentor Not Found</h1>
-            <p className="text-gray-600 mb-8">The mentor you're looking for doesn't exist.</p>
+            <p className="text-gray-600 mb-8">{error || "The mentor you're looking for doesn't exist."}</p>
             <Link href="/mentors">
               <Button>Back to Mentors</Button>
             </Link>
@@ -242,11 +187,18 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
               <div className="lg:col-span-1">
                 <div className="relative">
                   <div className="w-64 h-64 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
-                    <img
-                      src={mentor.avatar}
-                      alt={mentor.name}
-                      className="w-full h-full object-cover"
-                    />
+                    {mentor.profileImage ? (
+                      <Image
+                        src={mentor.profileImage}
+                        alt={mentor.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                        <Users className="w-16 h-16 text-gray-400" />
+                      </div>
+                    )}
                   </div>
                   <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
                     <GraduationCap className="w-6 h-6 text-gray-900" />
@@ -257,18 +209,18 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
               {/* Profile Info */}
               <div className="lg:col-span-2 text-white">
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {mentor.badges.map((badge, index) => (
+                  {mentor.specialties.map((specialty, index) => (
                     <span
                       key={index}
                       className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium"
                     >
-                      {badge}
+                      {specialty}
                     </span>
                   ))}
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl font-bold mb-4">{mentor.name}</h1>
-                <p className="text-2xl text-white/80 mb-6">{mentor.role}</p>
+                <p className="text-2xl text-white/80 mb-6">{mentor.experience}</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                   <div className="flex items-center space-x-3">
@@ -282,20 +234,20 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-white" />
+                      <Building className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-white/80 text-sm">Experience</p>
-                      <p className="text-white font-medium">{mentor.experience}</p>
+                      <p className="text-white/80 text-sm">Company</p>
+                      <p className="text-white font-medium">{mentor.company}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                      <Star className="w-6 h-6 text-white" />
+                      <Calendar className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-white/80 text-sm">Rating</p>
-                      <p className="text-white font-medium">{mentor.stats.rating}/5.0</p>
+                      <p className="text-white/80 text-sm">Joined</p>
+                      <p className="text-white font-medium">{new Date(mentor.createdAt).getFullYear()}</p>
                     </div>
                   </div>
                 </div>
@@ -334,17 +286,14 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
               {/* Expertise Areas */}
               <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Expertise Areas</h2>
-                <div className="space-y-6">
-                  {mentor.expertise.map((area, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-xl font-semibold text-gray-900">{area.title}</h3>
-                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                          {area.level}
-                        </span>
-                      </div>
-                      <p className="text-gray-600">{area.description}</p>
-                    </div>
+                <div className="flex flex-wrap gap-3">
+                  {mentor.specialties.map((specialty, index) => (
+                    <span
+                      key={index}
+                      className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+                    >
+                      {specialty}
+                    </span>
                   ))}
                 </div>
               </motion.div>
@@ -363,58 +312,10 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                   ))}
                 </div>
               </motion.div>
-
-              {/* Testimonials */}
-              <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Mentee Testimonials</h2>
-                <div className="space-y-6">
-                  {mentor.testimonials.map((testimonial, index) => (
-                    <div key={index} className="border-l-4 border-gray-500 pl-6">
-                      <div className="flex items-center space-x-1 mb-2">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
-                        ))}
-                      </div>
-                      <p className="text-gray-600 mb-3 italic">"{testimonial.text}"</p>
-                      <div>
-                        <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                        <p className="text-sm text-gray-500">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
             </div>
 
             {/* Right Column */}
             <div className="space-y-8">
-              {/* Stats */}
-              <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Mentoring Impact</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Users className="w-5 h-5 text-purple-600" />
-                      <span className="text-gray-600">Mentees Guided</span>
-                    </div>
-                    <span className="font-bold text-gray-900">{mentor.stats.mentees}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Calendar className="w-5 h-5 text-green-600" />
-                      <span className="text-gray-600">Sessions Conducted</span>
-                    </div>
-                    <span className="font-bold text-gray-900">{mentor.stats.sessions}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Star className="w-5 h-5 text-yellow-600" />
-                      <span className="text-gray-600">Average Rating</span>
-                    </div>
-                    <span className="font-bold text-gray-900">{mentor.stats.rating}/5.0</span>
-                  </div>
-                </div>
-              </motion.div>
 
               {/* Contact Info */}
               <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
@@ -425,12 +326,8 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                     <span className="text-gray-600">{mentor.location}</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Clock className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-600">Available {mentor.availability}</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
                     <Calendar className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-600">Joined {mentor.joinDate}</span>
+                    <span className="text-gray-600">Joined {new Date(mentor.createdAt).getFullYear()}</span>
                   </div>
                 </div>
               </motion.div>
@@ -458,9 +355,9 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
               <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Connect</h3>
                 <div className="space-y-3">
-                  {mentor.social.linkedin && (
+                  {mentor.socialLinks?.linkedin && (
                     <a
-                      href={mentor.social.linkedin}
+                      href={mentor.socialLinks.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
@@ -472,9 +369,9 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                       <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />
                     </a>
                   )}
-                  {mentor.social.twitter && (
+                  {mentor.socialLinks?.twitter && (
                     <a
-                      href={mentor.social.twitter}
+                      href={mentor.socialLinks.twitter}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
@@ -486,9 +383,9 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                       <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />
                     </a>
                   )}
-                  {mentor.social.github && (
+                  {mentor.socialLinks?.github && (
                     <a
-                      href={mentor.social.github}
+                      href={mentor.socialLinks.github}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -500,9 +397,9 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
                       <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />
                     </a>
                   )}
-                  {mentor.social.website && (
+                  {mentor.socialLinks?.website && (
                     <a
-                      href={mentor.social.website}
+                      href={mentor.socialLinks.website}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"

@@ -25,7 +25,6 @@ model User {
   sessions session[]
 
   // Custom relations
-  mentorProfile    MentorProfile?
   volunteerProfile VolunteerProfile?
   blogPosts        BlogPost[]
   comments         Comment[]
@@ -94,7 +93,10 @@ model verification {
 
 model MentorProfile {
   id          String   @id @map("_id") @db.String
-  userId      String   @unique @db.String
+  slug        String   @unique
+  name        String
+  email       String
+  profileImage String?
   bio         String?
   specialties String[]
   experience  String?
@@ -107,9 +109,6 @@ model MentorProfile {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("mentor_profiles")
 }
