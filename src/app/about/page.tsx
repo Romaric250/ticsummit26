@@ -375,52 +375,53 @@ const AboutPage = () => {
             ) : featuredAlumni.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 {featuredAlumni.map((alumnus, index) => (
-                  <motion.div
-                    key={alumnus.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center hover:shadow-xl transition-shadow"
-                  >
-                    <div className="w-20 h-20 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden">
-                      {alumnus.profileImage ? (
-                        <Image
-                          src={alumnus.profileImage}
-                          alt={alumnus.name}
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-white font-bold text-2xl">
-                          {alumnus.name.charAt(0)}
-                        </span>
+                  <Link key={alumnus.id} href={`/alumni/${alumnus.slug}`}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center hover:shadow-xl transition-shadow cursor-pointer"
+                    >
+                      <div className="w-20 h-20 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden">
+                        {alumnus.profileImage ? (
+                          <Image
+                            src={alumnus.profileImage}
+                            alt={alumnus.name}
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-white font-bold text-2xl">
+                            {alumnus.name.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {alumnus.name}
+                      </h3>
+                      
+                      {alumnus.currentRole && (
+                        <p className="text-blue-600 font-semibold mb-2">
+                          {alumnus.currentRole}
+                        </p>
                       )}
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {alumnus.name}
-                    </h3>
-                    
-                    {alumnus.currentRole && (
-                      <p className="text-blue-600 font-semibold mb-2">
-                        {alumnus.currentRole}
-                      </p>
-                    )}
-                    
-                    {alumnus.company && (
-                      <p className="text-gray-600 text-sm mb-4">
-                        {alumnus.company}
-                      </p>
-                    )}
-                    
-                    {alumnus.bio && (
-                      <blockquote className="text-gray-700 italic text-sm">
-                        "{alumnus.bio.length > 100 ? `${alumnus.bio.substring(0, 100)}...` : alumnus.bio}"
-                      </blockquote>
-                    )}
-                  </motion.div>
+                      
+                      {alumnus.company && (
+                        <p className="text-gray-600 text-sm mb-4">
+                          {alumnus.company}
+                        </p>
+                      )}
+                      
+                      {alumnus.bio && (
+                        <blockquote className="text-gray-700 italic text-sm">
+                          "{alumnus.bio.length > 100 ? `${alumnus.bio.substring(0, 100)}...` : alumnus.bio}"
+                        </blockquote>
+                      )}
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             ) : (

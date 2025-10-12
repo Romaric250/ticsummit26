@@ -92,7 +92,7 @@ model verification {
 }
 
 model MentorProfile {
-  id          String   @id @map("_id") @db.String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   slug        String   @unique
   name        String
   email       String
@@ -115,7 +115,7 @@ model MentorProfile {
 }
 
 model AlumniProfile {
-  id          String   @id @map("_id") @db.String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   slug        String   @unique
   name        String
   email       String

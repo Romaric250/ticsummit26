@@ -54,6 +54,8 @@ const AdminMentorsPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("")
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [mentorToDelete, setMentorToDelete] = useState<Mentor | null>(null)
+  const [showToggleModal, setShowToggleModal] = useState(false)
+  const [mentorToToggle, setMentorToToggle] = useState<Mentor | null>(null)
   const [showActiveOnly, setShowActiveOnly] = useState(true)
 
   useEffect(() => {
@@ -79,15 +81,26 @@ const AdminMentorsPage = () => {
     }
   }
 
-  const handleToggleActive = async (mentorId: string, currentStatus: boolean) => {
+  const handleToggleActive = (mentorId: string, currentStatus: boolean) => {
+    const mentor = mentors.find(m => m.id === mentorId)
+    if (!mentor) return
+    
+    setMentorToToggle(mentor)
+    setShowToggleModal(true)
+  }
+
+  const confirmToggleActive = async () => {
+    if (!mentorToToggle) return
+
     try {
-      const response = await fetch(`/api/mentors/${mentorId}`, {
+      const response = await fetch(`/api/mentors/${mentorToToggle.slug}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          isActive: !currentStatus
+          ...mentorToToggle,
+          isActive: !mentorToToggle.isActive
         })
       })
 
@@ -96,15 +109,20 @@ const AdminMentorsPage = () => {
       if (data.success) {
         // Update local state
         setMentors(prev => prev.map(mentor => 
-          mentor.id === mentorId 
-            ? { ...mentor, isActive: !currentStatus }
+          mentor.id === mentorToToggle.id 
+            ? { ...mentor, isActive: !mentorToToggle.isActive }
             : mentor
         ))
+        toast.success(`Mentor ${mentorToToggle.isActive ? 'deactivated' : 'activated'} successfully!`)
       } else {
-        console.error("Failed to toggle mentor status:", data.error)
+        toast.error("Failed to update mentor status")
       }
     } catch (error) {
       console.error("Error toggling mentor status:", error)
+      toast.error("Failed to update mentor status")
+    } finally {
+      setShowToggleModal(false)
+      setMentorToToggle(null)
     }
   }
 
@@ -521,6 +539,95 @@ const AdminMentorsPage = () => {
                     Delete Mentor
                   </Button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Toggle Status Confirmation Modal */}
+      <AnimatePresence>
+        {showToggleModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-xl p-6 w-full max-w-md"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {mentorToToggle?.isActive ? 'Deactivate' : 'Activate'} Mentor
+                </h3>
+                <button
+                  onClick={() => setShowToggleModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <span className="sr-only">Close</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="mb-4">
+                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                    {mentorToToggle?.profileImage ? (
+                      <img
+                        src={mentorToToggle.profileImage}
+                        alt={mentorToToggle.name}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <span className="text-gray-600 font-bold text-sm">
+                        {mentorToToggle?.name.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{mentorToToggle?.name}</p>
+                    <p className="text-sm text-gray-600">{mentorToToggle?.email}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to {mentorToToggle?.isActive ? 'deactivate' : 'activate'} this mentor? 
+                {mentorToToggle?.isActive 
+                  ? ' They will no longer appear in public listings.' 
+                  : ' They will become visible in public listings.'
+                }
+              </p>
+              
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setShowToggleModal(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={confirmToggleActive}
+                  className={`flex-1 ${
+                    mentorToToggle?.isActive 
+                      ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                      : 'bg-green-600 hover:bg-green-700 text-white'
+                  }`}
+                >
+                  {mentorToToggle?.isActive ? (
+                    <>
+                      <EyeOff className="w-4 h-4 mr-2" />
+                      Deactivate Mentor
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="w-4 h-4 mr-2" />
+                      Activate Mentor
+                    </>
+                  )}
+                </Button>
               </div>
             </motion.div>
           </div>

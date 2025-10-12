@@ -175,19 +175,19 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
             <div className="max-w-4xl mx-auto">
               <div className="flex flex-col lg:flex-row gap-8">
                 {/* Profile Image */}
-                <div className="lg:w-1/3">
+                <div className="lg:w-2/5">
                   <div className="relative">
                     {alumnus.profileImage ? (
                       <Image
                         src={alumnus.profileImage}
                         alt={alumnus.name}
-                        width={300}
-                        height={400}
-                        className="w-full h-80 object-cover rounded-2xl shadow-2xl"
+                        width={400}
+                        height={500}
+                        className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                       />
                     ) : (
-                      <div className="w-full h-80 bg-gray-700 rounded-2xl flex items-center justify-center">
-                        <Users className="w-24 h-24 text-gray-400" />
+                      <div className="w-full h-96 bg-gray-700 rounded-2xl flex items-center justify-center">
+                        <Users className="w-32 h-32 text-gray-400" />
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
@@ -195,7 +195,7 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
                 </div>
                 
                 {/* Content */}
-                <div className="lg:w-2/3 text-white">
+                <div className="lg:w-3/5 text-white">
                   <div className="mb-6">
                     <h1 className="text-4xl lg:text-5xl font-bold mb-4">{alumnus.name}</h1>
                     {alumnus.currentRole && (
@@ -220,13 +220,13 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
                       <Share2 className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
                       Share Profile
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="outline"
                       className="border-white text-white hover:bg-white hover:text-gray-900"
                     >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Contact
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </div>
@@ -242,12 +242,12 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-8">
                   {/* About */}
-                  {alumnus.bio && (
+                  {/* {alumnus.bio && (
                     <div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-4">About</h2>
                       <p className="text-gray-700 leading-relaxed">{alumnus.bio}</p>
                     </div>
-                  )}
+                  )} */}
 
                   {/* Achievements */}
                   {alumnus.achievements.length > 0 && (
@@ -371,7 +371,7 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
                 <Button
                   size="xl"
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-gray-900"
+                  className="border-white text-white hover:bg-transparent hover:text-white"
                 >
                   Join Our Program
                 </Button>

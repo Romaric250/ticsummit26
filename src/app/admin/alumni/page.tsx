@@ -18,7 +18,8 @@ import {
   MoreVertical,
   X,
   GraduationCap,
-  Briefcase
+  Briefcase,
+  CheckCircle
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
@@ -53,6 +54,8 @@ const AdminAlumniPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("")
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [alumnusToDelete, setAlumnusToDelete] = useState<Alumni | null>(null)
+  const [showToggleModal, setShowToggleModal] = useState(false)
+  const [alumnusToToggle, setAlumnusToToggle] = useState<Alumni | null>(null)
   const [showActiveOnly, setShowActiveOnly] = useState(true)
 
   useEffect(() => {
@@ -79,19 +82,26 @@ const AdminAlumniPage = () => {
     }
   }
 
-  const handleToggleStatus = async (alumnusId: string) => {
-    try {
-      const alumnus = alumni.find(a => a.id === alumnusId)
-      if (!alumnus) return
+  const handleToggleStatus = (alumnusId: string) => {
+    const alumnus = alumni.find(a => a.id === alumnusId)
+    if (!alumnus) return
+    
+    setAlumnusToToggle(alumnus)
+    setShowToggleModal(true)
+  }
 
-      const response = await fetch(`/api/alumni/${alumnus.slug}`, {
+  const confirmToggleStatus = async () => {
+    if (!alumnusToToggle) return
+
+    try {
+      const response = await fetch(`/api/alumni/${alumnusToToggle.slug}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...alumnus,
-          isActive: !alumnus.isActive
+          ...alumnusToToggle,
+          isActive: !alumnusToToggle.isActive
         })
       })
 
@@ -99,15 +109,20 @@ const AdminAlumniPage = () => {
 
       if (data.success) {
         setAlumni(prev => prev.map(a => 
-          a.id === alumnusId ? { ...a, isActive: !a.isActive } : a
+          a.id === alumnusToToggle.id 
+            ? { ...a, isActive: !a.isActive }
+            : a
         ))
-        toast.success(`Alumnus ${alumnus.isActive ? 'deactivated' : 'activated'} successfully!`)
+        toast.success(`Alumnus ${alumnusToToggle.isActive ? 'deactivated' : 'activated'} successfully!`)
       } else {
         toast.error("Failed to update alumnus status")
       }
     } catch (error) {
       console.error("Error toggling alumnus status:", error)
       toast.error("Failed to update alumnus status")
+    } finally {
+      setShowToggleModal(false)
+      setAlumnusToToggle(null)
     }
   }
 
@@ -460,7 +475,7 @@ const AdminAlumniPage = () => {
                             size="sm"
                             variant="outline"
                             onClick={() => handleDelete(alumnus.id)}
-                            className="text-red-600 border-red-300 hover:bg-red-50"
+                            className="bg-white text-red-600 border-red-300 hover:bg-white hover:text-red-600"
                           >
                             <Trash2 className="w-3 h-3 mr-1" />
                             Delete
@@ -526,6 +541,95 @@ const AdminAlumniPage = () => {
                       Delete Alumni
                     </Button>
                   </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Toggle Status Confirmation Modal */}
+        <AnimatePresence>
+          {showToggleModal && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white rounded-xl p-6 w-full max-w-md"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {alumnusToToggle?.isActive ? 'Deactivate' : 'Activate'} Alumni
+                  </h3>
+                  <button
+                    onClick={() => setShowToggleModal(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <span className="sr-only">Close</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="mb-4">
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      {alumnusToToggle?.profileImage ? (
+                        <img
+                          src={alumnusToToggle.profileImage}
+                          alt={alumnusToToggle.name}
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      ) : (
+                        <span className="text-gray-600 font-bold text-sm">
+                          {alumnusToToggle?.name.charAt(0)}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{alumnusToToggle?.name}</p>
+                      <p className="text-sm text-gray-600">{alumnusToToggle?.email}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <p className="text-gray-700 mb-6">
+                  Are you sure you want to {alumnusToToggle?.isActive ? 'deactivate' : 'activate'} this alumni? 
+                  {alumnusToToggle?.isActive 
+                    ? ' They will no longer appear in public listings.' 
+                    : ' They will become visible in public listings.'
+                  }
+                </p>
+                
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => setShowToggleModal(false)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={confirmToggleStatus}
+                    className={`flex-1 ${
+                      alumnusToToggle?.isActive 
+                        ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    {alumnusToToggle?.isActive ? (
+                      <>
+                        <EyeOff className="w-4 h-4 mr-2" />
+                        Deactivate Alumni
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4 mr-2" />
+                        Activate Alumni
+                      </>
+                    )}
+                  </Button>
                 </div>
               </motion.div>
             </div>
