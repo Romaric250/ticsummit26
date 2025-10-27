@@ -9,28 +9,17 @@ import {
   Linkedin, 
   Mail, 
   Phone, 
-  MapPin,
-  ArrowUp
+  MapPin
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 
 const Footer = () => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
   const footerLinks = {
     about: [
       { name: "Our Story", href: "/about" },
       { name: "Mission & Vision", href: "/about/mission" },
       { name: "Team", href: "/about/team" },
       { name: "Partners", href: "/about/partners" },
-    ],
-    events: [
-      { name: "Current Summit", href: "/events/current" },
-      { name: "Workshops", href: "/events/workshops" },
-      { name: "Past Events", href: "/events/past" },
-      { name: "Gallery", href: "/gallery" },
     ],
     resources: [
       { name: "Blog", href: "/blog" },
@@ -69,9 +58,9 @@ const Footer = () => {
       <div className="relative z-10">
         {/* Main Footer Content */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Brand Section */}
-            <div className="lg:col-span-2">
+            <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -87,12 +76,6 @@ const Footer = () => {
                     <span className="text-white text-sm">Innovation Hub</span>
                   </div>
                 </Link>
-                
-                <p className="text-white mb-6 max-w-md">
-                  Empowering young innovators across Cameroon through technology, 
-                  mentorship, and hands-on learning experiences. Join us in building 
-                  the future of African tech.
-                </p>
 
                 {/* Contact Info */}
                 <div className="space-y-3">
@@ -143,40 +126,27 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-              <div className="text-white text-sm">
-                © 2024 TIC Summit. All rights reserved.
-              </div>
-              
-              {/* Social Links */}
-              <div className="flex items-center space-x-4">
-                {socialLinks.map((social) => (
-                  <motion.a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-2 rounded-lg bg-white hover:bg-white transition-colors duration-200"
-                  >
-                    <social.icon className="w-5 h-5 text-gray-900" />
-                  </motion.a>
-                ))}
-              </div>
-
-              {/* Back to Top Button */}
-              <motion.button
-                onClick={scrollToTop}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white hover:bg-white transition-colors duration-200"
-              >
-                <ArrowUp className="w-4 h-4 text-gray-900" />
-                <span className="text-sm text-gray-900">Back to Top</span>
-              </motion.button>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col items-center space-y-4">
+            {/* Social Links */}
+            <div className="flex items-center space-x-4">
+              {socialLinks.map((social) => (
+                <motion.a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-2 rounded-lg bg-white hover:bg-white transition-colors duration-200"
+                >
+                  <social.icon className="w-5 h-5 text-gray-900" />
+                </motion.a>
+              ))}
+            </div>
+            
+            <div className="text-white text-sm">
+              © 2024 TIC Summit. All rights reserved.
             </div>
           </div>
         </div>

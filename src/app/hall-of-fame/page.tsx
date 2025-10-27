@@ -90,52 +90,52 @@ const HallOfFamePage = () => {
     <Layout>
       <div className="min-h-screen bg-gray-900">
         {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <section className="relative pt-16 pb-8 bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-center"
+              className="text-center mb-8"
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 Hall of Fame
               </h1>
-              <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                Celebrating the innovative projects and brilliant minds that have shaped the TIC Summit journey
+              <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                Celebrating innovative projects from TIC Summit
               </p>
-              
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                  <div className="text-3xl font-bold text-white">{projects.length}</div>
-                  <div className="text-gray-300 text-sm">Total Projects</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                  <div className="text-3xl font-bold text-white">
-                    {projects.filter(p => p.status === "WINNER").length}
-                  </div>
-                  <div className="text-gray-300 text-sm">Winners</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                  <div className="text-3xl font-bold text-white">
-                    {projects.filter(p => p.status === "FINALIST").length}
-                  </div>
-                  <div className="text-gray-300 text-sm">Finalists</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                  <div className="text-3xl font-bold text-white">
-                    {new Set(projects.map(p => p.category)).size}
-                  </div>
-                  <div className="text-gray-300 text-sm">Categories</div>
-                </div>
-              </div>
             </motion.div>
+            
+            {/* Compact Stats */}
+            <div className="flex flex-wrap justify-center gap-6 mb-0">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-white">{projects.length}</span>
+                <span className="text-gray-400">Projects</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-white">
+                  {projects.filter(p => p.status === "WINNER").length}
+                </span>
+                <span className="text-gray-400">Winners</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-white">
+                  {projects.filter(p => p.status === "FINALIST").length}
+                </span>
+                <span className="text-gray-400">Finalists</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-white">
+                  {new Set(projects.map(p => p.category)).size}
+                </span>
+                <span className="text-gray-400">Categories</span>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Filters */}
-        <section className="py-8 bg-gray-800">
+        <section className="py-4 bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -175,7 +175,7 @@ const HallOfFamePage = () => {
         </section>
 
         {/* Projects Grid */}
-        <section className="py-16">
+        <section className="py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {filteredProjects.length === 0 ? (
               <motion.div
@@ -192,7 +192,7 @@ const HallOfFamePage = () => {
                 </p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredProjects.map((project, index) => (
                   <motion.div
                     key={project.id}
@@ -207,7 +207,7 @@ const HallOfFamePage = () => {
                     }}
                   >
                     {/* Project Image */}
-                    <div className="relative h-48 bg-gray-700 flex items-center justify-center">
+                    <div className="relative h-36 bg-gray-700 flex items-center justify-center">
                       {project.images && project.images.length > 0 ? (
                         <img
                           src={project.images[Math.floor(Math.random() * project.images.length)]}
@@ -232,9 +232,9 @@ const HallOfFamePage = () => {
                     </div>
 
                     {/* Project Info */}
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-lg font-semibold text-white line-clamp-2 flex-1">
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="text-base font-semibold text-white line-clamp-2 flex-1">
                           {project.title}
                         </h3>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 ${
@@ -247,12 +247,12 @@ const HallOfFamePage = () => {
                         </span>
                       </div>
 
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                      <p className="text-gray-400 text-sm mb-2 line-clamp-2">
                         {project.description}
                       </p>
 
                       {/* Tech Stack */}
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-2">
                         {project.techStack.slice(0, 3).map((tech, index) => (
                           <span
                             key={index}
@@ -269,7 +269,7 @@ const HallOfFamePage = () => {
                       </div>
 
                       {/* Members */}
-                      <div className="flex items-center space-x-2 mb-4">
+                      <div className="flex items-center space-x-2 mb-2">
                         <User className="w-4 h-4 text-gray-400" />
                         <div className="flex flex-wrap gap-1">
                           {project.members.slice(0, 3).map((member, index) => (
@@ -288,7 +288,7 @@ const HallOfFamePage = () => {
 
                       {/* Demo URL */}
                       {project.demoUrl && (
-                        <div className="flex items-center space-x-2 mb-4">
+                        <div className="flex items-center space-x-2 mb-2">
                           <ExternalLink className="w-4 h-4 text-gray-400" />
                           <a
                             href={project.demoUrl}
@@ -303,7 +303,7 @@ const HallOfFamePage = () => {
                       )}
 
                       {/* Stats */}
-                      <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
+                      <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-1">
                             <Eye className="w-4 h-4" />
