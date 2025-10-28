@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, Clock, User, ArrowRight, Tag, Search } from 'lucide-react'
 import { BlogPost } from '@/types'
 import { formatDate } from '@/lib/utils'
+import BlogEditor from '@/components/blogs/BlogEditor'
 
 const blogPosts: BlogPost[] = [
   {
@@ -94,6 +95,8 @@ export default function BlogsSection() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [editorContent, setEditorContent] = useState('')
 
   const filteredPosts = blogPosts.filter(post => {
     const matchesCategory = selectedCategory === 'all' || 
@@ -307,18 +310,26 @@ export default function BlogsSection() {
           ))}
         </motion.div>
 
-        {/* Load More Button */}
+        {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-12 flex gap-4 justify-center"
         >
           <motion.button
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => setIsEditorOpen(true)}
             className="bg-primary-600 text-white px-8 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Create New Post
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white text-primary-600 px-8 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 border border-primary-600"
           >
             Load More Articles
           </motion.button>
@@ -390,6 +401,31 @@ export default function BlogsSection() {
                 </div>
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Blog Editor Modal */}
+      <AnimatePresence>
+        {isEditorOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-white"
+          >
+            <div className="h-full w-full">
+              <BlogEditor
+                initialContent={editorContent}
+                onSave={(content) => {
+                  setEditorContent(content)
+                  setIsEditorOpen(false)
+                  // Here you would save to your database/state management
+                  console.log('Saving content:', content)
+                }}
+                onCancel={() => setIsEditorOpen(false)}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

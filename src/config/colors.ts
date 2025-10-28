@@ -1,122 +1,75 @@
-// Global color configuration for the TIC Summit website
-// Change these values to update colors across the entire application
-
 export const colors = {
-  // Primary color (main brand color)
   primary: {
-    50: '#f9fafb',
-    100: '#f3f4f6',
-    200: '#e5e7eb',
-    300: '#d1d5db',
-    400: '#9ca3af',
-    500: '#6b7280',
-    600: '#4b5563',
-    700: '#374151',
-    800: '#1f2937',
-    900: '#111827', // Main primary color
+    50: '#eff6ff',
+    100: '#dbeafe',
+    200: '#bfdbfe',
+    300: '#93c5fd',
+    400: '#60a5fa',
+    500: '#3b82f6',
+    600: '#2563eb',
+    700: '#1d4ed8',
+    800: '#1e40af',
+    900: '#1e3a8a',
+    950: '#172554',
   },
-  
-  // Secondary color (white)
   secondary: {
+    50: '#f8fafc',
+    100: '#f1f5f9',
+    200: '#e2e8f0',
+    300: '#cbd5e1',
+    400: '#94a3b8',
+    500: '#64748b',
+    600: '#475569',
+    700: '#334155',
+    800: '#1e293b',
+    900: '#0f172a',
+    950: '#020617',
     white: '#ffffff',
-    offWhite: '#f9fafb',
   },
-  
-  // Accent colors (for highlights and special elements)
-  accent: {
-    success: '#10b981', // green-500
-    warning: '#f59e0b', // yellow-500
-    error: '#ef4444',   // red-500
-    info: '#3b82f6',    // blue-500
-  },
-  
-  // Text colors
+  accent: '#d946ef',
   text: {
-    primary: '#111827',    // gray-900
-    secondary: '#6b7280',  // gray-500
-    light: '#9ca3af',      // gray-400
+    primary: '#0f172a',
+    secondary: '#475569',
+    light: '#64748b',
     white: '#ffffff',
   },
-  
-  // Background colors
   background: {
-    primary: '#111827',    // gray-900
-    secondary: '#ffffff',  // white
-    light: '#f9fafb',      // gray-50
-    dark: '#1f2937',       // gray-800
+    primary: '#ffffff',
+    secondary: '#f8fafc',
+    light: '#f1f5f9',
+    dark: '#0f172a',
   },
-  
-  // Border colors
-  border: {
-    primary: '#111827',    // gray-900
-    secondary: '#e5e7eb',  // gray-200
-    light: '#f3f4f6',      // gray-100
-  }
-} as const
-
-// Helper function to get color values
-export const getColor = (path: string): string => {
-  const keys = path.split('.')
-  let value: any = colors
-  
-  for (const key of keys) {
-    value = value[key]
-    if (value === undefined) {
-      console.warn(`Color path "${path}" not found`)
-      return '#000000' // fallback to black
-    }
-  }
-  
-  return value
+  border: '#e2e8f0',
 }
 
-// Predefined color combinations for common use cases
 export const colorSchemes = {
-  // Primary button
   primaryButton: {
-    bg: colors.primary[900],
-    text: colors.secondary.white,
-    hover: colors.primary[800],
+    bg: colors.primary[600],
+    hover: colors.primary[700],
+    text: '#ffffff',
   },
-  
-  // Secondary button
   secondaryButton: {
-    bg: colors.secondary.white,
-    text: colors.primary[900],
-    hover: colors.primary[50],
-    border: colors.primary[900],
+    bg: colors.secondary[200],
+    hover: colors.secondary[300],
+    text: colors.text.primary,
   },
-  
-  // Header
   header: {
-    bg: colors.primary[900],
-    text: colors.secondary.white,
-    logo: {
-      bg: colors.secondary.white,
-      text: colors.primary[900],
-    }
+    bg: '#ffffff',
+    text: colors.text.primary,
+    border: colors.border,
   },
-  
-  // Footer
   footer: {
     bg: colors.primary[900],
-    text: colors.secondary.white,
-    links: colors.secondary.white,
+    text: '#ffffff',
+    textLight: colors.primary[300],
   },
-  
-  // Hero section
   hero: {
-    bg: colors.primary[900],
-    text: colors.secondary.white,
-    accent: colors.primary[300],
+    gradient: `linear-gradient(135deg, ${colors.primary[600]} 0%, ${colors.primary[700]} 50%, ${colors.primary[900]} 100%)`,
+    text: '#ffffff',
   },
-  
-  // Cards
   card: {
-    bg: colors.secondary.white,
-    text: colors.text.primary,
-    border: colors.border.secondary,
-  }
-} as const
-
-export default colors
+    bg: '#ffffff',
+    border: colors.border,
+    shadow: '0 1px 3px rgba(0,0,0,0.1)',
+  },
+}

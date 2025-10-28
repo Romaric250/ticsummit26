@@ -1,5 +1,299 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URL")
+  
+//   relationMode = "prisma"
+// }
+
+// model User {
+//   id            String    @id @map("_id")
+//   email         String    @unique
+//   name          String?
+//   image         String?
+//   emailVerified Boolean   @default(false)
+//   role          UserRole  @default(STUDENT)
+//   createdAt     DateTime  @default(now())
+//   updatedAt     DateTime  @updatedAt
+
+//   // Better Auth relations
+//   accounts account[]
+//   sessions session[]
+
+//   // Custom relations
+//   // volunteerProfile VolunteerProfile?
+//   blogPosts        BlogPost[]
+//   comments         Comment[]
+//   likes            Like[]
+//   views            View[]
+//   projects         Project[]
+//   applications     Application[]
+
+//   @@map("users")
+// }
+
+// model account {
+//   id                    String  @id @map("_id")
+//   userId                String
+//   type                  String @default("oauth")
+//   provider              String @default("google")
+//   providerId            String
+//   accountId             String
+//   refresh_token         String?
+//   access_token          String?
+//   accessToken           String?
+//   accessTokenExpiresAt  DateTime?
+//   expires_at            Int?
+//   token_type            String?
+//   scope                 String?
+//   id_token              String?
+//   idToken               String?
+//   session_state         String?
+//   createdAt             DateTime @default(now())
+//   updatedAt             DateTime @updatedAt
+
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([provider, providerId])
+//   @@map("accounts")
+// }
+
+// model session {
+//   id           String   @id @map("_id")
+//   sessionToken String?  @unique
+//   userId       String
+//   expires      DateTime?
+//   expiresAt    DateTime?
+//   token        String?  @unique
+//   ipAddress    String?
+//   userAgent    String?
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@map("sessions")
+// }
+
+// model verification {
+//   id         String   @id @map("_id")
+//   identifier String
+//   token      String?  @unique
+//   expiresAt  DateTime
+//   value      String?
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+
+//   @@unique([identifier, token])
+//   @@map("verification_tokens")
+// }
+
+// model MentorProfile {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   slug        String   @unique
+//   name        String
+//   email       String
+//   profileImage String?
+//   bio         String?
+//   specialties String[]
+//   experience  String?
+//   company     String?
+//   location    String?
+//   education   String?
+//   languages   String[]
+//   achievements String[]
+//   socialLinks Json?
+//   yearJoined  Int?     // Added year joined field
+//   isActive    Boolean  @default(true)
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+
+//   @@map("mentor_profiles")
+// }
+
+// model AlumniProfile {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   slug        String   @unique
+//   name        String
+//   email       String
+//   profileImage String?
+//   bio         String?
+//   graduationYear Int?
+//   currentRole String?
+//   company     String?
+//   location    String?
+//   achievements String[]
+//   socialLinks Json?
+//   isActive    Boolean  @default(true)
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+
+//   @@map("alumni_profiles")
+// }
+
+// model VolunteerProfile {
+//   id          String   @id @map("_id") @db.String
+//   userId      String
+//   specialties String[]
+//   experience  String?
+//   location    String?
+//   interests   String[]
+//   availability String?
+//   isActive    Boolean  @default(true)
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+
+//   // Relations
+
+//   @@map("volunteer_profiles")
+// }
+
+// model BlogPost {
+//   id          String   @id @map("_id") @db.String
+//   title       String
+//   slug        String   @unique
+//   excerpt     String
+//   content     String
+//   image       String?
+//   category    String
+//   tags        String[]
+//   featured    Boolean  @default(false)
+//   published   Boolean  @default(false)
+//   publishedAt DateTime?
+//   views       Int      @default(0)
+//   likesCount  Int      @default(0)
+//   readTime    String?
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+
+//   // Relations
+//   authorId String
+//   author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+//   comments Comment[]
+
+//   @@map("blog_posts")
+// }
+
+// model Comment {
+//   id        String   @id @map("_id") @db.String
+//   content   String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   // Relations
+//   postId   String @db.String
+//   post     BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+//   authorId String
+//   author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+//   @@map("comments")
+// }
+
+// model Like {
+//   id        String   @id @map("_id") @db.String
+//   createdAt DateTime @default(now())
+
+//   // Relations
+//   projectId String @db.String
+//   userId    String
+//   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([projectId, userId])
+//   @@map("likes")
+// }
+
+// model View {
+//   id        String   @id @map("_id") @db.String
+//   createdAt DateTime @default(now())
+//   ipAddress String?
+//   userAgent String?
+
+//   // Relations
+//   projectId String @db.String
+//   userId    String? @db.ObjectId
+//   user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([projectId, ipAddress])
+//   @@map("views")
+// }
+
+// model Project {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   title       String
+//   description String
+//   images      String[]
+//   techStack   String[]
+//   members     String[]
+//   category    String
+//   status      ProjectStatus @default(SUBMITTED)
+//   phase       String?
+//   slug        String?
+//   year        Int?
+//   demoUrl     String?
+//   views       Int      @default(0)
+//   likes       Int      @default(0)
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+
+//   // Relations
+//   authorId String
+//   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+//   @@map("projects")
+// }
+
+// model Application {
+//   id        String   @id @map("_id") @db.String
+//   type      ApplicationType
+//   status    ApplicationStatus @default(PENDING)
+//   data      Json?
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   // Relations
+//   userId String @db.ObjectId
+//   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@map("applications")
+// }
+
+// enum UserRole {
+//   STUDENT
+//   MENTOR
+//   VOLUNTEER
+//   ADMIN
+// }
+
+// enum ProjectStatus {
+//   SUBMITTED
+//   UNDER_REVIEW
+//   APPROVED
+//   REJECTED
+//   FINALIST
+//   WINNER
+// }
+
+// enum ApplicationType {
+//   MENTOR
+//   VOLUNTEER
+//   STUDENT
+// }
+
+// enum ApplicationStatus {
+//   PENDING
+//   APPROVED
+//   REJECTED
+// }
+
+
+
+// This is your Prisma schema file
+// Learn more at https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -8,10 +302,11 @@ generator client {
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
-  id            String    @id @map("_id") @db.String
+  id            String    @id @map("_id")
   email         String    @unique
   name          String?
   image         String?
@@ -25,61 +320,53 @@ model User {
   sessions session[]
 
   // Custom relations
-  volunteerProfile VolunteerProfile?
-  blogPosts        BlogPost[]
-  comments         Comment[]
-  likes            Like[]
-  views            View[]
-  projects         Project[]
-  applications     Application[]
+  blogPosts    BlogPost[]
+  comments     Comment[]
+  likes        Like[]
+  views        View[]
+  projects     Project[]
+  applications Application[]
 
   @@map("users")
 }
 
 model account {
-  id                    String  @id @map("_id") @db.String
-  userId                String  @db.String
-  type                  String @default("oauth")
-  provider              String @default("google")
-  providerId            String
-  accountId             String
-  refresh_token         String?
-  access_token          String?
-  accessToken           String?
-  accessTokenExpiresAt  DateTime?
-  expires_at            Int?
-  token_type            String?
-  scope                 String?
-  id_token              String?
-  idToken               String?
-  session_state         String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                   String   @id @map("_id")
+  userId               String
+  providerId           String   // e.g. "google"
+  accountId            String   // provider’s user id (Google sub)
+  refreshToken         String?
+  accessToken          String?
+  accessTokenExpiresAt DateTime?
+  idToken              String?
+  scope                String?  // <-- add this back
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerId])
+  @@unique([providerId, accountId])
   @@map("accounts")
 }
 
 model session {
-  id           String   @id @map("_id") @db.String
-  sessionToken String?  @unique
-  userId       String   @db.String
-  expires      DateTime?
+  id           String   @id @map("_id")
+  userId       String
+  token        String   @unique               // ✅ keep only this unique field
   expiresAt    DateTime?
-  token        String?  @unique
   ipAddress    String?
   userAgent    String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
 
+
 model verification {
-  id         String   @id @map("_id") @db.String
+  id         String   @id @map("_id")
   identifier String
   token      String?  @unique
   expiresAt  DateTime
@@ -91,64 +378,62 @@ model verification {
   @@map("verification_tokens")
 }
 
+// ===================== CUSTOM MODELS =====================
+
 model MentorProfile {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  slug        String   @unique
-  name        String
-  email       String
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug         String   @unique
+  name         String
+  email        String
   profileImage String?
-  bio         String?
-  specialties String[]
-  experience  String?
-  company     String?
-  location    String?
-  education   String?
-  languages   String[]
+  bio          String?
+  specialties  String[]
+  experience   String?
+  company      String?
+  location     String?
+  education    String?
+  languages    String[]
   achievements String[]
-  socialLinks Json?
-  yearJoined  Int?     // Added year joined field
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  socialLinks  Json?
+  yearJoined   Int?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("mentor_profiles")
 }
 
 model AlumniProfile {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  slug        String   @unique
-  name        String
-  email       String
-  profileImage String?
-  bio         String?
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String   @unique
+  name          String
+  email         String
+  profileImage  String?
+  bio           String?
   graduationYear Int?
-  currentRole String?
-  company     String?
-  location    String?
-  achievements String[]
-  socialLinks Json?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  currentRole   String?
+  company       String?
+  location      String?
+  achievements  String[]
+  socialLinks   Json?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("alumni_profiles")
 }
 
 model VolunteerProfile {
-  id          String   @id @map("_id") @db.String
-  userId      String   @unique @db.String
-  bio         String?
-  specialties String[]
-  experience  String?
-  location    String?
-  interests   String[]
+  id           String   @id @map("_id") @db.String
+  userId       String
+  specialties  String[]
+  experience   String?
+  location     String?
+  interests    String[]
   availability String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("volunteer_profiles")
 }
@@ -171,8 +456,7 @@ model BlogPost {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relations
-  authorId String @db.String
+  authorId String
   author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments Comment[]
 
@@ -185,10 +469,9 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
   postId   String @db.String
   post     BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-  authorId String @db.String
+  authorId String
   author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("comments")
@@ -198,9 +481,8 @@ model Like {
   id        String   @id @map("_id") @db.String
   createdAt DateTime @default(now())
 
-  // Relations
   projectId String @db.String
-  userId    String @db.String
+  userId    String
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, userId])
@@ -213,9 +495,8 @@ model View {
   ipAddress String?
   userAgent String?
 
-  // Relations
   projectId String @db.String
-  userId    String? @db.String
+  userId    String? @db.ObjectId
   user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, ipAddress])
@@ -240,8 +521,7 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relations
-  authorId String @db.String
+  authorId String
   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("projects")
@@ -255,12 +535,13 @@ model Application {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  userId String @db.String
+  userId String @db.ObjectId
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("applications")
 }
+
+// ===================== ENUMS =====================
 
 enum UserRole {
   STUDENT
@@ -289,4 +570,3 @@ enum ApplicationStatus {
   APPROVED
   REJECTED
 }
-
