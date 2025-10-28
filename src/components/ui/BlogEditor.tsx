@@ -1,7 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { EditorRoot, EditorCommand, EditorCommandItem, EditorCommandEmpty, EditorContent, type JSONContent, EditorCommandList, EditorBubble } from "novel"
+import { useState, useEffect, useCallback } from "react"
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import Placeholder from "@tiptap/extension-placeholder"
 import { useUploadThing } from "@/lib/uploadthing"
 
 interface NovelEditorProps {
@@ -10,10 +12,9 @@ interface NovelEditorProps {
   placeholder?: string
 }
 
-export const BlogEditor = ({ content, onChange, placeholder = "Start writing your blog post..." }: NovelEditorProps) => {
-  const [editorContent, setEditorContent] = useState<JSONContent | undefined>(
-    content ? JSON.parse(content) : undefined
-  )
+export const BlogEditor = ({ content, onChange, placeholder = "Type / for commands..." }: NovelEditorProps) => {
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [query, setQuery] = useState("")
   
   const { startUpload } = useUploadThing("blogImage", {
     onClientUploadComplete: () => {
@@ -24,266 +25,144 @@ export const BlogEditor = ({ content, onChange, placeholder = "Start writing you
     },
   })
 
-  useEffect(() => {
-    if (content && content !== JSON.stringify(editorContent)) {
-      try {
-        setEditorContent(JSON.parse(content))
-      } catch (error) {
-        console.error("Error parsing content:", error)
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
+      Placeholder.configure({
+        placeholder: placeholder,
+      }),
+    ],
+    content: content || '',
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML()
+      if (onChange) {
+        onChange(html)
       }
-    }
-  }, [content])
+    },
+    editorProps: {
+      attributes: {
+        class: "prose prose-lg prose-gray max-w-none min-h-[600px] focus:outline-none text-gray-900",
+      },
+      handleKeyDown: (view, event) => {
+        if (event.key === '/' && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
+          // Check if we're at the start of a new paragraph
+          const { selection } = view.state
+          const { $from } = selection
+          
+          // Check if slash is at the beginning of the paragraph
+          if ($from.parentOffset === 0 || view.state.doc.textBetween($from.start() - 1, $from.end()).startsWith('/')) {
+            setQuery('')
+            setShowSuggestions(true)
+            return true
+          }
+        }
+        
+        if (event.key === 'Escape') {
+          setShowSuggestions(false)
+          return true
+        }
+        
+        return false
+      },
+    },
+  })
 
-  const handleUpdate = (editor: any) => {
-    const json = editor.getJSON()
-    setEditorContent(json)
-    if (onChange) {
-      onChange(JSON.stringify(json))
+  useEffect(() => {
+    if (content) {
+      editor?.commands.setContent(content)
+    }
+  }, [content, editor])
+
+  const insertHeading = (level: 1 | 2 | 3) => {
+    if (editor) {
+      editor.chain().focus().toggleHeading({ level }).run()
+      setShowSuggestions(false)
     }
   }
 
-  const handleImageUpload = async (file: File) => {
-    try {
-      const res = await startUpload([file])
-      if (res?.[0]?.url) {
-        return res[0].url
-      }
-    } catch (error) {
-      console.error("Upload error:", error)
+  const insertBulletList = () => {
+    if (editor) {
+      editor.chain().focus().toggleBulletList().run()
+      setShowSuggestions(false)
     }
-    return ""
+  }
+
+  const insertOrderedList = () => {
+    if (editor) {
+      editor.chain().focus().toggleOrderedList().run()
+      setShowSuggestions(false)
+    }
+  }
+
+  const insertBlockquote = () => {
+    if (editor) {
+      editor.chain().focus().toggleBlockquote().run()
+      setShowSuggestions(false)
+    }
+  }
+
+  const insertCode = () => {
+    if (editor) {
+      editor.chain().focus().toggleCodeBlock().run()
+      setShowSuggestions(false)
+    }
+  }
+
+  const suggestions = [
+    { label: 'Heading 1', command: () => insertHeading(1), shortcut: 'H1' },
+    { label: 'Heading 2', command: () => insertHeading(2), shortcut: 'H2' },
+    { label: 'Heading 3', command: () => insertHeading(3), shortcut: 'H3' },
+    { label: 'Bullet List', command: insertBulletList, shortcut: '• List' },
+    { label: 'Numbered List', command: insertOrderedList, shortcut: '1. List' },
+    { label: 'Quote', command: insertBlockquote, shortcut: '" Quote' },
+    { label: 'Code Block', command: insertCode, shortcut: '</> Code' },
+  ]
+
+  const filteredSuggestions = suggestions.filter(s => 
+    s.label.toLowerCase().includes(query.toLowerCase()) ||
+    s.shortcut.toLowerCase().includes(query.toLowerCase())
+  )
+
+  if (!editor) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-[500px] border border-gray-600 rounded-lg overflow-hidden bg-gray-700">
-      <EditorRoot>
-        <EditorContent
-          initialContent={editorContent}
-          className="min-h-[500px] p-4"
-          editorProps={{
-            attributes: {
-              class: "prose prose-invert max-w-none focus:outline-none text-white",
-              "data-placeholder": placeholder,
-            },
-          }}
-          onUpdate={({ editor }) => handleUpdate(editor)}
-        >
-          <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-gray-600 bg-gray-800 px-1 py-2 shadow-md transition-all">
-            <EditorCommandEmpty className="px-2 text-gray-400">No results</EditorCommandEmpty>
-            <EditorCommandList>
-              <EditorCommandItem
-                value="paragraph"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setNode("paragraph")
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
+    <div className="h-full w-full relative text-gray-900 bg-white">
+      {showSuggestions && (
+        <div className="absolute z-50 top-4 left-4 w-64 border border-gray-300 rounded-lg bg-white shadow-lg p-2">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search commands..."
+            className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2"
+            autoFocus
+          />
+          <div className="max-h-64 overflow-y-auto">
+            {filteredSuggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                onClick={suggestion.command}
+                className="w-full text-left px-2 py-1 hover:bg-gray-100 rounded text-sm"
               >
-                <div>
-                  <p className="font-medium">Text</p>
-                  <p className="text-xs text-gray-400">Just start typing with plain text.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="heading1"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setNode("heading", { level: 1 })
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Heading 1</p>
-                  <p className="text-xs text-gray-400">Big section heading.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="heading2"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setNode("heading", { level: 2 })
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Heading 2</p>
-                  <p className="text-xs text-gray-400">Medium section heading.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="heading3"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setNode("heading", { level: 3 })
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Heading 3</p>
-                  <p className="text-xs text-gray-400">Small section heading.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="bulletList"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .toggleBulletList()
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Bullet List</p>
-                  <p className="text-xs text-gray-400">Create a simple bullet list.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="numberedList"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .toggleOrderedList()
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Numbered List</p>
-                  <p className="text-xs text-gray-400">Create a list with numbering.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="blockquote"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .toggleBlockquote()
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Quote</p>
-                  <p className="text-xs text-gray-400">Capture a quote.</p>
-                </div>
-              </EditorCommandItem>
-              
-              <EditorCommandItem
-                value="codeBlock"
-                onCommand={({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .toggleCodeBlock()
-                    .run()
-                }}
-                className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-              >
-                <div>
-                  <p className="font-medium">Code</p>
-                  <p className="text-xs text-gray-400">Capture a code snippet.</p>
-                </div>
-              </EditorCommandItem>
-            </EditorCommandList>
-          </EditorCommand>
-          
-          <EditorBubble
-            tippyOptions={{
-              placement: "top",
-            }}
-            className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-gray-600 bg-gray-800 shadow-xl"
-          >
-            <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-gray-600 bg-gray-800 px-1 py-2 shadow-md transition-all">
-              <EditorCommandEmpty className="px-2 text-gray-400">No results</EditorCommandEmpty>
-              <EditorCommandList>
-                <EditorCommandItem
-                  value="bold"
-                  onCommand={({ editor, range }) => {
-                    editor
-                      .chain()
-                      .focus()
-                      .deleteRange(range)
-                      .setMark("bold")
-                      .run()
-                  }}
-                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-                >
-                  <div>
-                    <p className="font-medium">Bold</p>
-                    <p className="text-xs text-gray-400">Make text bold.</p>
-                  </div>
-                </EditorCommandItem>
-                
-                <EditorCommandItem
-                  value="italic"
-                  onCommand={({ editor, range }) => {
-                    editor
-                      .chain()
-                      .focus()
-                      .deleteRange(range)
-                      .setMark("italic")
-                      .run()
-                  }}
-                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-                >
-                  <div>
-                    <p className="font-medium">Italic</p>
-                    <p className="text-xs text-gray-400">Make text italic.</p>
-                  </div>
-                </EditorCommandItem>
-                
-                <EditorCommandItem
-                  value="code"
-                  onCommand={({ editor, range }) => {
-                    editor
-                      .chain()
-                      .focus()
-                      .deleteRange(range)
-                      .setMark("code")
-                      .run()
-                  }}
-                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-600 aria-selected:bg-gray-600 text-white"
-                >
-                  <div>
-                    <p className="font-medium">Code</p>
-                    <p className="text-xs text-gray-400">Make text code.</p>
-                  </div>
-                </EditorCommandItem>
-              </EditorCommandList>
-            </EditorCommand>
-          </EditorBubble>
-        </EditorContent>
-      </EditorRoot>
+                <div className="font-medium">{suggestion.label}</div>
+                <div className="text-xs text-gray-500">{suggestion.shortcut}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      <EditorContent editor={editor} />
     </div>
   )
 }
