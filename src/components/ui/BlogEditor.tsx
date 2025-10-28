@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { EditorRoot, EditorCommand, EditorCommandItem, EditorCommandEmpty, EditorContent, type JSONContent, EditorCommandList, EditorBubble } from "novel"
-import { StarterKit } from "@tiptap/starter-kit"
-import { Placeholder } from "@tiptap/extension-placeholder"
 import { useUploadThing } from "@/lib/uploadthing"
 
 interface NovelEditorProps {
@@ -18,10 +16,8 @@ export const BlogEditor = ({ content, onChange, placeholder = "Start writing you
   )
   
   const { startUpload } = useUploadThing("blogImage", {
-    onClientUploadComplete: (res) => {
-      if (res?.[0]?.url) {
-        return res[0].url
-      }
+    onClientUploadComplete: () => {
+      // Upload complete
     },
     onUploadError: (error: Error) => {
       console.error("Upload error:", error)
@@ -63,25 +59,11 @@ export const BlogEditor = ({ content, onChange, placeholder = "Start writing you
       <EditorRoot>
         <EditorContent
           initialContent={editorContent}
-          extensions={[
-            StarterKit.configure({
-              bulletList: {
-                keepMarks: true,
-                keepAttributes: false,
-              },
-              orderedList: {
-                keepMarks: true,
-                keepAttributes: false,
-              },
-            }),
-            Placeholder.configure({
-              placeholder: placeholder,
-            }),
-          ]}
           className="min-h-[500px] p-4"
           editorProps={{
             attributes: {
               class: "prose prose-invert max-w-none focus:outline-none text-white",
+              "data-placeholder": placeholder,
             },
           }}
           onUpdate={({ editor }) => handleUpdate(editor)}

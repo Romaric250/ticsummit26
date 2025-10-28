@@ -74,7 +74,7 @@ export default function AdminBlogsPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 relative pt-16">
         {/* Header */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -221,15 +221,17 @@ export default function AdminBlogsPage() {
 
       {/* Editor Modal */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50">
-          <BlogEditor
-            initialContent={selectedPost?.content || ''}
-            onSave={handleSave}
-            onCancel={() => {
-              setIsEditorOpen(false)
-              setSelectedPost(null)
-            }}
-          />
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
+          <div className="w-full max-w-[70vw] h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <BlogEditor
+              initialContent={''}
+              onSave={handleSave}
+              onCancel={() => {
+                setIsEditorOpen(false)
+                setSelectedPost(null)
+              }}
+            />
+          </div>
         </div>
       )}
     </Layout>

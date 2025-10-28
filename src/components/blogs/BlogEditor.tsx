@@ -21,6 +21,7 @@ export default function BlogEditor({
   const [isSaving, setIsSaving] = useState(false)
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({
@@ -28,6 +29,11 @@ export default function BlogEditor({
       }),
     ],
     content: initialContent || '',
+    editorProps: {
+      attributes: {
+        class: 'prose prose-lg prose-gray max-w-none min-h-[500px] focus:outline-none p-6 text-gray-900',
+      },
+    },
   })
 
   const handleSave = async () => {
@@ -39,13 +45,17 @@ export default function BlogEditor({
   }
 
   if (!editor) {
-    return null
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-white">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    )
   }
 
   return (
-    <div className="w-full h-full relative bg-white">
+    <div className="w-full h-full flex flex-col bg-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <FileText className="h-6 w-6 text-primary" />
@@ -97,9 +107,10 @@ export default function BlogEditor({
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             disabled={!editor.can().chain().focus().toggleBold().run()}
-            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+            className={`p-2 rounded hover:bg-gray-100 transition-colors text-gray-900 ${
               editor.isActive('bold') ? 'bg-gray-200' : ''
             }`}
+            type="button"
           >
             <Bold className="h-5 w-5" />
           </button>
@@ -107,27 +118,30 @@ export default function BlogEditor({
           <button
             onClick={() => editor.chain().focus().toggleItalic().run()}
             disabled={!editor.can().chain().focus().toggleItalic().run()}
-            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+            className={`p-2 rounded hover:bg-gray-100 transition-colors text-gray-900 ${
               editor.isActive('italic') ? 'bg-gray-200' : ''
             }`}
+            type="button"
           >
             <Italic className="h-5 w-5" />
           </button>
           
           <button
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+            className={`p-2 rounded hover:bg-gray-100 transition-colors text-gray-900 ${
               editor.isActive('bulletList') ? 'bg-gray-200' : ''
             }`}
+            type="button"
           >
             <List className="h-5 w-5" />
           </button>
           
           <button
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+            className={`p-2 rounded hover:bg-gray-100 transition-colors text-gray-900 ${
               editor.isActive('orderedList') ? 'bg-gray-200' : ''
             }`}
+            type="button"
           >
             <ListOrdered className="h-5 w-5" />
           </button>
@@ -135,13 +149,8 @@ export default function BlogEditor({
       </div>
 
       {/* Editor */}
-      <div className="w-full max-w-4xl mx-auto">
-        <div className="px-6 py-8">
-          <EditorContent 
-            editor={editor}
-            className="prose prose-lg max-w-none min-h-[calc(100vh-300px)] focus:outline-none [&_.tiptap]:focus:outline-none"
-          />
-        </div>
+      <div className="flex-1 overflow-auto">
+        <EditorContent editor={editor} />
       </div>
     </div>
   )
