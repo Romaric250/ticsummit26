@@ -212,7 +212,7 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-white rounded-xl shadow-xl w-full max-w-[70vw] max-h-[90vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -249,8 +249,8 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
             </div>
 
             {/* Form Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto px-6 py-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex-1 overflow-y-auto px-6 py-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Blog Image */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
