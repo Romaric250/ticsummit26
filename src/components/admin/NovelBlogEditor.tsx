@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { generateJSON } from "@tiptap/html";
 import {
   EditorCommand,
@@ -204,6 +204,7 @@ export const NovelBlogEditor = ({
   const [initialContent, setInitialContent] = useState<null | JSONContent>(null);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState<number>();
+  const isInitializedRef = useRef(false);
 
   const { startUpload } = useUploadThing("blogImage", {
     onClientUploadComplete: (res) => {
@@ -438,20 +439,51 @@ export const NovelBlogEditor = ({
     return new XMLSerializer().serializeToString(doc);
   };
 
-  // Debounced updates
+  // Store editor instance ref for immediate access
+  const editorRef = useRef<EditorInstance | null>(null);
+  const isInternalUpdateRef = useRef(false);
+  const previousContentRef = useRef<string>("");
+
+  // Immediate update (for form validation)
+  const updateContentImmediately = useCallback((editor: EditorInstance) => {
+    const html = highlightCodeblocks(editor.getHTML());
+    editorRef.current = editor;
+    
+    // Only update if content actually changed to avoid feedback loops
+    if (html !== previousContentRef.current) {
+      previousContentRef.current = html;
+      isInternalUpdateRef.current = true;
+      
+      if (onChange) {
+        onChange(html);
+      }
+      
+      // Reset flag after a short delay
+      setTimeout(() => {
+        isInternalUpdateRef.current = false;
+      }, 0);
+    }
+  }, [onChange]);
+
+  // Debounced updates (for performance - save status, word count)
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
     const html = highlightCodeblocks(editor.getHTML());
     setCharsCount(editor.storage.characterCount.words());
     setSaveStatus("Saved");
-    
-    if (onChange) {
-      onChange(html);
-    }
   }, 500);
 
-  // Initialize content - convert HTML to JSONContent if needed
-  // Use baseExtensions for parsing (image extension not needed for parsing)
+  // Initialize content ONLY once on mount - don't update after editor is initialized
   useEffect(() => {
+    // Only initialize once
+    if (isInitializedRef.current) {
+      return;
+    }
+    
+    // Skip if it's an internal update
+    if (isInternalUpdateRef.current) {
+      return;
+    }
+    
     if (content) {
       try {
         if (content.trim().startsWith('{')) {
@@ -459,21 +491,20 @@ export const NovelBlogEditor = ({
           setInitialContent(JSON.parse(content));
         } else {
           // It's HTML - convert to JSONContent using TipTap with base extensions
-          // We use baseExtensions for parsing since we just need to convert, not render
           const jsonContent = generateJSON(content, baseExtensions as any);
           setInitialContent(jsonContent);
         }
       } catch (error) {
         console.error("Error parsing content:", error);
-        // If parsing fails, set empty content
         setInitialContent(null);
       }
     } else {
       setInitialContent(null);
     }
-    // Only run once on mount to initialize
+    
+    isInitializedRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty deps - only initialize once
+  }, []); // Only run once on mount
 
   // Show loading only if we have content but haven't converted it yet
   // If no content, we'll show empty editor (initialContent can be null/undefined)
@@ -513,6 +544,13 @@ export const NovelBlogEditor = ({
               class:
                 "prose prose-lg prose-headings:font-title font-default focus:outline-none max-w-full text-gray-900 p-6",
             },
+          }}
+          onUpdate={({ editor }) => {
+            // Update immediately for form validation
+            updateContentImmediately(editor);
+            // Also debounce for performance (save status, word count)
+            debouncedUpdates(editor);
+            setSaveStatus("Unsaved");
           }}
           slotAfter={<ImageResizer />}
         >

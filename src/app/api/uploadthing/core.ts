@@ -29,6 +29,19 @@ export const ourFileRouter = {
       return { uploadedBy: metadata.userId }
     }),
 
+  // Single project image uploader
+  projectImage: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      // For now, allow all uploads - we can add auth later if needed
+      return { userId: "anonymous" }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Project image upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
+      
+      return { uploadedBy: metadata.userId }
+    }),
+
   // Project images uploader (multiple images)
   projectImages: f({ image: { maxFileSize: "8MB", maxFileCount: 10 } })
     .middleware(async ({ req }) => {

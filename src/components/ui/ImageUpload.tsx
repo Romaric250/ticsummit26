@@ -10,12 +10,13 @@ interface ImageUploadProps {
   value?: string
   onChange: (url: string) => void
   disabled?: boolean
+  endpoint?: "blogImage" | "projectImage" | "projectImages" | "profileImage" | "mentorImage" | "alumniImage"
 }
 
-export const ImageUpload = ({ value, onChange, disabled }: ImageUploadProps) => {
+export const ImageUpload = ({ value, onChange, disabled, endpoint = "blogImage" }: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false)
   
-  const { startUpload } = useUploadThing("projectImage", {
+  const { startUpload } = useUploadThing(endpoint, {
     onClientUploadComplete: (res) => {
       if (res?.[0]?.url) {
         onChange(res[0].url)
@@ -58,7 +59,7 @@ export const ImageUpload = ({ value, onChange, disabled }: ImageUploadProps) => 
         <div className="aspect-video w-full rounded-lg overflow-hidden border border-gray-600">
           <img
             src={value}
-            alt="Project preview"
+            alt="Image preview"
             className="w-full h-full object-cover"
           />
         </div>
@@ -100,7 +101,7 @@ export const ImageUpload = ({ value, onChange, disabled }: ImageUploadProps) => 
           </div>
           <div>
             <p className="text-sm font-medium text-white">
-              {isDragActive ? "Drop image here" : "Upload project image"}
+              {isDragActive ? "Drop image here" : "Upload image"}
             </p>
             <p className="text-xs text-gray-400 mt-1">
               Drag & drop or click to select (max 8MB)

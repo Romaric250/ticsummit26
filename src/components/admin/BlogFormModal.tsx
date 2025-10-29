@@ -117,6 +117,18 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
     return `${minutes} min read`
   }
 
+  // Helper function to check if HTML content has meaningful text
+  const hasTextContent = (html: string): boolean => {
+    if (!html || !html.trim()) return false
+    
+    // Create a temporary DOM element to extract text content
+    const doc = new DOMParser().parseFromString(html, "text/html")
+    const textContent = doc.body.textContent || doc.body.innerText || ""
+    
+    // Check if there's any meaningful text (more than just whitespace)
+    return textContent.trim().length > 0
+  }
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
     
@@ -128,7 +140,8 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
       newErrors.excerpt = "Blog excerpt is required"
     }
     
-    if (!formData.content.trim()) {
+    // Check if HTML content has meaningful text
+    if (!hasTextContent(formData.content)) {
       newErrors.content = "Blog content is required"
     }
     
@@ -383,6 +396,7 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
                     Content *
                   </label>
                   <BlogEditor
+                    key={blogId || "new"} // Force remount when switching between new/edit
                     content={formData.content}
                     onChange={(content) => handleInputChange("content", content)}
                     placeholder="Start writing your blog post..."
