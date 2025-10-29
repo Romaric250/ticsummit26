@@ -67,7 +67,7 @@ const hljs = require("highlight.js");
 const placeholder = Placeholder;
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
-    class: cx("text-blue-400 underline underline-offset-[3px] hover:text-blue-300 transition-colors cursor-pointer"),
+    class: cx("text-blue-600 underline underline-offset-[3px] hover:text-blue-700 transition-colors cursor-pointer"),
   },
 });
 
@@ -92,7 +92,7 @@ const taskItem = TaskItem.configure({
 
 const horizontalRule = HorizontalRule.configure({
   HTMLAttributes: {
-    class: cx("mt-4 mb-6 border-t border-gray-600"),
+    class: cx("mt-4 mb-6 border-t border-gray-300"),
   },
 });
 
@@ -119,12 +119,12 @@ const starterKit = StarterKit.configure({
   },
   codeBlock: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-gray-900 text-gray-100 border border-gray-700 p-5 font-mono font-medium"),
+      class: cx("rounded-md bg-gray-100 text-gray-900 border border-gray-300 p-5 font-mono font-medium"),
     },
   },
   code: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-gray-900 px-1.5 py-1 font-mono font-medium text-gray-100"),
+      class: cx("rounded-md bg-gray-100 px-1.5 py-1 font-mono font-medium text-gray-900"),
       spellcheck: "false",
     },
   },
@@ -138,7 +138,7 @@ const starterKit = StarterKit.configure({
 
 const youtube = Youtube.configure({
   HTMLAttributes: {
-    class: cx("rounded-lg border border-gray-600"),
+    class: cx("rounded-lg border border-gray-300"),
   },
   inline: false,
 });
@@ -152,7 +152,7 @@ const twitter = Twitter.configure({
 
 const mathematics = Mathematics.configure({
   HTMLAttributes: {
-    class: cx("text-gray-100 rounded p-1 hover:bg-gray-700 cursor-pointer"),
+    class: cx("text-gray-900 rounded p-1 hover:bg-gray-100 cursor-pointer"),
   },
   katexOptions: {
     throwOnError: false,
@@ -163,7 +163,7 @@ const characterCount = CharacterCount.configure();
 
 const updatedImage = UpdatedImage.configure({
   HTMLAttributes: {
-    class: cx("rounded-lg border border-gray-600"),
+    class: cx("rounded-lg border border-gray-300"),
   },
 });
 
@@ -251,14 +251,14 @@ export const NovelBlogEditor = ({
     addProseMirrorPlugins() {
       return [
         UploadImagesPlugin({
-          imageClass: cx("opacity-40 rounded-lg border border-gray-600"),
+          imageClass: cx("opacity-40 rounded-lg border border-gray-300"),
         }),
       ];
     },
   }).configure({
     allowBase64: true,
     HTMLAttributes: {
-      class: cx("rounded-lg border border-gray-600"),
+      class: cx("rounded-lg border border-gray-300"),
     },
   });
 
@@ -480,8 +480,8 @@ export const NovelBlogEditor = ({
   if (content && initialContent === null) {
     // Still initializing/converting content
     return (
-      <div className="w-full min-h-[500px] flex items-center justify-center bg-gray-800 rounded-lg">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+      <div className="w-full min-h-[500px] flex items-center justify-center bg-white rounded-lg border border-gray-200">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -489,11 +489,11 @@ export const NovelBlogEditor = ({
   return (
     <div className="relative w-full">
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
-        <div className="rounded-lg bg-gray-700 px-2 py-1 text-sm text-gray-300">
+        <div className="rounded-lg bg-gray-100 px-2 py-1 text-sm text-gray-600">
           {saveStatus}
         </div>
         {charsCount !== undefined && (
-          <div className="rounded-lg bg-gray-700 px-2 py-1 text-sm text-gray-300">
+          <div className="rounded-lg bg-gray-100 px-2 py-1 text-sm text-gray-600">
             {charsCount} Words
           </div>
         )}
@@ -502,7 +502,7 @@ export const NovelBlogEditor = ({
         <EditorContent
           initialContent={initialContent || undefined}
           extensions={allExtensions as any}
-          className="relative min-h-[500px] w-full border-gray-700 bg-gray-800 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
+          className="relative min-h-[500px] w-full border-gray-300 bg-white sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
           editorProps={{
             handleDOMEvents: {
               keydown: (_view, event) => handleCommandNavigation(event),
@@ -511,13 +511,13 @@ export const NovelBlogEditor = ({
             handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, uploadFn),
             attributes: {
               class:
-                "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full text-gray-100 p-6",
+                "prose prose-lg prose-headings:font-title font-default focus:outline-none max-w-full text-gray-900 p-6",
             },
           }}
           slotAfter={<ImageResizer />}
         >
-          <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-gray-700 bg-gray-800 px-1 py-2 shadow-md transition-all">
-            <EditorCommandEmpty className="px-2 text-gray-400">
+          <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-gray-300 bg-white px-1 py-2 shadow-md transition-all">
+            <EditorCommandEmpty className="px-2 text-gray-500">
               No results
             </EditorCommandEmpty>
             <EditorCommandList>
@@ -529,15 +529,15 @@ export const NovelBlogEditor = ({
                       item.command(val);
                     }
                   }}
-                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-700 aria-selected:bg-gray-700 text-gray-200"
+                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-gray-100 aria-selected:bg-gray-100 text-gray-900"
                   key={item.title}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-700 bg-gray-900">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 bg-gray-50">
                     {item.icon}
                   </div>
                   <div>
                     <p className="font-medium">{item.title}</p>
-                    <p className="text-xs text-gray-400">{item.description}</p>
+                    <p className="text-xs text-gray-500">{item.description}</p>
                   </div>
                 </EditorCommandItem>
               ))}

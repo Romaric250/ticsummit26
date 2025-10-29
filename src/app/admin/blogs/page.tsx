@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Layout from '@/components/layout/Layout'
 import { motion } from 'framer-motion'
 import { Plus, FileText, Edit2, Trash2, Search, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { BlogFormModal } from '@/components/admin/BlogFormModal'
 
 interface BlogPost {
   id: string
@@ -36,12 +36,13 @@ interface BlogPost {
 }
 
 export default function AdminBlogsPage() {
-  const router = useRouter()
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingPostId, setEditingPostId] = useState<string | undefined>(undefined)
 
   // Fetch blog posts from API
   useEffect(() => {
@@ -118,7 +119,10 @@ export default function AdminBlogsPage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => router.push('/admin/blogs/new')}
+                onClick={() => {
+                  setEditingPostId(undefined)
+                  setIsModalOpen(true)
+                }}
                 className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all shadow-md cursor-pointer"
               >
                 <Plus className="h-5 w-5" />
@@ -233,7 +237,10 @@ export default function AdminBlogsPage() {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => router.push(`/admin/blogs/${post.id}`)}
+                        onClick={() => {
+                          setEditingPostId(post.id)
+                          setIsModalOpen(true)
+                        }}
                         className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
                       >
                         <Edit2 className="h-5 w-5" />
@@ -271,6 +278,19 @@ export default function AdminBlogsPage() {
           )}
         </div>
       </div>
+
+      {/* Blog Form Modal */}
+      <BlogFormModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setEditingPostId(undefined)
+        }}
+        onSuccess={() => {
+          fetchBlogPosts()
+        }}
+        blogId={editingPostId}
+      />
     </Layout>
   )
 }
