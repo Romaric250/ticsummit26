@@ -263,6 +263,25 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
                   margin-bottom: 0.75rem !important;
                   color: #111827 !important;
                 }
+                .blog-content pre {
+                  background-color: #111827 !important;
+                  color: #f3f4f6 !important;
+                  border: 1px solid #374151 !important;
+                  border-radius: 0.375rem !important;
+                  padding: 1.25rem !important;
+                  margin: 1rem 0 !important;
+                }
+                .blog-content pre code {
+                  background-color: transparent !important;
+                  color: inherit !important;
+                  padding: 0 !important;
+                }
+                .blog-content code:not(pre code) {
+                  background-color: #1f2937 !important;
+                  color: #f3f4f6 !important;
+                  padding: 0.125rem 0.375rem !important;
+                  border-radius: 0.25rem !important;
+                }
               `}} />
               <motion.article variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
                 <div 

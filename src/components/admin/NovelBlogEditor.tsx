@@ -138,12 +138,12 @@ const starterKit = StarterKit.configure({
   },
   codeBlock: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-gray-100 text-gray-900 border border-gray-300 p-5 font-mono font-medium my-4"),
+      class: cx("rounded-md bg-gray-900 text-gray-100 border border-gray-700 p-5 font-mono font-medium my-4"),
     },
   },
   code: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-gray-100 px-1.5 py-1 font-mono font-medium text-gray-900"),
+      class: cx("rounded-md bg-gray-800 px-1.5 py-1 font-mono font-medium text-gray-100"),
       spellcheck: "false",
     },
   },
@@ -658,6 +658,20 @@ export const NovelBlogEditor = ({
           font-weight: 700 !important;
           margin-top: 1.25rem !important;
           margin-bottom: 0.75rem !important;
+        }
+        .novel-editor-content pre {
+          background-color: #111827 !important;
+          color: #f3f4f6 !important;
+          border: 1px solid #374151 !important;
+        }
+        .novel-editor-content pre code {
+          background-color: transparent !important;
+          color: inherit !important;
+          padding: 0 !important;
+        }
+        .novel-editor-content code:not(pre code) {
+          background-color: #1f2937 !important;
+          color: #f3f4f6 !important;
         }
       `}} />
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">

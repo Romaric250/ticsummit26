@@ -132,6 +132,25 @@ export const BlogPreviewModal = ({ isOpen, onClose, post }: BlogPreviewModalProp
                       margin-bottom: 0.75rem !important;
                       color: #111827 !important;
                     }
+                    .blog-preview-content pre {
+                      background-color: #111827 !important;
+                      color: #f3f4f6 !important;
+                      border: 1px solid #374151 !important;
+                      border-radius: 0.375rem !important;
+                      padding: 1.25rem !important;
+                      margin: 1rem 0 !important;
+                    }
+                    .blog-preview-content pre code {
+                      background-color: transparent !important;
+                      color: inherit !important;
+                      padding: 0 !important;
+                    }
+                    .blog-preview-content code:not(pre code) {
+                      background-color: #1f2937 !important;
+                      color: #f3f4f6 !important;
+                      padding: 0.125rem 0.375rem !important;
+                      border-radius: 0.25rem !important;
+                    }
                   `}} />
                   <article className="blog-preview-content prose prose-lg max-w-none mt-6 text-gray-900 prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-800 prose-p:mb-4 prose-p:leading-relaxed prose-p:min-h-[1.5rem] prose-strong:text-gray-900 prose-a:text-blue-600 prose-ul:text-gray-800 prose-ol:text-gray-800 prose-li:text-gray-800 prose-blockquote:text-gray-700 prose-code:text-gray-900">
                     <div dangerouslySetInnerHTML={{ __html: post.content }} />
