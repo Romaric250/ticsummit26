@@ -36,7 +36,7 @@ export const BlogPreviewModal = ({ isOpen, onClose, post }: BlogPreviewModalProp
   return (
     <AnimatePresence>
       {isOpen && post && (
-        <div className="fixed inset-0 z-50" aria-modal="true" role="dialog" onClick={onClose}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
           <motion.div
             className="absolute inset-0 bg-black/50"
             initial={{ opacity: 0 }}
@@ -49,7 +49,7 @@ export const BlogPreviewModal = ({ isOpen, onClose, post }: BlogPreviewModalProp
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="relative z-10 mx-auto my-6 w-full max-w-5xl"
+            className="relative z-10 w-full max-w-5xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
