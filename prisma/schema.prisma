@@ -439,7 +439,7 @@ model VolunteerProfile {
 }
 
 model BlogPost {
-  id          String   @id @map("_id") @db.String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   slug        String   @unique
   excerpt     String
@@ -464,12 +464,12 @@ model BlogPost {
 }
 
 model Comment {
-  id        String   @id @map("_id") @db.String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  postId   String @db.String
+  postId   String @db.ObjectId
   post     BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   authorId String
   author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
