@@ -97,14 +97,26 @@ const horizontalRule = HorizontalRule.configure({
 });
 
 const starterKit = StarterKit.configure({
+  paragraph: {
+    HTMLAttributes: {
+      class: cx("mb-4 leading-relaxed"),
+    },
+    keepMarks: true,
+  },
+  heading: {
+    levels: [1, 2, 3],
+    HTMLAttributes: {
+      class: cx("font-bold mb-4 mt-6"),
+    },
+  },
   bulletList: {
     HTMLAttributes: {
-      class: cx("list-disc list-outside leading-3 -mt-2"),
+      class: cx("list-disc list-outside leading-3 -mt-2 mb-4"),
     },
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx("list-decimal list-outside leading-3 -mt-2"),
+      class: cx("list-decimal list-outside leading-3 -mt-2 mb-4"),
     },
   },
   listItem: {
@@ -114,12 +126,12 @@ const starterKit = StarterKit.configure({
   },
   blockquote: {
     HTMLAttributes: {
-      class: cx("border-l-4 border-blue-500"),
+      class: cx("border-l-4 border-blue-500 pl-4 my-4 italic"),
     },
   },
   codeBlock: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-gray-100 text-gray-900 border border-gray-300 p-5 font-mono font-medium"),
+      class: cx("rounded-md bg-gray-100 text-gray-900 border border-gray-300 p-5 font-mono font-medium my-4"),
     },
   },
   code: {
@@ -444,9 +456,19 @@ export const NovelBlogEditor = ({
   const isInternalUpdateRef = useRef(false);
   const previousContentRef = useRef<string>("");
 
+  // Helper function to preserve empty paragraphs in HTML
+  const preserveEmptyParagraphs = (html: string): string => {
+    // Replace empty <p></p> tags with <p><br></p> to preserve spacing
+    // This ensures empty paragraphs maintain their height and spacing
+    return html.replace(/<p>\s*<\/p>/g, '<p><br></p>');
+  };
+
   // Immediate update (for form validation)
   const updateContentImmediately = useCallback((editor: EditorInstance) => {
-    const html = highlightCodeblocks(editor.getHTML());
+    let html = editor.getHTML();
+    // Preserve empty paragraphs
+    html = preserveEmptyParagraphs(html);
+    html = highlightCodeblocks(html);
     editorRef.current = editor;
     
     // Only update if content actually changed to avoid feedback loops
@@ -467,7 +489,10 @@ export const NovelBlogEditor = ({
 
   // Debounced updates (for performance - save status, word count)
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
-    const html = highlightCodeblocks(editor.getHTML());
+    let html = editor.getHTML();
+    // Preserve empty paragraphs
+    html = preserveEmptyParagraphs(html);
+    html = highlightCodeblocks(html);
     setCharsCount(editor.storage.characterCount.words());
     setSaveStatus("Saved");
   }, 500);
