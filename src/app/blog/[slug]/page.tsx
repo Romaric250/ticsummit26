@@ -240,13 +240,13 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
         </div>
 
         {/* Hero Section with Image Side-by-Side */}
-        <section className="relative py-16 bg-gray-900">
+        <section className="relative py-8 lg:py-12 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center"
             >
               {/* Cover Image */}
               {post.image && (
@@ -259,7 +259,7 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
                   <img
                     src={post.image}
                     alt={post.title}
-                    className="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl"
+                    className="w-full h-64 lg:h-80 object-cover rounded-xl shadow-xl"
                   />
                 </motion.div>
               )}
@@ -267,41 +267,41 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
               {/* Content Section */}
               <div className="text-white">
                 {/* Category Badge */}
-                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                  <Tag className="w-4 h-4 text-white" />
-                  <span className="text-sm font-medium">{post.category}</span>
+                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 mb-4">
+                  <Tag className="w-3 h-3 text-white" />
+                  <span className="text-xs font-medium">{post.category}</span>
                 </div>
 
                 {/* Title */}
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
                   {post.title}
                 </h1>
 
                 {/* Excerpt */}
-                <p className="text-lg text-white/90 mb-6 leading-relaxed">
+                <p className="text-base text-white/90 mb-4 leading-relaxed line-clamp-3">
                   {post.excerpt}
                 </p>
 
                 {/* Meta Information */}
-                <div className="flex flex-wrap items-center gap-4 text-white/80 text-sm">
-                  <div className="flex items-center space-x-3">
+                <div className="flex flex-wrap items-center gap-3 text-white/80 text-xs">
+                  <div className="flex items-center space-x-2">
                     <img
                       src={post.author?.image || "https://placehold.co/80x80"}
                       alt={post.author?.name || 'Author'}
-                      className="w-8 h-8 rounded-full"
+                      className="w-6 h-6 rounded-full"
                     />
                     <span className="font-medium text-white">{post.author?.name || 'Unknown Author'}</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-3 h-3" />
                     <span>{formatDate(post.publishedAt || post.createdAt)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-3 h-3" />
                     <span>{post.readTime}</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-3 h-3" />
                     <span>{post.views} views</span>
                   </div>
                 </div>
