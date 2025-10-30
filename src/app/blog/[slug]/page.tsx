@@ -240,7 +240,7 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
             <div className="lg:col-span-3">
               <motion.article variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
                 <div 
-                  className="prose prose-lg max-w-none"
+                  className="prose prose-lg max-w-none text-gray-900 prose-headings:text-gray-900 prose-p:text-gray-800 prose-strong:text-gray-900 prose-a:text-blue-600 prose-ul:text-gray-800 prose-ol:text-gray-800 prose-li:text-gray-800 prose-blockquote:text-gray-700 prose-code:text-gray-900"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
               </motion.article>
