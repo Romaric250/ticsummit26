@@ -28,6 +28,9 @@ import {
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
+import { useSession, signIn } from "@/lib/auth-client"
+import { ShareModal } from "@/components/ui/ShareModal"
+import { toast } from "sonner"
 
 interface BlogPostItem {
   id: string
@@ -50,9 +53,15 @@ interface BlogPostItem {
 }
 
 const BlogPostPage = ({ params }: { params: { slug: string } }) => {
+  const { data: session } = useSession()
   const [post, setPost] = useState<BlogPostItem | null>(null)
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [relatedPosts, setRelatedPosts] = useState<BlogPostItem[]>([])
+  const [loadingRelated, setLoadingRelated] = useState(false)
+  const [subscribing, setSubscribing] = useState(false)
+  const [subscribeEmail, setSubscribeEmail] = useState("")
 
   useEffect(() => {
     const load = async () => {
@@ -63,17 +72,45 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
           const p: BlogPostItem = json.data
           setPost(p)
           setLikeCount(p.likesCount || 0)
+          
+          // Check like status if authenticated
+          if (session?.user) {
+            const likeStatusRes = await fetch(`/api/blogs/likes?blogId=${p.id}`)
+            const likeStatusData = await likeStatusRes.json()
+            if (likeStatusData.success) {
+              setIsLiked(likeStatusData.data.liked)
+            }
+          }
+          
           // increment views (no auth)
           fetch('/api/blogs/views', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ blogId: p.id })
           }).catch(() => {})
+
+          // Load related posts
+          loadRelatedPosts(p.id)
         }
       } catch {}
     }
     load()
-  }, [params.slug])
+  }, [params.slug, session])
+
+  const loadRelatedPosts = async (excludeId: string) => {
+    try {
+      setLoadingRelated(true)
+      const res = await fetch(`/api/blogs/random?limit=3&excludeId=${excludeId}`)
+      const json = await res.json()
+      if (json?.success) {
+        setRelatedPosts(json.data || [])
+      }
+    } catch (error) {
+      console.error("Error loading related posts:", error)
+    } finally {
+      setLoadingRelated(false)
+    }
+  }
   
   if (!post) {
     return (
@@ -92,6 +129,20 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
   }
 
   const handleLike = async () => {
+    if (!session?.user) {
+      // Not authenticated - redirect to signup
+      try {
+        await signIn.social({
+          provider: "google",
+          callbackURL: `/blog/${params.slug}`
+        })
+      } catch (error) {
+        console.error("Sign in error:", error)
+        toast.error("Please sign in to like posts")
+      }
+      return
+    }
+
     try {
       const res = await fetch('/api/blogs/likes', {
         method: 'POST',
@@ -99,15 +150,48 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
         body: JSON.stringify({ blogId: post.id })
       })
       if (res.status === 401) {
-        // not authenticated
+        toast.error("Please sign in to like posts")
         return
       }
       const json = await res.json()
       if (json?.success) {
         setIsLiked(json.data.liked)
         setLikeCount(json.data.likesCount)
+        toast.success(json.data.liked ? "Post liked!" : "Post unliked.")
       }
-    } catch {}
+    } catch (error) {
+      console.error("Error toggling like:", error)
+      toast.error("Failed to toggle like")
+    }
+  }
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!subscribeEmail || !subscribeEmail.includes('@')) {
+      toast.error("Please enter a valid email address")
+      return
+    }
+
+    try {
+      setSubscribing(true)
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: subscribeEmail })
+      })
+      const json = await res.json()
+      if (json.success) {
+        toast.success("Successfully subscribed to our newsletter!")
+        setSubscribeEmail("")
+      } else {
+        toast.error(json.error || "Failed to subscribe")
+      }
+    } catch (error) {
+      console.error("Error subscribing:", error)
+      toast.error("Failed to subscribe")
+    } finally {
+      setSubscribing(false)
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -155,75 +239,73 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
           </div>
         </div>
 
-        {/* Hero Section */}
+        {/* Hero Section with Image Side-by-Side */}
         <section className="relative py-16 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="max-w-4xl mx-auto text-white"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center"
             >
-              {/* Category Badge */}
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <Tag className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium">{post.category}</span>
-              </div>
-
-              {/* Title */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                {post.title}
-              </h1>
-
-              {/* Excerpt */}
-              <p className="text-xl text-white/90 mb-8 leading-relaxed">
-                {post.excerpt}
-              </p>
-
-              {/* Meta Information */}
-              <div className="flex flex-wrap items-center gap-6 text-white/80">
-                <div className="flex items-center space-x-3">
+              {/* Cover Image */}
+              {post.image && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="relative"
+                >
                   <img
-                    src={post.author?.image || "https://placehold.co/80x80"}
-                    alt={post.author?.name || 'Author'}
-                    className="w-10 h-10 rounded-full"
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl"
                   />
-                  <div>
-                    <p className="font-medium text-white">{post.author?.name || 'Unknown Author'}</p>
-                    <p className="text-sm text-white/70">&nbsp;</p>
+                </motion.div>
+              )}
+
+              {/* Content Section */}
+              <div className="text-white">
+                {/* Category Badge */}
+                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+                  <Tag className="w-4 h-4 text-white" />
+                  <span className="text-sm font-medium">{post.category}</span>
+                </div>
+
+                {/* Title */}
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                  {post.title}
+                </h1>
+
+                {/* Excerpt */}
+                <p className="text-lg text-white/90 mb-6 leading-relaxed">
+                  {post.excerpt}
+                </p>
+
+                {/* Meta Information */}
+                <div className="flex flex-wrap items-center gap-4 text-white/80 text-sm">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={post.author?.image || "https://placehold.co/80x80"}
+                      alt={post.author?.name || 'Author'}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span className="font-medium text-white">{post.author?.name || 'Unknown Author'}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{post.readTime}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Eye className="w-4 h-4" />
+                    <span>{post.views} views</span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{formatDate(post.publishedAt || post.createdAt)}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Clock className="w-4 h-4" />
-                  <span>{post.readTime}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span>{post.views} views</span>
-                </div>
               </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Featured Image */}
-        <section className="py-8 bg-white">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-4xl mx-auto"
-            >
-              <img
-                src={post.image}
-                alt={post.title}
-                className="w-full h-96 object-cover rounded-2xl shadow-lg"
-              />
             </motion.div>
           </div>
         </section>
@@ -310,17 +392,21 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
                   <Button
                     variant="outline"
                     onClick={handleLike}
-                    className={`border-gray-300 ${isLiked ? 'text-red-500 border-red-300' : 'text-gray-600 hover:bg-gray-50'}`}
+                    className={`bg-white border-gray-300 ${isLiked ? 'text-red-500 border-red-300 hover:bg-red-50' : 'text-gray-600 hover:bg-primary hover:text-white hover:border-primary'}`}
                   >
-                    <Heart className={`w-4 h-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
+                    <Heart className={`w-4 h-4 mr-2 ${isLiked ? 'fill-current text-red-500' : 'text-red-500'}`} />
                     {likeCount} Likes
                   </Button>
-                  <Button variant="outline" className="border-gray-300 text-gray-600 hover:bg-gray-50">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsShareModalOpen(true)}
+                    className="bg-white border-gray-300 text-gray-600 hover:bg-gray-600 hover:text-white hover:border-gray-600"
+                  >
                     <Share2 className="w-4 h-4 mr-2" />
                     Share
                   </Button>
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-base font-medium text-gray-700">
                   {post.views} views
                 </div>
               </motion.div>
@@ -347,47 +433,37 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
               {/* Related Articles */}
               <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Related Articles</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <img
-                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&h=100&fit=crop"
-                      alt="Related article"
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h4 className="font-medium text-gray-900 text-sm line-clamp-2">
-                        Student Success Stories from TIC Summit 2025
-                      </h4>
-                      <p className="text-xs text-gray-600 mt-1">Dec 8, 2024</p>
-                    </div>
+                {loadingRelated ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <img
-                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&h=100&fit=crop"
-                      alt="Related article"
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h4 className="font-medium text-gray-900 text-sm line-clamp-2">
-                        Building Tech Communities in Schools
-                      </h4>
-                      <p className="text-xs text-gray-600 mt-1">Dec 5, 2024</p>
-                    </div>
+                ) : relatedPosts.length > 0 ? (
+                  <div className="space-y-4">
+                    {relatedPosts.map((relatedPost) => (
+                      <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`}>
+                        <div className="flex items-start space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors cursor-pointer">
+                          {relatedPost.image && (
+                            <img
+                              src={relatedPost.image}
+                              alt={relatedPost.title}
+                              className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-gray-900 text-sm line-clamp-2 hover:text-primary transition-colors">
+                              {relatedPost.title}
+                            </h4>
+                            <p className="text-xs text-gray-600 mt-1">
+                              {formatDate(relatedPost.publishedAt || relatedPost.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <img
-                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&h=100&fit=crop"
-                      alt="Related article"
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h4 className="font-medium text-gray-900 text-sm line-clamp-2">
-                        The Future of Tech Education in Africa
-                      </h4>
-                      <p className="text-xs text-gray-600 mt-1">Dec 2, 2024</p>
-                    </div>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-4">No related articles found</p>
+                )}
               </motion.div>
 
               {/* Newsletter Signup */}
@@ -396,21 +472,38 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
                 <p className="text-white/90 mb-4">
                   Get the latest TIC Summit news and insights delivered to your inbox.
                 </p>
-                <div className="space-y-3">
+                <form onSubmit={handleSubscribe} className="space-y-3">
                   <input
                     type="email"
+                    value={subscribeEmail}
+                    onChange={(e) => setSubscribeEmail(e.target.value)}
                     placeholder="Enter your email"
+                    required
                     className="w-full px-4 py-2 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent"
                   />
-                  <Button className="w-full bg-white hover:bg-white text-gray-900">
-                    Subscribe
+                  <Button 
+                    type="submit"
+                    disabled={subscribing}
+                    className="w-full bg-white hover:bg-white text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {subscribing ? "Subscribing..." : "Subscribe"}
                   </Button>
-                </div>
+                </form>
               </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      {post && (
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          url={`/blog/${post.slug}`}
+          title={post.title}
+        />
+      )}
     </Layout>
   )
 }

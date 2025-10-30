@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   Calendar, 
@@ -30,7 +30,7 @@ import {
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
-import React from "react"
+import { toast } from "sonner"
 
 // Loaded from API
 interface BlogPostItem {
@@ -69,9 +69,11 @@ const BlogPage = () => {
   const [showFilters, setShowFilters] = useState(false)
   const [postsToShow, setPostsToShow] = useState(6)
   const [posts, setPosts] = useState<BlogPostItem[]>([])
+  const [subscribeEmail, setSubscribeEmail] = useState("")
+  const [subscribing, setSubscribing] = useState(false)
 
   // Fetch blogs from API
-  React.useEffect(() => {
+  useEffect(() => {
     const load = async () => {
       try {
         const res = await fetch('/api/blogs')
@@ -522,18 +524,54 @@ const BlogPage = () => {
               <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
                 Get the latest TIC Summit news, success stories, and insights delivered to your inbox
               </p>
-              <div className="max-w-md mx-auto">
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  if (!subscribeEmail || !subscribeEmail.includes('@')) {
+                    toast.error("Please enter a valid email address")
+                    return
+                  }
+                  try {
+                    setSubscribing(true)
+                    const res = await fetch('/api/newsletter/subscribe', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email: subscribeEmail })
+                    })
+                    const json = await res.json()
+                    if (json.success) {
+                      toast.success("Successfully subscribed to our newsletter!")
+                      setSubscribeEmail("")
+                    } else {
+                      toast.error(json.error || "Failed to subscribe")
+                    }
+                  } catch (error) {
+                    console.error("Error subscribing:", error)
+                    toast.error("Failed to subscribe")
+                  } finally {
+                    setSubscribing(false)
+                  }
+                }}
+                className="max-w-md mx-auto"
+              >
                 <div className="flex gap-4">
                   <input
                     type="email"
+                    value={subscribeEmail}
+                    onChange={(e) => setSubscribeEmail(e.target.value)}
                     placeholder="Enter your email"
+                    required
                     className="flex-1 px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent"
                   />
-                  <Button className="bg-white hover:bg-white text-gray-900">
-                    Subscribe
+                  <Button 
+                    type="submit"
+                    disabled={subscribing}
+                    className="bg-white hover:bg-white text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {subscribing ? "Subscribing..." : "Subscribe"}
                   </Button>
                 </div>
-              </div>
+              </form>
             </motion.div>
           </div>
         </section>

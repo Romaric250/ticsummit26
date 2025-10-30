@@ -492,6 +492,15 @@ model BlogView {
   @@map("blog_views")
 }
 
+model NewsletterSubscription {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  subscribedAt DateTime @default(now())
+  active    Boolean  @default(true)
+
+  @@map("newsletter_subscriptions")
+}
+
 model Comment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   content   String
