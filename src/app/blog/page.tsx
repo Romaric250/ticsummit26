@@ -30,106 +30,28 @@ import {
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
+import React from "react"
 
-// Blog post data
-const blogPosts = [
-  {
-    id: "tic-summit-2026-launch",
-    title: "TIC Summit 2026: Launching Cameroon's Biggest Tech Innovation Program",
-    excerpt: "We're excited to announce the launch of TIC Summit 2026, our most ambitious program yet. This year, we're expanding to reach over 5,000 students across Cameroon.",
-    content: "Full blog post content here...",
-    author: "TIC Summit Team",
-    authorAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-    publishDate: "2024-12-15",
-    readTime: "5 min read",
-    category: "Announcements",
-    tags: ["TIC Summit", "Innovation", "Students", "Cameroon"],
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop",
-    views: 1250,
-    likes: 89,
-    featured: true
-  },
-  {
-    id: "mentorship-program-success",
-    title: "How Our Mentorship Program is Transforming Tech Education in Cameroon",
-    excerpt: "Discover how our industry mentors are making a real difference in students' lives and preparing the next generation of tech innovators.",
-    content: "Full blog post content here...",
-    author: "Dr. Patricia Nguema",
-    authorAvatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop&crop=face",
-    publishDate: "2024-12-10",
-    readTime: "7 min read",
-    category: "Mentorship",
-    tags: ["Mentorship", "Education", "Success Stories"],
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop",
-    views: 980,
-    likes: 67,
-    featured: false
-  },
-  {
-    id: "student-project-showcase",
-    title: "Amazing Student Projects from TIC Summit 2025",
-    excerpt: "From AI-powered agriculture solutions to mobile apps for education, see the incredible innovations created by our talented students.",
-    content: "Full blog post content here...",
-    author: "Marcus Fon",
-    authorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-    publishDate: "2024-12-05",
-    readTime: "6 min read",
-    category: "Student Projects",
-    tags: ["Student Projects", "Innovation", "AI", "Mobile Apps"],
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop",
-    views: 1450,
-    likes: 112,
-    featured: true
-  },
-  {
-    id: "tech-clubs-expansion",
-    title: "TICTAP Clubs: Building Tech Communities in Schools Across Cameroon",
-    excerpt: "Learn about our TICTAP club initiative and how we're creating sustainable tech communities in secondary and high schools.",
-    content: "Full blog post content here...",
-    author: "Grace Tchoumi",
-    authorAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-    publishDate: "2024-11-28",
-    readTime: "4 min read",
-    category: "Community",
-    tags: ["TICTAP", "Schools", "Community", "Tech Clubs"],
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop",
-    views: 750,
-    likes: 45,
-    featured: false
-  },
-  {
-    id: "industry-partnerships",
-    title: "Building Bridges: Our New Industry Partnerships for 2026",
-    excerpt: "We're proud to announce new partnerships with leading tech companies to provide more opportunities for our students.",
-    content: "Full blog post content here...",
-    author: "David Nguema",
-    authorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-    publishDate: "2024-11-20",
-    readTime: "5 min read",
-    category: "Partnerships",
-    tags: ["Partnerships", "Industry", "Opportunities"],
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop",
-    views: 890,
-    likes: 56,
-    featured: false
-  },
-  {
-    id: "mini-hackathon-success",
-    title: "Regional Mini Hackathons: A Huge Success Across Cameroon",
-    excerpt: "Our regional mini hackathons brought together hundreds of students for intense coding challenges and innovation competitions.",
-    content: "Full blog post content here...",
-    author: "Sophie Nkeng",
-    authorAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
-    publishDate: "2024-11-15",
-    readTime: "6 min read",
-    category: "Events",
-    tags: ["Hackathons", "Competitions", "Regional Events"],
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop",
-    views: 1100,
-    likes: 78,
-    featured: true
-  }
-]
+// Loaded from API
+interface BlogPostItem {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  image?: string
+  category: string
+  tags: string[]
+  featured: boolean
+  published: boolean
+  publishedAt?: string
+  views: number
+  likesCount: number
+  readTime?: string
+  createdAt: string
+  updatedAt: string
+  author: { id: string; name: string | null; image: string | null }
+}
 
 const categories = [
   "All",
@@ -146,8 +68,26 @@ const BlogPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [showFilters, setShowFilters] = useState(false)
   const [postsToShow, setPostsToShow] = useState(6)
+  const [posts, setPosts] = useState<BlogPostItem[]>([])
 
-  const filteredPosts = blogPosts.filter(post => {
+  // Fetch blogs from API
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/blogs')
+        const json = await res.json()
+        if (json?.success) {
+          // Only show published blogs
+          setPosts((json.data as BlogPostItem[]).filter((p) => p.published))
+        }
+      } catch (e) {
+        // noop minimal UI change
+      }
+    }
+    load()
+  }, [])
+
+  const filteredPosts = posts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -229,7 +169,7 @@ const BlogPage = () => {
               <div className="flex flex-wrap justify-center gap-6 text-white/80">
                 <div className="flex items-center space-x-2">
                   <BookOpen className="w-5 h-5" />
-                  <span>{blogPosts.length} Articles</span>
+                  <span>{posts.length} Articles</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Eye className="w-5 h-5" />
@@ -358,12 +298,12 @@ const BlogPage = () => {
                         variants={itemVariants}
                         className="group"
                       >
-                        <Link href={`/blog/${post.id}`}>
+                        <Link href={`/blog/${post.slug}`}>
                           <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer">
                             {/* Featured Badge */}
                             <div className="relative">
                               <img
-                                src={post.image}
+                                src={post.image || "https://placehold.co/400x200"}
                                 alt={post.title}
                                 className="w-full h-48 object-cover"
                               />
@@ -383,19 +323,19 @@ const BlogPage = () => {
                               <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
                                 <div className="flex items-center space-x-2">
                                   <img
-                                    src={post.authorAvatar}
-                                    alt={post.author}
+                                    src={post.author?.image || "https://placehold.co/48x48"}
+                                    alt={post.author?.name || "Author"}
                                     className="w-6 h-6 rounded-full"
                                   />
-                                  <span>{post.author}</span>
+                                  <span>{post.author?.name || 'Unknown Author'}</span>
                                 </div>
                                 <div className="flex items-center space-x-1">
                                   <Calendar className="w-4 h-4" />
-                                  <span>{formatDate(post.publishDate)}</span>
+                                  <span>{formatDate(post.publishedAt || post.createdAt)}</span>
                                 </div>
                                 <div className="flex items-center space-x-1">
                                   <Clock className="w-4 h-4" />
-                                  <span>{post.readTime}</span>
+                                  <span>{post.readTime || ''}</span>
                                 </div>
                               </div>
 
@@ -433,7 +373,7 @@ const BlogPage = () => {
                                   </div>
                                   <div className="flex items-center space-x-1">
                                     <Heart className="w-4 h-4" />
-                                    <span>{post.likes}</span>
+                                    <span>{post.likesCount}</span>
                                   </div>
                                 </div>
                                 <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
@@ -458,11 +398,11 @@ const BlogPage = () => {
                         variants={itemVariants}
                         className="group"
                       >
-                        <Link href={`/blog/${post.id}`}>
+                        <Link href={`/blog/${post.slug}`}>
                           <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer">
                             <div className="relative">
                               <img
-                                src={post.image}
+                                src={post.image || "https://placehold.co/400x200"}
                                 alt={post.title}
                                 className="w-full h-48 object-cover"
                               />
@@ -477,15 +417,15 @@ const BlogPage = () => {
                               <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
                                 <div className="flex items-center space-x-2">
                                   <img
-                                    src={post.authorAvatar}
-                                    alt={post.author}
+                                    src={post.author?.image || "https://placehold.co/48x48"}
+                                    alt={post.author?.name || "Author"}
                                     className="w-6 h-6 rounded-full"
                                   />
-                                  <span>{post.author}</span>
+                                  <span>{post.author?.name || 'Unknown Author'}</span>
                                 </div>
                                 <div className="flex items-center space-x-1">
                                   <Calendar className="w-4 h-4" />
-                                  <span>{formatDate(post.publishDate)}</span>
+                                  <span>{formatDate(post.publishedAt || post.createdAt)}</span>
                                 </div>
                               </div>
 
@@ -519,7 +459,7 @@ const BlogPage = () => {
                                 <div className="flex items-center space-x-4 text-sm text-gray-600">
                                   <div className="flex items-center space-x-1">
                                     <Clock className="w-4 h-4" />
-                                    <span>{post.readTime}</span>
+                                    <span>{post.readTime || ''}</span>
                                   </div>
                                   <div className="flex items-center space-x-1">
                                     <Eye className="w-4 h-4" />

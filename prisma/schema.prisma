@@ -324,6 +324,7 @@ model User {
   comments     Comment[]
   likes        Like[]
   views        View[]
+  blogLikes    BlogLike[]
   projects     Project[]
   applications Application[]
 
@@ -459,8 +460,36 @@ model BlogPost {
   authorId String
   author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments Comment[]
+  blogLikes BlogLike[]
+  blogViews BlogView[]
 
   @@map("blog_posts")
+}
+model BlogLike {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  blogId String @db.ObjectId
+  userId String
+
+  blog   BlogPost @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([blogId, userId])
+  @@map("blog_likes")
+}
+
+model BlogView {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  ipAddress String
+  userAgent String?
+
+  blogId String @db.ObjectId
+  blog   BlogPost @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@unique([blogId, ipAddress])
+  @@map("blog_views")
 }
 
 model Comment {
