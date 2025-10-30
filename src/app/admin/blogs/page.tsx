@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Layout from '@/components/layout/Layout'
 import { motion } from 'framer-motion'
 import { Plus, FileText, Edit2, Trash2, Search, Loader2, Eye } from 'lucide-react'
+import { UploadCloud, Undo2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { BlogFormModal } from '@/components/admin/BlogFormModal'
 import { BlogPreviewModal } from '@/components/admin/BlogPreviewModal'
@@ -44,6 +45,9 @@ export default function AdminBlogsPage() {
   const [filterStatus, setFilterStatus] = useState('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [confirmPublishId, setConfirmPublishId] = useState<string | null>(null)
+  const [publishTargetState, setPublishTargetState] = useState<'publish' | 'unpublish'>('publish')
+  const [publishingId, setPublishingId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPostId, setEditingPostId] = useState<string | undefined>(undefined)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
@@ -94,6 +98,39 @@ export default function AdminBlogsPage() {
     } finally {
       setDeletingId(null)
       setConfirmDeleteId(null)
+    }
+  }
+
+  const handleTogglePublish = async (postId: string, target: 'publish' | 'unpublish') => {
+    try {
+      setPublishingId(postId)
+      const response = await fetch(`/api/blogs/${postId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          published: target === 'publish',
+          publishedAt: target === 'publish' ? new Date().toISOString() : null,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success(target === 'publish' ? 'Blog post published' : 'Blog post set to draft')
+        setPosts(posts.map(p => p.id === postId ? {
+          ...p,
+          published: target === 'publish',
+          publishedAt: target === 'publish' ? new Date().toISOString() : undefined,
+        } : p))
+      } else {
+        toast.error(data.error || 'Failed to update publish status')
+      }
+    } catch (error) {
+      console.error('Error updating publish status:', error)
+      toast.error('Failed to update publish status')
+    } finally {
+      setPublishingId(null)
+      setConfirmPublishId(null)
     }
   }
 
@@ -272,6 +309,35 @@ export default function AdminBlogsPage() {
                       >
                         <Eye className="h-5 w-5" />
                       </motion.button>
+                      {post.published ? (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setPublishTargetState('unpublish')
+                            setConfirmPublishId(post.id)
+                          }}
+                          className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all cursor-pointer"
+                          aria-label={`Unpublish ${post.title}`}
+                          disabled={publishingId === post.id}
+                        >
+                          <Undo2 className="h-5 w-5" />
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setPublishTargetState('publish')
+                            setConfirmPublishId(post.id)
+                          }}
+                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all cursor-pointer"
+                          aria-label={`Publish ${post.title}`}
+                          disabled={publishingId === post.id}
+                        >
+                          <UploadCloud className="h-5 w-5" />
+                        </motion.button>
+                      )}
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -351,6 +417,23 @@ export default function AdminBlogsPage() {
         onConfirm={() => {
           if (confirmDeleteId) {
             handleDelete(confirmDeleteId)
+          }
+        }}
+      />
+
+      {/* Publish/Unpublish Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={!!confirmPublishId}
+        onClose={() => setConfirmPublishId(null)}
+        title={publishTargetState === 'publish' ? 'Publish blog post' : 'Unpublish blog post'}
+        description={publishTargetState === 'publish' 
+          ? 'Are you sure you want to publish this blog post? It will be visible publicly.'
+          : 'Are you sure you want to unpublish this blog post? It will be removed from public view.'}
+        confirmLabel={publishingId ? (publishTargetState === 'publish' ? 'Publishing...' : 'Updating...') : (publishTargetState === 'publish' ? 'Publish' : 'Set as draft')}
+        isLoading={!!publishingId}
+        onConfirm={() => {
+          if (confirmPublishId) {
+            handleTogglePublish(confirmPublishId, publishTargetState)
           }
         }}
       />
