@@ -40,6 +40,9 @@ import {
   createSuggestionItems,
   renderItems,
   createImageUpload,
+  EditorBubble,
+  EditorBubbleItem,
+  useEditor,
 } from "novel";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "sonner";
@@ -59,6 +62,10 @@ import {
   TextQuote,
   Twitter as TwitterIcon,
   Youtube as YoutubeIcon,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
 } from "lucide-react";
 
 const hljs = require("highlight.js");
@@ -201,6 +208,78 @@ const baseExtensions = [
   CustomKeymap,
   GlobalDragHandle,
 ];
+
+// Bubble Menu Buttons Component
+const BubbleMenuButtons = () => {
+  const { editor } = useEditor();
+  
+  if (!editor) return null;
+
+  const formatButtons = [
+    {
+      name: "bold",
+      icon: Bold,
+      isActive: () => editor.isActive("bold"),
+      command: () => editor.chain().focus().toggleBold().run(),
+    },
+    {
+      name: "italic",
+      icon: Italic,
+      isActive: () => editor.isActive("italic"),
+      command: () => editor.chain().focus().toggleItalic().run(),
+    },
+    {
+      name: "underline",
+      icon: Underline,
+      isActive: () => editor.isActive("underline"),
+      command: () => editor.chain().focus().toggleUnderline().run(),
+    },
+    {
+      name: "strike",
+      icon: Strikethrough,
+      isActive: () => editor.isActive("strike"),
+      command: () => editor.chain().focus().toggleStrike().run(),
+    },
+    {
+      name: "code",
+      icon: Code,
+      isActive: () => editor.isActive("code"),
+      command: () => editor.chain().focus().toggleCode().run(),
+    },
+  ];
+
+  return (
+    <>
+      {formatButtons.map((item) => (
+        <EditorBubbleItem
+          key={item.name}
+          onSelect={(editor) => {
+            item.command();
+          }}
+          className="cursor-pointer"
+        >
+          <button
+            type="button"
+            className={cx(
+              "p-2 rounded hover:bg-gray-100 transition-colors",
+              item.isActive() 
+                ? "bg-blue-100" 
+                : "bg-white"
+            )}
+            title={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+          >
+            <item.icon className={cx(
+              "w-4 h-4",
+              item.isActive() 
+                ? "text-blue-600" 
+                : "text-gray-700"
+            )} />
+          </button>
+        </EditorBubbleItem>
+      ))}
+    </>
+  );
+};
 
 interface NovelBlogEditorProps {
   content?: string; // HTML content
@@ -497,10 +576,13 @@ export const NovelBlogEditor = ({
     setSaveStatus("Saved");
   }, 500);
 
-  // Initialize content ONLY once on mount - don't update after editor is initialized
+  // Track the content used for initialization to detect when it changes
+  const initializedContentRef = useRef<string>("");
+
+  // Initialize content when content prop changes (but not due to internal updates)
   useEffect(() => {
-    // Only initialize once
-    if (isInitializedRef.current) {
+    // Skip if this is the same content we already initialized
+    if (initializedContentRef.current === content) {
       return;
     }
     
@@ -509,27 +591,38 @@ export const NovelBlogEditor = ({
       return;
     }
     
-    if (content) {
-      try {
-        if (content.trim().startsWith('{')) {
-          // It's already JSON
-          setInitialContent(JSON.parse(content));
-        } else {
-          // It's HTML - convert to JSONContent using TipTap with base extensions
-          const jsonContent = generateJSON(content, baseExtensions as any);
-          setInitialContent(jsonContent);
-        }
-      } catch (error) {
-        console.error("Error parsing content:", error);
-        setInitialContent(null);
-      }
-    } else {
+    // Reset initialization flag if content changed significantly
+    if (initializedContentRef.current && content !== initializedContentRef.current) {
+      isInitializedRef.current = false;
       setInitialContent(null);
     }
     
-    isInitializedRef.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
+    // Initialize if not already initialized or content changed
+    if (!isInitializedRef.current) {
+      if (content) {
+        try {
+          if (content.trim().startsWith('{')) {
+            // It's already JSON
+            setInitialContent(JSON.parse(content));
+          } else {
+            // It's HTML - convert to JSONContent using TipTap with base extensions
+            const jsonContent = generateJSON(content, baseExtensions as any);
+            setInitialContent(jsonContent);
+          }
+          initializedContentRef.current = content;
+        } catch (error) {
+          console.error("Error parsing content:", error);
+          setInitialContent(null);
+          initializedContentRef.current = "";
+        }
+      } else {
+        setInitialContent(null);
+        initializedContentRef.current = "";
+      }
+      
+      isInitializedRef.current = true;
+    }
+  }, [content]);
 
   // Show loading only if we have content but haven't converted it yet
   // If no content, we'll show empty editor (initialContent can be null/undefined)
@@ -544,6 +637,29 @@ export const NovelBlogEditor = ({
 
   return (
     <div className="relative w-full">
+      <style dangerouslySetInnerHTML={{__html: `
+        .novel-editor-content h1 {
+          font-size: 2.25rem !important;
+          line-height: 2.5rem !important;
+          font-weight: 700 !important;
+          margin-top: 2rem !important;
+          margin-bottom: 1.5rem !important;
+        }
+        .novel-editor-content h2 {
+          font-size: 1.875rem !important;
+          line-height: 2.25rem !important;
+          font-weight: 700 !important;
+          margin-top: 1.5rem !important;
+          margin-bottom: 1rem !important;
+        }
+        .novel-editor-content h3 {
+          font-size: 1.5rem !important;
+          line-height: 2rem !important;
+          font-weight: 700 !important;
+          margin-top: 1.25rem !important;
+          margin-bottom: 0.75rem !important;
+        }
+      `}} />
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
         <div className="rounded-lg bg-gray-100 px-2 py-1 text-sm text-gray-600">
           {saveStatus}
@@ -558,7 +674,7 @@ export const NovelBlogEditor = ({
         <EditorContent
           initialContent={initialContent || undefined}
           extensions={allExtensions as any}
-          className="relative min-h-[500px] w-full border-gray-300 bg-white sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
+          className="novel-editor-content relative min-h-[500px] w-full border-gray-300 bg-white sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
           editorProps={{
             handleDOMEvents: {
               keydown: (_view, event) => handleCommandNavigation(event),
@@ -567,7 +683,7 @@ export const NovelBlogEditor = ({
             handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, uploadFn),
             attributes: {
               class:
-                "prose prose-lg prose-headings:font-title font-default focus:outline-none max-w-full text-gray-900 p-6",
+                "prose prose-lg prose-headings:font-bold prose-p:mb-4 prose-p:leading-relaxed font-default focus:outline-none max-w-full text-gray-900 p-6",
             },
           }}
           onUpdate={({ editor }) => {
@@ -579,6 +695,16 @@ export const NovelBlogEditor = ({
           }}
           slotAfter={<ImageResizer />}
         >
+          {/* Floating Bubble Menu for Text Formatting */}
+          <EditorBubble
+            tippyOptions={{
+              placement: "top",
+            }}
+            className="flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-1 shadow-lg"
+          >
+            <BubbleMenuButtons />
+          </EditorBubble>
+
           <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-gray-300 bg-white px-1 py-2 shadow-md transition-all">
             <EditorCommandEmpty className="px-2 text-gray-500">
               No results

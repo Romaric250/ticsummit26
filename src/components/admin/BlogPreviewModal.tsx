@@ -107,7 +107,33 @@ export const BlogPreviewModal = ({ isOpen, onClose, post }: BlogPreviewModalProp
                   )}
 
                   {/* Render HTML content */}
-                  <article className="prose prose-lg max-w-none mt-6 text-gray-900 prose-headings:text-gray-900 prose-headings:font-bold prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-6 prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-5 prose-p:text-gray-800 prose-p:mb-4 prose-p:leading-relaxed prose-p:min-h-[1.5rem] prose-strong:text-gray-900 prose-a:text-blue-600 prose-ul:text-gray-800 prose-ol:text-gray-800 prose-li:text-gray-800 prose-blockquote:text-gray-700 prose-code:text-gray-900">
+                  <style dangerouslySetInnerHTML={{__html: `
+                    .blog-preview-content h1 {
+                      font-size: 2.25rem !important;
+                      line-height: 2.5rem !important;
+                      font-weight: 700 !important;
+                      margin-top: 2rem !important;
+                      margin-bottom: 1.5rem !important;
+                      color: #111827 !important;
+                    }
+                    .blog-preview-content h2 {
+                      font-size: 1.875rem !important;
+                      line-height: 2.25rem !important;
+                      font-weight: 700 !important;
+                      margin-top: 1.5rem !important;
+                      margin-bottom: 1rem !important;
+                      color: #111827 !important;
+                    }
+                    .blog-preview-content h3 {
+                      font-size: 1.5rem !important;
+                      line-height: 2rem !important;
+                      font-weight: 700 !important;
+                      margin-top: 1.25rem !important;
+                      margin-bottom: 0.75rem !important;
+                      color: #111827 !important;
+                    }
+                  `}} />
+                  <article className="blog-preview-content prose prose-lg max-w-none mt-6 text-gray-900 prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-800 prose-p:mb-4 prose-p:leading-relaxed prose-p:min-h-[1.5rem] prose-strong:text-gray-900 prose-a:text-blue-600 prose-ul:text-gray-800 prose-ol:text-gray-800 prose-li:text-gray-800 prose-blockquote:text-gray-700 prose-code:text-gray-900">
                     <div dangerouslySetInnerHTML={{ __html: post.content }} />
                   </article>
                 </div>

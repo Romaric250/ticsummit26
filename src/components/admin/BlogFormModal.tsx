@@ -395,12 +395,21 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Content *
                   </label>
-                  <BlogEditor
-                    key={blogId || "new"} // Force remount when switching between new/edit
-                    content={formData.content}
-                    onChange={(content) => handleInputChange("content", content)}
-                    placeholder="Start writing your blog post..."
-                  />
+                  {loading && blogId ? (
+                    <div className="w-full min-h-[500px] flex items-center justify-center bg-white rounded-lg border border-gray-200">
+                      <div className="text-center">
+                        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Loading content...</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <BlogEditor
+                      key={blogId || `new-${isOpen}`} // Force remount when switching between new/edit or opening modal
+                      content={formData.content}
+                      onChange={(content) => handleInputChange("content", content)}
+                      placeholder="Start writing your blog post..."
+                    />
+                  )}
                   {errors.content && (
                     <div className="flex items-center mt-2 text-sm text-red-600">
                       <AlertCircle className="w-4 h-4 mr-1" />
