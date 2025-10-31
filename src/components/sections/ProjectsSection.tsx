@@ -267,23 +267,16 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <motion.div
-            variants={itemVariants}
-            className="inline-flex items-center space-x-2 bg-gray-100 text-gray-900 rounded-full px-4 py-2 mb-6"
-          >
-            <Star className="w-4 h-4" />
-            <span className="text-sm font-medium">Featured Projects</span>
-          </motion.div>
 
-          <motion.h2
+
+          <motion.h5
             variants={itemVariants}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+            className="text-sm sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
           >
-            Hall of Fame
             <span className="block text-gray-700">
               Celebrating Innovation
             </span>
-          </motion.h2>
+          </motion.h5>
 
           <motion.p
             variants={itemVariants}
@@ -385,9 +378,6 @@ const ProjectsSection = () => {
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center space-x-3 bg-gray-50 rounded-xl px-6 py-3 shadow-sm border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-300 group cursor-pointer"
             >
-              <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center">
-                <Star className="w-5 h-5 text-white" />
-              </div>
               <div className="text-left">
                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-gray-700 transition-colors">
                   Hall of Fame
@@ -402,7 +392,7 @@ const ProjectsSection = () => {
         </motion.div>
 
         {/* Call to Action */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -429,7 +419,7 @@ const ProjectsSection = () => {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   )

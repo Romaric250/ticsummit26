@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/Button"
 import { StudentsInActionCarousel } from "./HeroSection"
 import { useState, useEffect } from "react"
+import Link from "next/link"
 
 // Animated Counter Hook
 const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
@@ -220,9 +221,9 @@ const AboutSection = () => {
             variants={itemVariants}
             className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            The TIC Summit 2023 edition was a great success. Our volunteers and staff 
-            engaged in numerous outreaches across multiple regions, reaching over 1500 
-            students from 28 different schools.
+            The TIC Summit has been a great success since its inception in 2021. Our volunteers and staff 
+            engaged in numerous outreaches across multiple regions, reaching over 10,000
+            students from over  50 different schools.
           </motion.p>
         </motion.div>
 
@@ -352,13 +353,12 @@ const AboutSection = () => {
               variants={itemVariants}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Button className="bg-blue-900 hover:bg-blue-800 text-white group" size="lg">
-                Learn More
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="lg" className="border-blue-900 text-blue-900 hover:bg-blue-50">
-                View Gallery
-              </Button>
+              <Link href="/about">
+                <Button className="bg-blue-900 hover:bg-blue-800 text-white group" size="lg">
+                  Learn More
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
