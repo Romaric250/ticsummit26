@@ -6,17 +6,14 @@ import {
   Users, 
   Plus, 
   Search, 
-  Filter,
   Edit,
   Trash2,
   Eye,
   EyeOff,
   MapPin,
   Building,
-  Calendar,
-  Star,
-  MoreVertical,
-  X
+  X,
+  Calendar
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"

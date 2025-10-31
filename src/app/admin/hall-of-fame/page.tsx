@@ -18,7 +18,6 @@ import {
   X,
   Award,
   Code,
-  Loader2
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"

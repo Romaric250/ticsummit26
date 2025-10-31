@@ -1,21 +1,13 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { 
   ArrowLeft,
   Save,
   User,
-  Building,
-  MapPin,
-  Calendar,
-  GraduationCap,
-  Globe,
-  Award,
   Plus,
   X,
-  Users,
-  Loader
+  Loader22
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
@@ -243,7 +235,7 @@ const EditMentorPage = ({ params }: { params: Promise<{ id: string }> }) => {
       <Layout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <Loader className="w-12 h-12 animate-spin text-gray-400 mx-auto mb-4" />
+            <Loader2 className="w-12 h-12 animate-spin text-gray-400 mx-auto mb-4" />
             <p className="text-gray-400">Loading mentor...</p>
           </div>
         </div>
@@ -704,7 +696,7 @@ const EditMentorPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <Button type="submit" disabled={loading} className="bg-gray-900 hover:bg-gray-800 text-white">
                 {loading ? (
                   <>
-                    <Loader className="w-4 h-4 animate-spin mr-2" />
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
                     Updating...
                   </>
                 ) : (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star, Mail, Phone, MapPin } from "lucide-react"
+import { Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star, Mail, Phone, MapPin } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 import { useUploadThing } from "@/lib/uploadthing"
@@ -137,8 +137,7 @@ const MinorUpdatesPage = () => {
   const [showTICImpactModal, setShowTICImpactModal] = useState(false)
   const [showContactInfoModal, setShowContactInfoModal] = useState(false)
   const [showMVVModal, setShowMVVModal] = useState(false)
-  const [editingCarouselSlide, setEditingCarouselSlide] = useState<{ type: "HERO" | "STUDENTS", slide: CarouselSlide | null, index: number } | null>(null)
-  const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null)
+  // Removed unused editingCarouselSlide and editingTeamMember states
 
   useEffect(() => {
     fetchData()
@@ -1071,7 +1070,7 @@ const CarouselModal = ({
           toast.error("Failed to delete slide")
           return
         }
-      } catch (error) {
+      } catch {
         toast.error("Failed to delete slide")
         return
       }

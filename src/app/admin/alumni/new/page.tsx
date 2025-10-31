@@ -1,18 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
 import { 
   ArrowLeft,
   Upload,
   X,
-  Plus,
-  GraduationCap,
-  Briefcase,
-  Building,
-  MapPin,
-  Calendar,
-  Award
+  Plus
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"

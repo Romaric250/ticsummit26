@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Save, Plus, Trash2, Edit, ArrowUp, ArrowDown, CheckCircle, Circle, X } from "lucide-react"
+import { Plus, Trash2, Edit, ArrowUp, ArrowDown, X, Save } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 
@@ -23,7 +23,7 @@ const ScheduleAdminPage = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [phases, setPhases] = useState<TimelinePhase[]>([])
-  const [editingPhaseId, setEditingPhaseId] = useState<string | null>(null)
+  // Removed unused editingPhaseId state
 
   const statusOptions = ["COMPLETED", "ACTIVE", "UPCOMING"]
   const colorOptions = [

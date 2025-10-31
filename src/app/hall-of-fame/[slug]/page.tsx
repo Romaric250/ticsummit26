@@ -1,25 +1,21 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import { 
   ArrowLeft, 
-  Calendar, 
   User, 
   ExternalLink, 
   Share2, 
   Heart,
-  MessageCircle,
-  Star,
   Award,
   Code,
   Users,
   Eye,
+  Star,
   Sparkles,
-  ChevronLeft,
-  ChevronRight,
   X
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
@@ -84,7 +80,6 @@ const ProjectDetailPage = () => {
   const [viewsCount, setViewsCount] = useState(0)
   const [isLiking, setIsLiking] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showShareModal, setShowShareModal] = useState(false)
 
   useEffect(() => {

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   Calendar, 
-  Clock, 
   User, 
   Tag, 
   Search, 
@@ -12,20 +11,7 @@ import {
   ArrowRight,
   Eye,
   Heart,
-  Share2,
-  BookOpen,
-  Code,
-  Lightbulb,
-  Users,
-  Award,
-  Globe,
-  Zap,
-  Rocket,
-  Target,
-  TrendingUp,
-  Star,
-  ChevronDown,
-  ChevronUp
+  Share2
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"

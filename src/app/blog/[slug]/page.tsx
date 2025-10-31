@@ -6,25 +6,12 @@ import { useParams } from "next/navigation"
 import { 
   ArrowLeft,
   Calendar, 
-  Clock, 
+  Clock,
   User, 
   Tag, 
   Eye,
   Heart,
-  Share2,
-  BookOpen,
-  Code,
-  Lightbulb,
-  Users,
-  Award,
-  Globe,
-  Zap,
-  Rocket,
-  Target,
-  TrendingUp,
-  Star,
-  ChevronLeft,
-  ChevronRight
+  Share2
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"

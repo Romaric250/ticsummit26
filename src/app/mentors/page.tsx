@@ -66,7 +66,7 @@ interface Mentor {
   education?: string
   languages: string[]
   achievements: string[]
-  socialLinks?: any
+  socialLinks?: Record<string, string>
   isActive: boolean
   createdAt: string
   updatedAt: string

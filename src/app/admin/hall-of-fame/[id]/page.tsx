@@ -1,11 +1,10 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/Button"
-import { ImageUpload } from "@/components/ui/ImageUpload"
 import { MultipleImageUpload } from "@/components/ui/MultipleImageUpload"
 import { TechStackInput } from "@/components/ui/TechStackInput"
 import { MembersInput } from "@/components/ui/MembersInput"

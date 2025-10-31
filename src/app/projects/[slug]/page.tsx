@@ -6,7 +6,6 @@ import { useParams } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
 import { 
   Heart, 
-  MessageCircle, 
   Share2, 
   Eye, 
   ExternalLink,
@@ -15,9 +14,6 @@ import {
   Award,
   ArrowLeft,
   Tag,
-  ThumbsUp,
-  Reply,
-  Send,
   Bookmark,
   Flag
 } from "lucide-react"

@@ -288,7 +288,6 @@ export default function HallOfFameSection() {
             )}
           </motion.div>
         )}
-        </motion.div>
 
         {/* Achievements Section - Only show if there are achievements */}
         {achievements.length > 0 && (

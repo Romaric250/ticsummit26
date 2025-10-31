@@ -1,17 +1,11 @@
 "use client"
 
 import { useState, useEffect, use } from "react"
-import { motion } from "framer-motion"
 import { 
   ArrowLeft,
   Upload,
   X,
   Plus,
-  GraduationCap,
-  Briefcase,
-  Building,
-  MapPin,
-  Calendar,
   Award
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
@@ -32,7 +26,7 @@ interface Alumni {
   company?: string
   location?: string
   achievements: string[]
-  socialLinks?: any
+  socialLinks?: Record<string, string>
   isActive: boolean
   createdAt: string
   updatedAt: string

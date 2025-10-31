@@ -6,35 +6,15 @@ import {
   Target, 
   Users, 
   Lightbulb, 
-  Award, 
   Globe, 
   Heart,
-  CheckCircle,
   ArrowRight,
-  Calendar,
-  MapPin,
   Trophy,
-  Star,
   Quote,
   Play,
-  ChevronRight,
-  Sparkles,
-  Zap,
-  Rocket,
-  Crown,
-  Brain,
-  Atom,
-  Cpu,
-  Database,
-  Code,
-  Layers,
   Linkedin,
   Github,
-  Mail,
-  Shuffle,
-  RotateCcw,
-  Eye,
-  EyeOff
+  Mail
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
@@ -53,7 +33,7 @@ interface Alumni {
   company?: string
   location?: string
   achievements: string[]
-  socialLinks?: any
+  socialLinks?: Record<string, string>
   isActive: boolean
   createdAt: string
   updatedAt: string
@@ -112,7 +92,21 @@ const AboutPage = () => {
   })
 
   // Team members state
-  const [teamMembers, setTeamMembers] = useState<any[]>([])
+  const [teamMembers, setTeamMembers] = useState<Array<{
+    id: string
+    slug?: string
+    name: string
+    role: string
+    bio?: string
+    imageUrl?: string
+    email?: string
+    socialLinks?: {
+      linkedin?: string
+      twitter?: string
+      github?: string
+      email?: string
+    }
+  }>>([])
   const [teamLoading, setTeamLoading] = useState(true)
   const [showTeamSection, setShowTeamSection] = useState(true)
 
@@ -657,11 +651,11 @@ const AboutPage = () => {
                       )}
 
                       {/* Social Links */}
-                      {(member.linkedin || member.twitter || member.github || member.email) && (
+                      {(member.socialLinks?.linkedin || member.socialLinks?.twitter || member.socialLinks?.github || member.email) && (
                         <div className="flex justify-center gap-3 mt-4">
-                          {member.linkedin && (
+                          {member.socialLinks?.linkedin && (
                             <a
-                              href={member.linkedin}
+                              href={member.socialLinks.linkedin}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-gray-400 hover:text-blue-600 transition-colors"
@@ -670,9 +664,9 @@ const AboutPage = () => {
                               <Linkedin className="w-5 h-5" />
                             </a>
                           )}
-                          {member.twitter && (
+                          {member.socialLinks?.twitter && (
                             <a
-                              href={member.twitter}
+                              href={member.socialLinks.twitter}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-gray-400 hover:text-blue-400 transition-colors"
@@ -681,9 +675,9 @@ const AboutPage = () => {
                               <span className="w-5 h-5 flex items-center justify-center text-sm">𝕏</span>
                             </a>
                           )}
-                          {member.github && (
+                          {member.socialLinks?.github && (
                             <a
-                              href={member.github}
+                              href={member.socialLinks.github}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-gray-400 hover:text-gray-900 transition-colors"

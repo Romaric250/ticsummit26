@@ -64,7 +64,7 @@ interface Alumni {
   company?: string
   location?: string
   achievements: string[]
-  socialLinks?: any
+  socialLinks?: Record<string, string>
   isActive: boolean
   createdAt: string
   updatedAt: string

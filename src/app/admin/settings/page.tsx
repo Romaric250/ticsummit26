@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Settings, Users, Save } from "lucide-react"
+import { Settings, Users } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 

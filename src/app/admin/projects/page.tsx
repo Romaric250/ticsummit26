@@ -3,21 +3,14 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
-  Star, 
-  Heart, 
-  MessageCircle, 
   Share2, 
   Eye, 
-  ExternalLink,
   Filter,
   Search,
-  Calendar,
   User,
-  Award,
-  ChevronDown
+  Award
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
-import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 
 interface Project {
@@ -41,7 +34,7 @@ const HallOfFamePage = () => {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState("newest")
+  // Removed unused sortBy state
 
   useEffect(() => {
     fetchProjects()
