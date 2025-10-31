@@ -28,6 +28,9 @@ import {
   Database,
   Code,
   Layers,
+  Linkedin,
+  Github,
+  Mail,
   Shuffle,
   RotateCcw,
   Eye,
@@ -107,6 +110,11 @@ const AboutPage = () => {
     quote: "When we started TIC Summit, we had a simple vision: to unlock the incredible potential of young minds across Cameroon. Today, seeing thousands of students transformed into innovators, entrepreneurs, and tech leaders, I know we've created something truly special."
   })
 
+  // Team members state
+  const [teamMembers, setTeamMembers] = useState<any[]>([])
+  const [teamLoading, setTeamLoading] = useState(true)
+  const [showTeamSection, setShowTeamSection] = useState(true)
+
   // Fetch TIC Impact from API
   useEffect(() => {
     const fetchTICImpact = async () => {
@@ -121,6 +129,41 @@ const AboutPage = () => {
       }
     }
     fetchTICImpact()
+  }, [])
+
+  // Fetch team members and settings
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        setTeamLoading(true)
+        const [teamRes, settingsRes] = await Promise.all([
+          fetch("/api/content/team-members"),
+          fetch("/api/content/site-settings")
+        ])
+
+        if (teamRes.ok) {
+          const teamData = await teamRes.json()
+          if (teamData.success) {
+            const activeMembers = teamData.data
+              .filter((m: any) => m.active)
+              .sort((a: any, b: any) => a.order - b.order)
+            setTeamMembers(activeMembers)
+          }
+        }
+
+        if (settingsRes.ok) {
+          const settingsData = await settingsRes.json()
+          if (settingsData.success && settingsData.data) {
+            setShowTeamSection(settingsData.data.showTeamSection !== false)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching team data:", error)
+      } finally {
+        setTeamLoading(false)
+      }
+    }
+    fetchTeamData()
   }, [])
 
   useEffect(() => {
@@ -517,6 +560,137 @@ const AboutPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Team Section */}
+        {showTeamSection && (
+          <section className="py-20 bg-white">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  Team Behind the Summit
+                  <span className="block text-blue-900">Our Amazing Team</span>
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Meet the dedicated team working tirelessly to make TIC Summit a success
+                </p>
+              </div>
+
+              {teamLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center animate-pulse">
+                      <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-6"></div>
+                      <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                      <div className="h-4 bg-gray-300 rounded mb-4 w-3/4 mx-auto"></div>
+                      <div className="h-3 bg-gray-300 rounded"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : teamMembers.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                  {teamMembers.map((member, index) => (
+                    <motion.div
+                      key={member.id || index}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center hover:shadow-xl transition-shadow"
+                    >
+                      <div className="w-24 h-24 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden">
+                        {member.imageUrl ? (
+                          <Image
+                            src={member.imageUrl}
+                            alt={member.name}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-white font-bold text-3xl">
+                            {member.name.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {member.name}
+                      </h3>
+                      
+                      {member.role && (
+                        <p className="text-blue-600 font-semibold mb-3">
+                          {member.role}
+                        </p>
+                      )}
+                      
+                      {member.bio && (
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                          {member.bio}
+                        </p>
+                      )}
+
+                      {/* Social Links */}
+                      {(member.linkedin || member.twitter || member.github || member.email) && (
+                        <div className="flex justify-center gap-3 mt-4">
+                          {member.linkedin && (
+                            <a
+                              href={member.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-400 hover:text-blue-600 transition-colors"
+                              aria-label="LinkedIn"
+                            >
+                              <Linkedin className="w-5 h-5" />
+                            </a>
+                          )}
+                          {member.twitter && (
+                            <a
+                              href={member.twitter}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-400 hover:text-blue-400 transition-colors"
+                              aria-label="Twitter"
+                            >
+                              <span className="w-5 h-5 flex items-center justify-center text-sm">𝕏</span>
+                            </a>
+                          )}
+                          {member.github && (
+                            <a
+                              href={member.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-400 hover:text-gray-900 transition-colors"
+                              aria-label="GitHub"
+                            >
+                              <Github className="w-5 h-5" />
+                            </a>
+                          )}
+                          {member.email && (
+                            <a
+                              href={`mailto:${member.email}`}
+                              className="text-gray-400 hover:text-gray-900 transition-colors"
+                              aria-label="Email"
+                            >
+                              <Mail className="w-5 h-5" />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <Users className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-medium text-gray-600 mb-2">No team members yet</h3>
+                  <p className="text-gray-500">Team members will appear here once added.</p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Founder's Message */}
         <section className="py-20 bg-white">
