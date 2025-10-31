@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
     // Create new view record
     await prisma.view.create({
       data: {
-        id: `view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         projectId: projectId,
         ipAddress: ipAddress,
         userAgent: userAgent

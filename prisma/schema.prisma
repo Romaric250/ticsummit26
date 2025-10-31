@@ -515,7 +515,7 @@ model Comment {
 }
 
 model Like {
-  id        String   @id @map("_id") @db.String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
 
   projectId String @db.String
@@ -527,7 +527,7 @@ model Like {
 }
 
 model View {
-  id        String   @id @map("_id") @db.String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   ipAddress String?
   userAgent String?

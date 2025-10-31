@@ -126,7 +126,6 @@ export async function POST(request: NextRequest) {
 
     const mentor = await prisma.mentorProfile.create({
       data: {
-        id: `mentor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name,
         email,
         slug,
