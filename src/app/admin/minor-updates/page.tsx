@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, Settings } from "lucide-react"
+import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, Settings, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 import { useUploadThing } from "@/lib/uploadthing"
@@ -60,11 +60,40 @@ const MinorUpdatesPage = () => {
   // Team Members State
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
 
+  // Site Stats State
+  const [siteStats, setSiteStats] = useState({
+    studentsReached: 1500,
+    schoolsVisited: 28,
+    successfulProjects: 150,
+    daysOfInnovation: 3
+  })
+
+  // Site Features State
+  const [siteFeatures, setSiteFeatures] = useState([
+    { id: "", title: "Our Mission", description: "To empower young innovators across Cameroon through technology, mentorship, and hands-on learning experiences.", iconName: "Target", color: "bg-blue-500", order: 0, active: true },
+    { id: "", title: "Innovation Focus", description: "We provide a platform for brilliant minds to connect with industry experts and develop cutting-edge solutions.", iconName: "Lightbulb", color: "bg-yellow-500", order: 1, active: true },
+    { id: "", title: "Community Building", description: "Creating a strong network of young tech enthusiasts who support and inspire each other's growth.", iconName: "Users", color: "bg-green-500", order: 2, active: true },
+    { id: "", title: "Recognition", description: "Celebrating outstanding achievements and providing opportunities for students to showcase their talents.", iconName: "Award", color: "bg-purple-500", order: 3, active: true }
+  ])
+
+  // TIC Impact State
+  const [ticImpact, setTicImpact] = useState({
+    studentsInspired: 1000,
+    teenagersTrained: 5000,
+    prizeAwardsFCFA: 2.0,
+    ticClubsEstablished: 25,
+    subtitle: "in 4 Years",
+    description: "Transforming lives and building the future of tech in Cameroon"
+  })
+
   // Modal States
   const [showFounderModal, setShowFounderModal] = useState(false)
   const [showHeroCarouselModal, setShowHeroCarouselModal] = useState(false)
   const [showStudentsCarouselModal, setShowStudentsCarouselModal] = useState(false)
   const [showTeamModal, setShowTeamModal] = useState(false)
+  const [showStatsModal, setShowStatsModal] = useState(false)
+  const [showFeaturesModal, setShowFeaturesModal] = useState(false)
+  const [showTICImpactModal, setShowTICImpactModal] = useState(false)
   const [editingCarouselSlide, setEditingCarouselSlide] = useState<{ type: "HERO" | "STUDENTS", slide: CarouselSlide | null, index: number } | null>(null)
   const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null)
 
@@ -103,6 +132,36 @@ const MinorUpdatesPage = () => {
         const teamData = await teamRes.json()
         if (teamData.success) {
           setTeamMembers(teamData.data.sort((a: any, b: any) => a.order - b.order))
+        }
+      }
+
+      // Fetch site stats
+      const statsRes = await fetch("/api/content/site-stats")
+      if (statsRes.ok) {
+        const statsData = await statsRes.json()
+        if (statsData.success && statsData.data) {
+          setSiteStats(statsData.data)
+        }
+      }
+
+      // Fetch site features
+      const featuresRes = await fetch("/api/content/site-features")
+      if (featuresRes.ok) {
+        const featuresData = await featuresRes.json()
+        if (featuresData.success) {
+          const sorted = featuresData.data.sort((a: any, b: any) => a.order - b.order)
+          if (sorted.length > 0) {
+            setSiteFeatures(sorted)
+          }
+        }
+      }
+
+      // Fetch TIC Impact
+      const impactRes = await fetch("/api/content/tic-impact")
+      if (impactRes.ok) {
+        const impactData = await impactRes.json()
+        if (impactData.success && impactData.data) {
+          setTicImpact(impactData.data)
         }
       }
     } catch (error) {
@@ -186,6 +245,81 @@ const MinorUpdatesPage = () => {
     } catch (error) {
       console.error("Error saving team members:", error)
       toast.error("Failed to save team members")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSaveStats = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/site-stats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(siteStats)
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("Stats updated successfully")
+        setShowStatsModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update stats")
+      }
+    } catch (error) {
+      console.error("Error saving stats:", error)
+      toast.error("Failed to save stats")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSaveFeatures = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/site-features", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: siteFeatures })
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("Features updated successfully")
+        setShowFeaturesModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update features")
+      }
+    } catch (error) {
+      console.error("Error saving features:", error)
+      toast.error("Failed to save features")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSaveTICImpact = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/tic-impact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ticImpact)
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("TIC Impact updated successfully")
+        setShowTICImpactModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update TIC Impact")
+      }
+    } catch (error) {
+      console.error("Error saving TIC Impact:", error)
+      toast.error("Failed to save TIC Impact")
     } finally {
       setSaving(false)
     }
@@ -284,6 +418,77 @@ const MinorUpdatesPage = () => {
                 </div>
               </div>
             </motion.div>
+
+            {/* Site Stats Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowStatsModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Site Stats</h3>
+                  <p className="text-sm text-gray-600">Manage statistics</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="font-medium text-gray-900">{siteStats.studentsReached.toLocaleString()}+</span>
+                  <span className="text-gray-600 ml-1">Students</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900">{siteStats.schoolsVisited}</span>
+                  <span className="text-gray-600 ml-1">Schools</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Site Features Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowFeaturesModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <Lightbulb className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Site Features</h3>
+                  <p className="text-sm text-gray-600">{siteFeatures.length} features</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* TIC Impact Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowTICImpactModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">TIC Impact</h3>
+                  <p className="text-sm text-gray-600">Manage impact statistics</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="font-medium text-gray-900">{ticImpact.studentsInspired.toLocaleString()}+</span>
+                  <span className="text-gray-600 ml-1">Students</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900">{ticImpact.teenagersTrained.toLocaleString()}+</span>
+                  <span className="text-gray-600 ml-1">Teenagers</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -326,6 +531,36 @@ const MinorUpdatesPage = () => {
           teamMembers={teamMembers}
           setTeamMembers={setTeamMembers}
           onSave={handleSaveTeamMembers}
+          saving={saving}
+        />
+
+        {/* Site Stats Modal */}
+        <SiteStatsModal
+          isOpen={showStatsModal}
+          onClose={() => setShowStatsModal(false)}
+          stats={siteStats}
+          setStats={setSiteStats}
+          onSave={handleSaveStats}
+          saving={saving}
+        />
+
+        {/* Site Features Modal */}
+        <SiteFeaturesModal
+          isOpen={showFeaturesModal}
+          onClose={() => setShowFeaturesModal(false)}
+          features={siteFeatures}
+          setFeatures={setSiteFeatures}
+          onSave={handleSaveFeatures}
+          saving={saving}
+        />
+
+        {/* TIC Impact Modal */}
+        <TICImpactModal
+          isOpen={showTICImpactModal}
+          onClose={() => setShowTICImpactModal(false)}
+          impact={ticImpact}
+          setImpact={setTicImpact}
+          onSave={handleSaveTICImpact}
           saving={saving}
         />
       </div>
@@ -1169,6 +1404,429 @@ const TeamMemberEditor = ({
         </div>
       </div>
     </div>
+  )
+}
+
+// Site Stats Modal Component
+const SiteStatsModal = ({
+  isOpen,
+  onClose,
+  stats,
+  setStats,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  stats: { studentsReached: number, schoolsVisited: number, successfulProjects: number, daysOfInnovation: number }
+  setStats: (stats: typeof stats) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Edit Site Stats</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Students Reached</label>
+                  <input
+                    type="number"
+                    value={stats.studentsReached}
+                    onChange={(e) => setStats({ ...stats, studentsReached: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Schools Visited</label>
+                  <input
+                    type="number"
+                    value={stats.schoolsVisited}
+                    onChange={(e) => setStats({ ...stats, schoolsVisited: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Successful Projects</label>
+                  <input
+                    type="number"
+                    value={stats.successfulProjects}
+                    onChange={(e) => setStats({ ...stats, successfulProjects: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Days of Innovation</label>
+                  <input
+                    type="number"
+                    value={stats.daysOfInnovation}
+                    onChange={(e) => setStats({ ...stats, daysOfInnovation: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+// Site Features Modal Component
+const SiteFeaturesModal = ({
+  isOpen,
+  onClose,
+  features,
+  setFeatures,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  features: Array<{ id: string, title: string, description: string, iconName?: string, color?: string, order: number, active: boolean }>
+  setFeatures: (features: typeof features) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+
+  const iconOptions = ["Target", "Lightbulb", "Users", "Award", "Heart", "Globe", "Trophy", "Star"]
+  const colorOptions = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-purple-500", "bg-red-500", "bg-indigo-500", "bg-pink-500", "bg-orange-500"]
+
+  const handleAddFeature = () => {
+    const newFeature = {
+      id: "",
+      title: "",
+      description: "",
+      iconName: "Target",
+      color: "bg-blue-500",
+      order: features.length,
+      active: true
+    }
+    setFeatures([...features, newFeature])
+    setEditingIndex(features.length)
+  }
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Site Features</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleAddFeature}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Feature
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {features.map((feature, index) => (
+                  <div key={feature.id || index} className="border border-gray-200 rounded-lg p-4">
+                    {editingIndex === index ? (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                          <input
+                            type="text"
+                            value={feature.title}
+                            onChange={(e) => {
+                              const updated = [...features]
+                              updated[index] = { ...updated[index], title: e.target.value }
+                              setFeatures(updated)
+                            }}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                          <textarea
+                            rows={2}
+                            value={feature.description}
+                            onChange={(e) => {
+                              const updated = [...features]
+                              updated[index] = { ...updated[index], description: e.target.value }
+                              setFeatures(updated)
+                            }}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                            <select
+                              value={feature.iconName || ""}
+                              onChange={(e) => {
+                                const updated = [...features]
+                                updated[index] = { ...updated[index], iconName: e.target.value }
+                                setFeatures(updated)
+                              }}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                            >
+                              {iconOptions.map(icon => (
+                                <option key={icon} value={icon}>{icon}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                            <select
+                              value={feature.color || ""}
+                              onChange={(e) => {
+                                const updated = [...features]
+                                updated[index] = { ...updated[index], color: e.target.value }
+                                setFeatures(updated)
+                              }}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                            >
+                              {colorOptions.map(color => (
+                                <option key={color} value={color}>{color}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => setEditingIndex(null)}
+                            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => setEditingIndex(null)}
+                            className="px-3 py-1.5 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+                          >
+                            Done
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 ${feature.color || "bg-gray-500"} rounded-lg flex items-center justify-center`}>
+                            {(() => {
+                              const iconMap: Record<string, any> = { Target, Lightbulb, Users, Award, Heart, Globe, Trophy, Star }
+                              const Icon = iconMap[feature.iconName || "Target"] || Target
+                              return <Icon className="w-6 h-6 text-white" />
+                            })()}
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900">{feature.title || "Untitled"}</h4>
+                            <p className="text-sm text-gray-600 line-clamp-1">{feature.description || "No description"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setEditingIndex(index)}
+                            className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const updated = features.filter((_, i) => i !== index)
+                              updated.forEach((f, i) => { f.order = i })
+                              setFeatures(updated)
+                            }}
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+// TIC Impact Modal Component
+const TICImpactModal = ({
+  isOpen,
+  onClose,
+  impact,
+  setImpact,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  impact: { studentsInspired: number, teenagersTrained: number, prizeAwardsFCFA: number, ticClubsEstablished: number, subtitle?: string, description?: string }
+  setImpact: (impact: typeof impact) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Edit TIC Impact</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                <input
+                  type="text"
+                  value={impact.subtitle || ""}
+                  onChange={(e) => setImpact({ ...impact, subtitle: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  placeholder="e.g., in 4 Years"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  rows={2}
+                  value={impact.description || ""}
+                  onChange={(e) => setImpact({ ...impact, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="e.g., Transforming lives and building the future of tech in Cameroon"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Students Inspired</label>
+                  <input
+                    type="number"
+                    value={impact.studentsInspired}
+                    onChange={(e) => setImpact({ ...impact, studentsInspired: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Teenagers Trained</label>
+                  <input
+                    type="number"
+                    value={impact.teenagersTrained}
+                    onChange={(e) => setImpact({ ...impact, teenagersTrained: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Prize Awards (M FCFA)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={impact.prizeAwardsFCFA}
+                    onChange={(e) => setImpact({ ...impact, prizeAwardsFCFA: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">TIC Clubs Established</label>
+                  <input
+                    type="number"
+                    value={impact.ticClubsEstablished}
+                    onChange={(e) => setImpact({ ...impact, ticClubsEstablished: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   )
 }
 

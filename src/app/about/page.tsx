@@ -86,11 +86,14 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0) => 
 }
 
 const AboutPage = () => {
-  // Animated counters
-  const studentsCount = useCountUp(1000, 3000)
-  const teenagersCount = useCountUp(5000, 3500)
-  const prizeCount = useCountUp(2, 2000)
-  const clubsCount = useCountUp(25, 2500)
+  const [ticImpact, setTicImpact] = useState({
+    studentsInspired: 1000,
+    teenagersTrained: 5000,
+    prizeAwardsFCFA: 2.0,
+    ticClubsEstablished: 25,
+    subtitle: "in 4 Years",
+    description: "Transforming lives and building the future of tech in Cameroon"
+  })
 
   // Alumni state
   const [featuredAlumni, setFeaturedAlumni] = useState<Alumni[]>([])
@@ -103,6 +106,22 @@ const AboutPage = () => {
     title: "Founder & CEO, TIC Summit",
     quote: "When we started TIC Summit, we had a simple vision: to unlock the incredible potential of young minds across Cameroon. Today, seeing thousands of students transformed into innovators, entrepreneurs, and tech leaders, I know we've created something truly special."
   })
+
+  // Fetch TIC Impact from API
+  useEffect(() => {
+    const fetchTICImpact = async () => {
+      try {
+        const response = await fetch("/api/content/tic-impact")
+        const data = await response.json()
+        if (data.success && data.data) {
+          setTicImpact(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching TIC impact:", error)
+      }
+    }
+    fetchTICImpact()
+  }, [])
 
   useEffect(() => {
     fetchFeaturedAlumni()
@@ -121,6 +140,31 @@ const AboutPage = () => {
     }
     fetchFounderQuote()
   }, [])
+
+  // Animated counters - reinitialize when impact changes
+  const studentsCount = useCountUp(ticImpact.studentsInspired, 3000)
+  const teenagersCount = useCountUp(ticImpact.teenagersTrained, 3500)
+  const prizeCount = useCountUp(ticImpact.prizeAwardsFCFA, 2500)
+  const clubsCount = useCountUp(ticImpact.ticClubsEstablished, 2000)
+
+  // Trigger count animation when impact data is loaded
+  useEffect(() => {
+    if (ticImpact.studentsInspired > 0) {
+      // Reset visibility to trigger animation
+      studentsCount.setIsVisible(false)
+      teenagersCount.setIsVisible(false)
+      prizeCount.setIsVisible(false)
+      clubsCount.setIsVisible(false)
+      
+      // Trigger animation after a brief delay
+      setTimeout(() => {
+        studentsCount.setIsVisible(true)
+        teenagersCount.setIsVisible(true)
+        prizeCount.setIsVisible(true)
+        clubsCount.setIsVisible(true)
+      }, 100)
+    }
+  }, [ticImpact.studentsInspired, ticImpact.teenagersTrained, ticImpact.prizeAwardsFCFA, ticImpact.ticClubsEstablished])
 
   const fetchFeaturedAlumni = async () => {
     try {
@@ -161,28 +205,28 @@ const AboutPage = () => {
 
   const impactStats = [
     {
-      number: 1000,
+      number: ticImpact.studentsInspired,
       suffix: "+",
       label: "Students inspired to pursue tech careers",
       icon: Users,
       count: studentsCount
     },
     {
-      number: 5000,
+      number: ticImpact.teenagersTrained,
       suffix: "+",
       label: "Teenagers trained with technical skills",
       icon: Lightbulb,
       count: teenagersCount
     },
     {
-      number: 2,
+      number: ticImpact.prizeAwardsFCFA,
       suffix: "M FCFA",
       label: "In prize awards and scholarships",
       icon: Trophy,
       count: prizeCount
     },
     {
-      number: 25,
+      number: ticImpact.ticClubsEstablished,
       suffix: "+",
       label: "TIC clubs established across Cameroon",
       icon: Globe,
@@ -327,11 +371,15 @@ const AboutPage = () => {
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
                 TIC's Impact
-                <span className="block text-blue-900">in 4 Years</span>
+                {ticImpact.subtitle && (
+                  <span className="block text-blue-900">{ticImpact.subtitle}</span>
+                )}
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Transforming lives and building the future of tech in Cameroon
-              </p>
+              {ticImpact.description && (
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  {ticImpact.description}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">

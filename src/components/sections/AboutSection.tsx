@@ -9,7 +9,9 @@ import {
   Globe, 
   Heart,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  Star,
+  Trophy
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { StudentsInActionCarousel } from "./HeroSection"
@@ -45,20 +47,14 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0) => 
 }
 
 const AboutSection = () => {
-  // Animated counters
-  const studentsCount = useCountUp(1500, 2500)
-  const schoolsCount = useCountUp(28, 2000)
-  const projectsCount = useCountUp(150, 2000)
-  const daysCount = useCountUp(3, 1500)
+  const [siteStats, setSiteStats] = useState({
+    studentsReached: 1500,
+    schoolsVisited: 28,
+    successfulProjects: 150,
+    daysOfInnovation: 3
+  })
 
-  const stats = [
-    { icon: Users, value: "1500+", label: "Students Reached", color: "text-blue-500", count: studentsCount },
-    { icon: Globe, value: "28", label: "Schools Visited", color: "text-green-500", count: schoolsCount },
-    { icon: Award, value: "150", label: "Successful Projects", color: "text-purple-500", count: projectsCount },
-    { icon: Heart, value: "3", label: "Days of Innovation", color: "text-red-500", count: daysCount },
-  ]
-
-  const features = [
+  const [siteFeatures, setSiteFeatures] = useState([
     {
       icon: Target,
       title: "Our Mission",
@@ -83,7 +79,69 @@ const AboutSection = () => {
       description: "Celebrating outstanding achievements and providing opportunities for students to showcase their talents.",
       color: "bg-purple-500"
     }
+  ])
+
+  // Fetch stats and features from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/content/site-stats")
+        const data = await response.json()
+        if (data.success && data.data) {
+          setSiteStats(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error)
+      }
+    }
+
+    const fetchFeatures = async () => {
+      try {
+        const response = await fetch("/api/content/site-features")
+        const data = await response.json()
+        if (data.success && data.data.length > 0) {
+          const iconMap: Record<string, any> = { Target, Lightbulb, Users, Award, Heart, Globe, Trophy, Star }
+          const mapped = data.data.map((f: any) => ({
+            icon: iconMap[f.iconName] || Target,
+            title: f.title,
+            description: f.description,
+            color: f.color || "bg-blue-500"
+          }))
+          setSiteFeatures(mapped)
+        }
+      } catch (error) {
+        console.error("Error fetching features:", error)
+      }
+    }
+
+    fetchStats()
+    fetchFeatures()
+  }, [])
+
+  // Animated counters - reinitialize when stats change
+  const studentsCount = useCountUp(siteStats.studentsReached, 2500)
+  const schoolsCount = useCountUp(siteStats.schoolsVisited, 2000)
+  const projectsCount = useCountUp(siteStats.successfulProjects, 2000)
+  const daysCount = useCountUp(siteStats.daysOfInnovation, 1500)
+
+  // Trigger count animation when stats are loaded
+  useEffect(() => {
+    if (siteStats.studentsReached > 0) {
+      studentsCount.setIsVisible(true)
+      schoolsCount.setIsVisible(true)
+      projectsCount.setIsVisible(true)
+      daysCount.setIsVisible(true)
+    }
+  }, [siteStats])
+
+  const stats = [
+    { icon: Users, value: `${siteStats.studentsReached}+`, label: "Students Reached", color: "text-blue-500", count: studentsCount },
+    { icon: Globe, value: `${siteStats.schoolsVisited}`, label: "Schools Visited", color: "text-green-500", count: schoolsCount },
+    { icon: Award, value: `${siteStats.successfulProjects}`, label: "Successful Projects", color: "text-purple-500", count: projectsCount },
+    { icon: Heart, value: `${siteStats.daysOfInnovation}`, label: "Days of Innovation", color: "text-red-500", count: daysCount },
   ]
+
+  const features = siteFeatures
 
   const achievements = [
     "Design Thinking Workshops",

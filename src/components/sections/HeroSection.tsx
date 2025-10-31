@@ -1,9 +1,54 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Play, Users, Award, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight, Play, Users, Award, Calendar, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { useState, useEffect } from "react"
+
+// Carousel Image Component with Loading State
+const CarouselImage = ({ src, alt, className }: { src: string, alt: string, className?: string }) => {
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    setImageLoaded(false)
+    setImageError(false)
+    const img = new Image()
+    img.onload = () => setImageLoaded(true)
+    img.onerror = () => {
+      setImageError(true)
+      setImageLoaded(true)
+    }
+    img.src = src
+  }, [src])
+
+  return (
+    <div className="relative w-full h-full">
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+          <Loader2 className="w-12 h-12 text-gray-400 animate-spin" />
+        </div>
+      )}
+      {imageError ? (
+        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+          <span className="text-gray-400">Failed to load image</span>
+        </div>
+      ) : (
+        <img 
+          src={src}
+          alt={alt}
+          className={className}
+          style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s' }}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => {
+            setImageError(true)
+            setImageLoaded(true)
+          }}
+        />
+      )}
+    </div>
+  )
+}
 
 // Animated Counter Hook
 const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
@@ -63,10 +108,12 @@ const HeroSection = () => {
     }
   ])
   
-  // Animated counters
-  const studentsCount = useCountUp(1500, 2500)
-  const schoolsCount = useCountUp(28, 2000)
-  const daysCount = useCountUp(3, 1500)
+  // Site Stats State
+  const [siteStats, setSiteStats] = useState({
+    studentsReached: 1500,
+    schoolsVisited: 28,
+    daysOfInnovation: 3
+  })
 
   // Fetch hero carousel from API
   useEffect(() => {
@@ -96,10 +143,40 @@ const HeroSection = () => {
     fetchHeroCarousel()
   }, [])
 
+  // Fetch site stats from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/content/site-stats")
+        const data = await response.json()
+        if (data.success && data.data) {
+          setSiteStats(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error)
+      }
+    }
+    fetchStats()
+  }, [])
+
+  // Animated counters - reinitialize when stats change
+  const studentsCount = useCountUp(siteStats.studentsReached, 2500)
+  const schoolsCount = useCountUp(siteStats.schoolsVisited, 2000)
+  const daysCount = useCountUp(siteStats.daysOfInnovation, 1500)
+
+  // Trigger count animation when stats are loaded
+  useEffect(() => {
+    if (siteStats.studentsReached > 0) {
+      studentsCount.setIsVisible(true)
+      schoolsCount.setIsVisible(true)
+      daysCount.setIsVisible(true)
+    }
+  }, [siteStats])
+
   const stats = [
-    { icon: Users, value: "1500+", label: "Students Reached" },
-    { icon: Award, value: "28", label: "Schools Visited" },
-    { icon: Calendar, value: "3", label: "Days of Innovation" },
+    { icon: Users, value: `${siteStats.studentsReached}+`, label: "Students Reached" },
+    { icon: Award, value: `${siteStats.schoolsVisited}`, label: "Schools Visited" },
+    { icon: Calendar, value: `${siteStats.daysOfInnovation}`, label: "Days of Innovation" },
   ]
 
   // Auto-rotate slides
@@ -501,7 +578,7 @@ const HeroSection = () => {
                         {/* Main Image Card */}
                         <div className="relative w-full h-full group">
                           <div className="w-full h-full rounded-3xl backdrop-blur-sm border border-white/20 overflow-hidden shadow-2xl transform-gpu">
-                            <img 
+                            <CarouselImage 
                               src={image.src}
                               alt={image.title}
                               className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
@@ -758,7 +835,7 @@ export const StudentsInActionCarousel = () => {
                 {/* Main Image with Creative Mask */}
                 <div className="relative w-full h-full group">
                   <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl">
-                    <img 
+                    <CarouselImage 
                       src={image.src}
                       alt={image.title}
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"

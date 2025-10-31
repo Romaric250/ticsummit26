@@ -642,6 +642,46 @@ model TeamMember {
   @@map("team_members")
 }
 
+model SiteStats {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentsReached Int
+  schoolsVisited   Int
+  successfulProjects Int
+  daysOfInnovation   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_stats")
+}
+
+model SiteFeature {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   // e.g., "Our Mission", "Innovation Focus"
+  description String
+  iconName    String?  // Name of icon from lucide-react
+  color       String?  // Color class name
+  order       Int      @default(0) // For ordering features
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_features")
+}
+
+model TICImpact {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentsInspired      Int      // Students inspired to pursue tech careers
+  teenagersTrained       Int      // Teenagers trained with technical skills
+  prizeAwardsFCFA       Float    // Prize awards in FCFA (e.g., 2.0 for 2M FCFA)
+  ticClubsEstablished   Int      // TIC clubs established
+  subtitle              String?  // e.g., "in 4 Years"
+  description           String?  // e.g., "Transforming lives and building the future of tech in Cameroon"
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("tic_impact")
+}
+
 model HomeCarousel {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   type        CarouselType
