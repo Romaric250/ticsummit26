@@ -80,6 +80,7 @@ const ProjectDetailPage = () => {
   const [viewsCount, setViewsCount] = useState(0)
   const [isLiking, setIsLiking] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showShareModal, setShowShareModal] = useState(false)
 
   useEffect(() => {

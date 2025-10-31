@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Upload, X, Check, AlertCircle } from "lucide-react"
-import { UploadButton, UploadDropzone } from "@uploadthing/react"
+import { UploadDropzone } from "@uploadthing/react"
 import { OurFileRouter } from "@/app/api/uploadthing/core"
+import { useUploadThing } from "@/lib/uploadthing"
 
 interface FileUploadProps {
   endpoint: keyof OurFileRouter
@@ -22,48 +23,91 @@ export function FileUpload({
 }: FileUploadProps) {
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleUploadComplete = (res: any) => {
-    if (res && res[0]?.url) {
-      setUploadedUrl(res[0].url)
-      onUploadComplete?.(res[0].url)
+  const { startUpload } = useUploadThing(endpoint, {
+    onClientUploadComplete: (res) => {
+      if (res && res[0]?.url) {
+        setUploadedUrl(res[0].url)
+        onUploadComplete?.(res[0].url)
+      }
+      setIsUploading(false)
+    },
+    onUploadError: (error: Error) => {
+      console.error("Upload error:", error)
+      onUploadError?.(error)
+      setIsUploading(false)
+    },
+  })
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      setIsUploading(true)
+      await startUpload(Array.from(files))
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
     }
-    setIsUploading(false)
-  }
-
-  const handleUploadError = (error: Error) => {
-    console.error("Upload error:", error)
-    onUploadError?.(error)
-    setIsUploading(false)
-  }
-
-  const handleUploadBegin = () => {
-    setIsUploading(true)
   }
 
   if (children) {
     return (
       <div className={className}>
-        <UploadButton
-          endpoint={endpoint}
-          onClientUploadComplete={handleUploadComplete}
-          onUploadError={handleUploadError}
-          onUploadBegin={handleUploadBegin}
-          className="ut-button:bg-gray-900 ut-button:ut-readying:bg-gray-800 ut-button:ut-uploading:bg-gray-700"
+        <input
+          ref={fileInputRef}
+          type="file"
+          onChange={handleFileChange}
+          className="hidden"
+          disabled={isUploading}
+        />
+        <label
+          onClick={() => !isUploading && fileInputRef.current?.click()}
+          className={`cursor-pointer ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
         >
           {children}
-        </UploadButton>
+        </label>
+        {isUploading && (
+          <div className="mt-2 flex items-center space-x-2 text-gray-600">
+            <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+            <span className="text-sm">Uploading...</span>
+          </div>
+        )}
+        {uploadedUrl && (
+          <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center space-x-2 text-green-800">
+              <Check className="w-4 h-4" />
+              <span className="text-sm font-medium">Upload successful!</span>
+            </div>
+            <p className="text-xs text-green-600 mt-1 break-all">
+              {uploadedUrl}
+            </p>
+          </div>
+        )}
       </div>
     )
   }
 
   return (
     <div className={className}>
-      <UploadDropzone
+      <UploadDropzone<OurFileRouter, typeof endpoint>
         endpoint={endpoint}
-        onClientUploadComplete={handleUploadComplete}
-        onUploadError={handleUploadError}
-        onUploadBegin={handleUploadBegin}
+        onClientUploadComplete={(res) => {
+          if (res && res[0]?.url) {
+            setUploadedUrl(res[0].url)
+            onUploadComplete?.(res[0].url)
+          }
+          setIsUploading(false)
+        }}
+        onUploadError={(error: Error) => {
+          console.error("Upload error:", error)
+          onUploadError?.(error)
+          setIsUploading(false)
+        }}
+        onUploadBegin={() => {
+          setIsUploading(true)
+        }}
         className="ut-label:text-gray-900 ut-allowed-content:text-gray-600 ut-button:bg-gray-900 ut-button:ut-readying:bg-gray-800 ut-button:ut-uploading:bg-gray-700"
       />
       

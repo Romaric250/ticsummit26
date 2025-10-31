@@ -137,7 +137,8 @@ const MinorUpdatesPage = () => {
   const [showTICImpactModal, setShowTICImpactModal] = useState(false)
   const [showContactInfoModal, setShowContactInfoModal] = useState(false)
   const [showMVVModal, setShowMVVModal] = useState(false)
-  // Removed unused editingCarouselSlide and editingTeamMember states
+  const [editingCarouselSlide, setEditingCarouselSlide] = useState<{ type: "HERO" | "STUDENTS", slide: CarouselSlide | null, index: number } | null>(null)
+  const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null)
 
   useEffect(() => {
     fetchData()

@@ -23,7 +23,7 @@ const ScheduleAdminPage = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [phases, setPhases] = useState<TimelinePhase[]>([])
-  // Removed unused editingPhaseId state
+  const [editingPhaseId, setEditingPhaseId] = useState<string | null>(null)
 
   const statusOptions = ["COMPLETED", "ACTIVE", "UPCOMING"]
   const colorOptions = [
