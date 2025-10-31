@@ -299,7 +299,7 @@ const ProjectDetailPage = () => {
                     {project.status.replace('_', ' ')}
                   </span>
                   {project.year && (
-                    <span className="px-3 py-1 bg-gray-100 text-gray-900 text-sm font-medium rounded-full">
+                    <span className="px-4 py-2 bg-gray-900 text-white text-lg font-semibold rounded-lg border-2 border-gray-700">
                       {project.year}
                     </span>
                   )}
@@ -395,7 +395,7 @@ const ProjectDetailPage = () => {
                             <User className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-center">
-                            <span className="text-gray-900 text-sm font-medium block">{member}</span>
+                            <span className="text-gray-900 text-base font-bold block">{member}</span>
                             <p className="text-gray-600 text-xs mt-0.5">
                               {index === 0 ? 'Lead Developer' : 'Team Member'}
                             </p>
