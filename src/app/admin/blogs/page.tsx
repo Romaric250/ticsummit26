@@ -229,21 +229,24 @@ export default function AdminBlogsPage() {
               <div className="divide-y divide-gray-200">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div key={index} className="p-6 animate-pulse">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
+                    <div className="flex items-start justify-between gap-4">
+                      {/* Image Skeleton */}
+                      <div className="flex-shrink-0 w-32 h-32 bg-gray-200 rounded-lg"></div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="h-6 bg-gray-300 rounded w-1/3"></div>
                           <div className="h-5 bg-gray-200 rounded-full w-20"></div>
                         </div>
                         <div className="h-4 bg-gray-200 rounded w-2/3 mb-3"></div>
                         <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 flex-wrap">
                           <div className="h-3 bg-gray-200 rounded w-24"></div>
                           <div className="h-3 bg-gray-200 rounded w-16"></div>
                           <div className="h-3 bg-gray-200 rounded w-20"></div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 ml-4">
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
                         <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
                         <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
                       </div>
@@ -263,11 +266,26 @@ export default function AdminBlogsPage() {
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   className="p-6 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    {/* Featured Image */}
+                    {post.image ? (
+                      <div className="flex-shrink-0">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="w-32 h-32 object-cover rounded-lg border border-gray-200"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex-shrink-0 w-32 h-32 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                        <FileText className="h-8 w-8 text-gray-400" />
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3">
                         <h3 className="text-lg font-semibold text-gray-900">{post.title}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
                           post.published
                             ? 'bg-green-100 text-green-800'
                             : 'bg-yellow-100 text-yellow-800'
@@ -276,7 +294,7 @@ export default function AdminBlogsPage() {
                         </span>
                       </div>
                       <p className="text-gray-600 mt-1 line-clamp-2">{post.excerpt}</p>
-                      <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 flex-wrap">
                         <span>{post.author.name || 'Unknown Author'}</span>
                         <span>•</span>
                         <span>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : new Date(post.createdAt).toLocaleDateString()}</span>
@@ -296,7 +314,7 @@ export default function AdminBlogsPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 ml-4">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
