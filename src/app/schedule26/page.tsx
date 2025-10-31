@@ -298,7 +298,7 @@ const Schedule26Page = () => {
             <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
           </div>
 
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-2 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -311,28 +311,8 @@ const Schedule26Page = () => {
               </div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                <span className="block text-white">Journey to</span>
-                <span className="block text-white">Innovation</span>
+                <span className="block text-white">Journey to the TIC Summit 2026</span>
               </h1>
-
-              <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-                From school outreach to the grand finale - follow the complete journey of TIC Summit 2026
-              </p>
-
-              <div className="flex flex-wrap justify-center gap-6 text-white/80">
-                <div className="flex items-center space-x-2">
-                  <Users className="w-5 h-5" />
-                  <span>5000+ Students Reached</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Award className="w-5 h-5" />
-                  <span>7 Phases of Innovation</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>11 Months Journey</span>
-                </div>
-              </div>
             </motion.div>
           </div>
         </section>
