@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { ArrowLeft, Save, AlertCircle, Eye } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { ImageUpload } from "@/components/ui/ImageUpload"
@@ -24,8 +24,11 @@ interface BlogFormData {
   readTime: string
 }
 
-const EditBlogPage = ({ params }: { params: { id: string } }) => {
+const EditBlogPage = () => {
   const router = useRouter()
+  const params = useParams()
+  const id = params.id as string
+  
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -46,12 +49,14 @@ const EditBlogPage = ({ params }: { params: { id: string } }) => {
   const categories = ["Technology", "AI", "Web Development", "Mobile", "Design", "Business", "Other"]
 
   useEffect(() => {
-    fetchBlogPost()
-  }, [params.id])
+    if (id) {
+      fetchBlogPost()
+    }
+  }, [id])
 
   const fetchBlogPost = async () => {
     try {
-      const response = await fetch(`/api/blogs/${params.id}`)
+      const response = await fetch(`/api/blogs/${id}`)
       const data = await response.json()
       
       if (data.success) {
@@ -149,7 +154,7 @@ const EditBlogPage = ({ params }: { params: { id: string } }) => {
     setSaving(true)
 
     try {
-      const response = await fetch(`/api/blogs/${params.id}`, {
+      const response = await fetch(`/api/blogs/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { useParams } from "next/navigation"
 import { 
   ArrowLeft,
   Calendar, 
@@ -52,7 +53,9 @@ interface BlogPostItem {
   author: { id: string; name: string | null; image: string | null }
 }
 
-const BlogPostPage = ({ params }: { params: { slug: string } }) => {
+const BlogPostPage = () => {
+  const params = useParams()
+  const slug = params.slug as string
   const { data: session } = useSession()
   const [post, setPost] = useState<BlogPostItem | null>(null)
   const [isLiked, setIsLiked] = useState(false)
@@ -66,11 +69,12 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    if (!slug) return
     const load = async () => {
       try {
         setLoading(true)
         setNotFound(false)
-        const res = await fetch(`/api/blogs/slug/${params.slug}`)
+        const res = await fetch(`/api/blogs/slug/${slug}`)
         const json = await res.json()
         if (json?.success) {
           const p: BlogPostItem = json.data
@@ -106,7 +110,7 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
       }
     }
     load()
-  }, [params.slug, session])
+  }, [slug, session])
 
   const loadRelatedPosts = async (excludeId: string) => {
     try {
@@ -207,7 +211,7 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
       try {
         await signIn.social({
           provider: "google",
-          callbackURL: `/blog/${params.slug}`
+          callbackURL: `/blog/${slug}`
         })
       } catch (error) {
         console.error("Sign in error:", error)

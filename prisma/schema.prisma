@@ -323,7 +323,6 @@ model User {
   blogPosts    BlogPost[]
   comments     Comment[]
   likes        Like[]
-  views        View[]
   blogLikes    BlogLike[]
   projects     Project[]
   applications Application[]
@@ -534,8 +533,7 @@ model View {
   userAgent String?
 
   projectId String @db.String
-  userId    String? @db.ObjectId
-  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
 
   @@unique([projectId, ipAddress])
   @@map("views")

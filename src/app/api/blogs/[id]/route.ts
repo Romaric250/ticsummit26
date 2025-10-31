@@ -7,11 +7,12 @@ const prisma = new PrismaClient()
 // GET single blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const blogPost = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         author: {
           select: {
@@ -48,9 +49,10 @@ export async function GET(
 // PUT update blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth.api.getSession({ headers: request.headers })
     
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -76,7 +78,7 @@ export async function PUT(
     } = body
 
     const blogPost = await prisma.blogPost.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         slug,
@@ -119,9 +121,10 @@ export async function PUT(
 // DELETE blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth.api.getSession({ headers: request.headers })
     
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -132,7 +135,7 @@ export async function DELETE(
     }
 
     await prisma.blogPost.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ success: true, message: "Blog post deleted successfully" })

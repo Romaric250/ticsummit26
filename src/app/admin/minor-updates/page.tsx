@@ -111,14 +111,14 @@ const MinorUpdatesPage = () => {
   })
 
   // Contact Info State
-  const [contactInfo, setContactInfo] = useState({
+  const [contactInfo, setContactInfo] = useState<{ address: string; email: string; phone?: string }>({
     address: "Yaoundé, Cameroon",
     email: "info@ticsummit.org",
     phone: "+237 XXX XXX XXX"
   })
 
   // Mission/Vision/Values State
-  const [mvv, setMvv] = useState({
+  const [mvv, setMvv] = useState<{ mission: string; vision: string; values: string; introText?: string }>({
     mission: "Empower young innovators through technology, mentorship, and hands-on learning experiences.",
     vision: "Create a thriving ecosystem where young minds can innovate and build the future of Cameroon.",
     values: "Innovation, collaboration, excellence, and impact drive everything we do.",
@@ -862,7 +862,7 @@ const MinorUpdatesPage = () => {
           isOpen={showContactInfoModal}
           onClose={() => setShowContactInfoModal(false)}
           contactInfo={contactInfo}
-          setContactInfo={setContactInfo}
+          setContactInfo={(info) => setContactInfo(info)}
           onSave={handleSaveContactInfo}
           saving={saving}
         />
@@ -872,7 +872,7 @@ const MinorUpdatesPage = () => {
           isOpen={showMVVModal}
           onClose={() => setShowMVVModal(false)}
           mvv={mvv}
-          setMvv={setMvv}
+          setMvv={(mvv) => setMvv(mvv)}
           onSave={handleSaveMVV}
           saving={saving}
         />

@@ -78,7 +78,9 @@ export const ProjectCardSkeleton = ({ index = 0 }: ProjectCardSkeletonProps) => 
   )
 }
 
-interface ProjectDetailSkeletonProps {}
+interface ProjectDetailSkeletonProps {
+  // Empty interface placeholder
+}
 
 export const ProjectDetailSkeleton = ({}: ProjectDetailSkeletonProps) => {
   return (

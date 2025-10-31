@@ -291,7 +291,13 @@ const AddProjectPage = () => {
               </label>
               <select
                 value={formData.year || ""}
-                onChange={(e) => handleInputChange("year", e.target.value ? parseInt(e.target.value) : null)}
+                onChange={(e) => {
+                  const yearValue = e.target.value ? parseInt(e.target.value) : null
+                  setFormData(prev => ({ ...prev, year: yearValue }))
+                  if (errors.year) {
+                    setErrors(prev => ({ ...prev, year: "" }))
+                  }
+                }}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">Select Year</option>

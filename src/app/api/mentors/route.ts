@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const location = searchParams.get('location')
     const isActive = searchParams.get('isActive') !== 'false' // Default to true
 
-    let whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       isActive: isActive === true || isActive === 'true'
     }
 

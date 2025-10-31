@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
-import { UploadButton } from "@uploadthing/react"
+import { useUploadThing } from "@/lib/uploadthing"
 
 interface FormData {
   name: string
@@ -60,6 +60,21 @@ const NewAlumniPage = () => {
     }
   })
   const [newAchievement, setNewAchievement] = useState("")
+  const [imageUploading, setImageUploading] = useState(false)
+  
+  const { startUpload } = useUploadThing("alumniImage", {
+    onClientUploadComplete: (res) => {
+      if (res?.[0]?.url) {
+        setFormData(prev => ({ ...prev, profileImage: res[0].url }))
+        toast.success("Image uploaded successfully!")
+      }
+      setImageUploading(false)
+    },
+    onUploadError: (error: Error) => {
+      toast.error(`Upload failed: ${error.message}`)
+      setImageUploading(false)
+    },
+  })
 
   const generateSlug = (name: string) => {
     return name
@@ -235,22 +250,56 @@ const NewAlumniPage = () => {
                 </div>
                 
                 <div className="flex-1">
-                  <UploadButton
-                    endpoint="alumniImage"
-                    onClientUploadComplete={(res) => {
-                      if (res && res[0]) {
-                        setFormData(prev => ({ ...prev, profileImage: res[0].url }))
-                        toast.success("Image uploaded successfully!")
+                  <input
+                    type="file"
+                    id="profileImage"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      
+                      // Validate file size (4MB max)
+                      if (file.size > 4 * 1024 * 1024) {
+                        toast.error("File size must be less than 4MB")
+                        return
+                      }
+                      
+                      setImageUploading(true)
+                      try {
+                        await startUpload([file])
+                      } catch (error) {
+                        console.error("Upload error:", error)
+                        toast.error("Failed to upload image")
+                        setImageUploading(false)
+                      }
+                      // Reset input
+                      if (e.target) {
+                        e.target.value = ""
                       }
                     }}
-                    onUploadError={(error: Error) => {
-                      toast.error(`Upload failed: ${error.message}`)
-                    }}
-                    appearance={{
-                      button: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium",
-                      allowedContent: "text-gray-500 text-xs mt-1"
-                    }}
+                    className="hidden"
+                    disabled={imageUploading}
                   />
+                  <label
+                    htmlFor="profileImage"
+                    className={`inline-flex items-center px-4 py-2 rounded-lg cursor-pointer text-sm font-medium ${
+                      imageUploading 
+                        ? 'bg-gray-400 text-white cursor-not-allowed' 
+                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
+                  >
+                    {imageUploading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload Image
+                      </>
+                    )}
+                  </label>
                   <p className="text-xs text-gray-500 mt-1">Recommended: 400x400px, max 4MB</p>
                 </div>
               </div>

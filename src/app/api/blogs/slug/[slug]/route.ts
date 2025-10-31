@@ -5,11 +5,12 @@ const prisma = new PrismaClient()
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params
     const blogPost = await prisma.blogPost.findFirst({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
         author: { select: { id: true, name: true, image: true } },
         _count: { select: { comments: true } }

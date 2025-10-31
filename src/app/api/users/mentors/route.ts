@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search')
 
-    let whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       mentorProfile: null // Only users who don't already have mentor profiles
     }
 

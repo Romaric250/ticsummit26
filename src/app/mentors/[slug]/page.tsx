@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useParams } from "next/navigation"
 import { 
   ArrowLeft,
   MapPin, 
@@ -87,7 +88,9 @@ interface Mentor {
   updatedAt: string
 }
 
-const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
+const MentorProfilePage = () => {
+  const params = useParams()
+  const slug = params.slug as string
   const [mentor, setMentor] = useState<Mentor | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -101,8 +104,10 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
   })
 
   useEffect(() => {
-    fetchMentor()
-  }, [params.slug])
+    if (slug) {
+      fetchMentor()
+    }
+  }, [slug])
 
   const fetchMentor = async () => {
     try {
@@ -111,7 +116,7 @@ const MentorProfilePage = ({ params }: { params: { slug: string } }) => {
       
       // First, try to find mentor by slug in the database
       // For now, we'll use the slug as the ID since we don't have slug field in our schema yet
-      const response = await fetch(`/api/mentors/${params.slug}`)
+      const response = await fetch(`/api/mentors/${slug}`)
       const data = await response.json()
       
       if (data.success) {

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { useParams } from "next/navigation"
 import { 
   Heart, 
   MessageCircle, 
@@ -62,7 +63,9 @@ interface Project {
   similarProjects: string[]
 }
 
-const ProjectDetailPage = ({ params }: { params: { slug: string } }) => {
+const ProjectDetailPage = () => {
+  const params = useParams()
+  const slug = params.slug as string
   const [isLiked, setIsLiked] = useState(false)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [newComment, setNewComment] = useState("")

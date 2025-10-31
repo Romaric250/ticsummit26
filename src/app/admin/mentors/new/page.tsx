@@ -94,11 +94,8 @@ const NewMentorPage = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          slug: formData.slug,
-          profileImage,
-          ...formData
+          ...formData,
+          profileImage
         })
       })
 
