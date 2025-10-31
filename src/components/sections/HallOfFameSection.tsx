@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Trophy, 
@@ -14,146 +14,75 @@ import {
   Target,
   Zap
 } from 'lucide-react'
-import { Project, Achievement } from '@/types'
+import { Achievement } from '@/types'
+import Link from 'next/link'
+import Image from 'next/image'
 
-const projects: Project[] = [
-  {
-    id: '1',
-    title: 'AI-Powered Healthcare Platform',
-    description: 'Revolutionary healthcare platform using machine learning to predict patient outcomes and optimize treatment plans.',
-    image: '/api/placeholder/600/400',
-    technologies: ['Python', 'TensorFlow', 'React', 'Node.js', 'PostgreSQL'],
-    year: 2023,
-    participants: ['Sarah Johnson', 'Michael Chen', 'Lisa Wang'],
-    link: 'https://github.com/example/healthcare-ai',
-    featured: true
-  },
-  {
-    id: '2',
-    title: 'Sustainable Energy Management System',
-    description: 'Smart grid management system that optimizes energy distribution and reduces carbon footprint.',
-    image: '/api/placeholder/600/400',
-    technologies: ['IoT', 'Python', 'Docker', 'Kubernetes', 'MongoDB'],
-    year: 2023,
-    participants: ['David Kim', 'Emily Rodriguez', 'Alex Thompson'],
-    link: 'https://github.com/example/energy-mgmt',
-    featured: true
-  },
-  {
-    id: '3',
-    title: 'Blockchain Voting System',
-    description: 'Secure and transparent voting system built on blockchain technology for enhanced election integrity.',
-    image: '/api/placeholder/600/400',
-    technologies: ['Solidity', 'Web3.js', 'React', 'Ethereum', 'IPFS'],
-    year: 2022,
-    participants: ['Michael Chen', 'Sarah Johnson'],
-    link: 'https://github.com/example/blockchain-voting',
-    featured: false
-  },
-  {
-    id: '4',
-    title: 'AR Shopping Experience',
-    description: 'Augmented reality mobile app that allows users to visualize products in their space before purchasing.',
-    image: '/api/placeholder/600/400',
-    technologies: ['React Native', 'ARCore', 'Three.js', 'Node.js', 'MongoDB'],
-    year: 2022,
-    participants: ['Emily Rodriguez', 'David Kim'],
-    link: 'https://github.com/example/ar-shopping',
-    featured: false
-  },
-  {
-    id: '5',
-    title: 'Real-time Collaboration Tool',
-    description: 'Advanced collaboration platform with real-time editing, video conferencing, and project management.',
-    image: '/api/placeholder/600/400',
-    technologies: ['WebRTC', 'Socket.io', 'React', 'Express', 'Redis'],
-    year: 2021,
-    participants: ['Alex Thompson', 'Lisa Wang', 'Michael Chen'],
-    link: 'https://github.com/example/collab-tool',
-    featured: false
-  },
-  {
-    id: '6',
-    title: 'Predictive Analytics Dashboard',
-    description: 'Business intelligence dashboard that provides predictive insights and data visualization.',
-    image: '/api/placeholder/600/400',
-    technologies: ['D3.js', 'Python', 'Flask', 'PostgreSQL', 'Docker'],
-    year: 2021,
-    participants: ['Lisa Wang', 'Sarah Johnson'],
-    link: 'https://github.com/example/analytics-dashboard',
-    featured: false
+interface Project {
+  id: string
+  title: string
+  description: string
+  images: string[]
+  techStack: string[]
+  members: string[]
+  category: string
+  status: string
+  phase?: string
+  year?: number
+  demoUrl?: string
+  views: number
+  likes: number
+  slug?: string
+  author: {
+    id: string
+    name: string
+    image?: string
   }
-]
-
-const achievements: Achievement[] = [
-  {
-    id: '1',
-    title: 'Best Innovation Award',
-    description: 'Recognized for groundbreaking AI healthcare platform',
-    icon: 'Trophy',
-    year: 2023,
-    category: 'award'
-  },
-  {
-    id: '2',
-    title: '1000+ GitHub Stars',
-    description: 'Open source project reached 1000+ stars on GitHub',
-    icon: 'Star',
-    year: 2023,
-    category: 'milestone'
-  },
-  {
-    id: '3',
-    title: 'TechCrunch Feature',
-    description: 'Featured in TechCrunch for innovative energy solution',
-    icon: 'Award',
-    year: 2023,
-    category: 'recognition'
-  },
-  {
-    id: '4',
-    title: '500+ Active Users',
-    description: 'Collaboration tool reached 500+ active users',
-    icon: 'Users',
-    year: 2022,
-    category: 'milestone'
-  },
-  {
-    id: '5',
-    title: 'Patent Filed',
-    description: 'Blockchain voting system patent application filed',
-    icon: 'Target',
-    year: 2022,
-    category: 'recognition'
-  },
-  {
-    id: '6',
-    title: '50% Performance Boost',
-    description: 'Achieved 50% performance improvement in analytics platform',
-    icon: 'Zap',
-    year: 2021,
-    category: 'milestone'
-  }
-]
-
-const years = [2023, 2022, 2021, 2020]
-const categories = [
-  { id: 'all', label: 'All Projects', count: projects.length },
-  { id: 'featured', label: 'Featured', count: projects.filter(p => p.featured).length },
-  { id: '2023', label: '2023', count: projects.filter(p => p.year === 2023).length },
-  { id: '2022', label: '2022', count: projects.filter(p => p.year === 2022).length },
-  { id: '2021', label: '2021', count: projects.filter(p => p.year === 2021).length }
-]
+  createdAt: string
+}
 
 export default function HallOfFameSection() {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-  const [selectedYear, setSelectedYear] = useState(2023)
+  const [achievements] = useState<Achievement[]>([]) // Empty for now - can be fetched from API later
+
+  useEffect(() => {
+    fetchProjects()
+  }, [])
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/projects')
+      const data = await response.json()
+      if (data.success) {
+        setProjects(data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Get unique years from projects
+  const years = Array.from(new Set(projects.filter(p => p.year).map(p => p.year!))).sort((a, b) => b - a)
+  
+  // Build categories dynamically
+  const categories = [
+    { id: 'all', label: 'All Projects', count: projects.length },
+    ...years.map(year => ({
+      id: year.toString(),
+      label: year.toString(),
+      count: projects.filter(p => p.year === year).length
+    }))
+  ]
 
   const filteredProjects = projects.filter(project => {
     if (selectedCategory === 'all') return true
-    if (selectedCategory === 'featured') return project.featured
-    return project.year.toString() === selectedCategory
+    return project.year?.toString() === selectedCategory
   })
 
   const getIconComponent = (iconName: string) => {
@@ -247,123 +176,164 @@ export default function HallOfFameSection() {
           </div>
         </motion.div>
 
-        {/* Projects Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
-        >
-          {filteredProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group cursor-pointer"
-              onClick={() => setSelectedProject(project)}
-            >
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300">
-                <div className="relative">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  {project.featured && (
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        Featured
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute bottom-4 left-4">
-                    <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {project.year}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-200 transition-colors duration-300">
-                    {project.title}
-                  </h3>
-                  <p className="text-primary-100 mb-4 line-clamp-3">{project.description}</p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.slice(0, 3).map((tech) => (
-                      <span
-                        key={tech}
-                        className="bg-white/20 text-white px-2 py-1 rounded-full text-xs font-medium"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {project.technologies.length > 3 && (
-                      <span className="text-primary-200 text-xs">
-                        +{project.technologies.length - 3} more
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 text-primary-200">
-                      <Users className="h-4 w-4" />
-                      <span className="text-sm">{project.participants.length} contributors</span>
-                    </div>
-                    <ExternalLink className="h-5 w-5 text-primary-200 group-hover:text-white transition-colors duration-300" />
-                  </div>
+          {/* Projects Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg animate-pulse">
+                <div className="w-full h-48 bg-white/20" />
+                <div className="p-6 space-y-4">
+                  <div className="h-6 bg-white/20 rounded w-3/4" />
+                  <div className="h-4 bg-white/20 rounded w-full" />
+                  <div className="h-4 bg-white/20 rounded w-2/3" />
                 </div>
               </div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+          >
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project, index) => (
+                <Link
+                  key={project.id}
+                  href={project.slug ? `/hall-of-fame/${project.slug}` : '#'}
+                  className="group"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="h-full"
+                  >
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
+                      <div className="relative h-48">
+                        {project.images && project.images.length > 0 ? (
+                          <Image
+                            src={project.images[0]}
+                            alt={project.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-white/20 flex items-center justify-center">
+                            <Award className="h-12 w-12 text-white/50" />
+                          </div>
+                        )}
+                        {project.year && (
+                          <div className="absolute bottom-4 left-4">
+                            <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                              {project.year}
+                            </span>
+                          </div>
+                        )}
+                        {project.status === 'WINNER' && (
+                          <div className="absolute top-4 right-4">
+                            <span className="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              Winner
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-6 flex-1 flex flex-col">
+                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-200 transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                        <p className="text-primary-100 mb-4 line-clamp-3 flex-1">{project.description}</p>
+
+                        {project.techStack && project.techStack.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {project.techStack.slice(0, 3).map((tech, idx) => (
+                              <span
+                                key={idx}
+                                className="bg-white/20 text-white px-2 py-1 rounded-full text-xs font-medium"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                            {project.techStack.length > 3 && (
+                              <span className="text-primary-200 text-xs">
+                                +{project.techStack.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between mt-auto">
+                          {project.members && project.members.length > 0 && (
+                            <div className="flex items-center space-x-2 text-primary-200">
+                              <Users className="h-4 w-4" />
+                              <span className="text-sm">{project.members.length} contributors</span>
+                            </div>
+                          )}
+                          <ExternalLink className="h-5 w-5 text-primary-200 group-hover:text-white transition-colors duration-300" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center text-primary-200 py-12">
+                No projects found
+              </div>
+            )}
+          </motion.div>
+        )}
         </motion.div>
 
-        {/* Achievements Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
-          <h3 className="text-3xl font-bold text-center mb-12">Recent Achievements</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {achievements.map((achievement, index) => {
-              const IconComponent = getIconComponent(achievement.icon)
-              return (
-                <motion.div
-                  key={achievement.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all duration-300"
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-primary-600 rounded-lg p-3">
-                      <IconComponent className="h-6 w-6 text-white" />
+        {/* Achievements Section - Only show if there are achievements */}
+        {achievements.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <h3 className="text-3xl font-bold text-center mb-12">Recent Achievements</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {achievements.map((achievement, index) => {
+                const IconComponent = getIconComponent(achievement.icon)
+                return (
+                  <motion.div
+                    key={achievement.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all duration-300"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className="bg-primary-600 rounded-lg p-3">
+                        <IconComponent className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-semibold text-white mb-2">
+                          {achievement.title}
+                        </h4>
+                        <p className="text-primary-100 text-sm mb-2">
+                          {achievement.description}
+                        </p>
+                        <span className="text-primary-200 text-xs font-medium">
+                          {achievement.year}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-lg font-semibold text-white mb-2">
-                        {achievement.title}
-                      </h4>
-                      <p className="text-primary-100 text-sm mb-2">
-                        {achievement.description}
-                      </p>
-                      <span className="text-primary-200 text-xs font-medium">
-                        {achievement.year}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
-        </motion.div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </motion.div>
+        )}
 
         {/* Call to Action */}
         <motion.div
@@ -401,11 +371,20 @@ export default function HallOfFameSection() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-8">
-                <img
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  className="w-full h-64 object-cover rounded-xl mb-6"
-                />
+                {selectedProject.images && selectedProject.images.length > 0 ? (
+                  <div className="relative w-full h-64 mb-6 rounded-xl overflow-hidden">
+                    <Image
+                      src={selectedProject.images[0]}
+                      alt={selectedProject.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-64 bg-gray-200 rounded-xl mb-6 flex items-center justify-center">
+                    <Award className="h-16 w-16 text-gray-400" />
+                  </div>
+                )}
                 
                 <div className="flex items-start justify-between mb-6">
                   <div>
@@ -414,59 +393,56 @@ export default function HallOfFameSection() {
                     </h2>
                     <p className="text-gray-600 text-lg">{selectedProject.description}</p>
                   </div>
-                  <div className="text-right">
-                    <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
-                      {selectedProject.year}
-                    </span>
-                  </div>
+                  {selectedProject.year && (
+                    <div className="text-right">
+                      <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
+                        {selectedProject.year}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Technologies Used</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProject.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                  {selectedProject.techStack && selectedProject.techStack.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-3">Technologies Used</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProject.techStack.map((tech, idx) => (
+                          <span
+                            key={idx}
+                            className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Contributors</h3>
-                    <div className="space-y-2">
-                      {selectedProject.participants.map((participant) => (
-                        <div key={participant} className="flex items-center space-x-2">
-                          <Users className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-700">{participant}</span>
-                        </div>
-                      ))}
+                  )}
+                  {selectedProject.members && selectedProject.members.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-3">Contributors</h3>
+                      <div className="space-y-2">
+                        {selectedProject.members.map((member, idx) => (
+                          <div key={idx} className="flex items-center space-x-2">
+                            <Users className="h-4 w-4 text-gray-400" />
+                            <span className="text-gray-700">{member}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                {selectedProject.link && (
+                {selectedProject.demoUrl && (
                   <div className="flex space-x-4">
                     <a
-                      href={selectedProject.link}
+                      href={selectedProject.demoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors duration-300"
                     >
-                      <Github className="h-5 w-5" />
-                      <span>View on GitHub</span>
-                    </a>
-                    <a
-                      href={selectedProject.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-200 transition-colors duration-300"
-                    >
                       <ExternalLink className="h-5 w-5" />
-                      <span>Visit Project</span>
+                      <span>View Demo</span>
                     </a>
                   </div>
                 )}

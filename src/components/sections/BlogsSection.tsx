@@ -204,7 +204,7 @@ export default function BlogsSection() {
                         </span>
                         <div className="flex items-center space-x-2 text-gray-500">
                           <Calendar className="h-4 w-4" />
-                          <span className="text-sm">{formatDate(featuredPost.publishedAt)}</span>
+                          <span className="text-sm">{featuredPost.publishedAt ? formatDate(featuredPost.publishedAt) : 'Not published'}</span>
                         </div>
                         <div className="flex items-center space-x-2 text-gray-500">
                           <Clock className="h-4 w-4" />
@@ -268,7 +268,7 @@ export default function BlogsSection() {
                 <div className="flex items-center space-x-4 mb-4 text-sm text-gray-500">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4" />
-                    <span>{formatDate(post.publishedAt)}</span>
+                    <span>{post.publishedAt ? formatDate(post.publishedAt) : 'Not published'}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4" />
@@ -364,7 +364,7 @@ export default function BlogsSection() {
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="flex items-center space-x-2 text-gray-500">
                       <Calendar className="h-4 w-4" />
-                      <span className="text-sm">{formatDate(selectedPost.publishedAt)}</span>
+                      <span className="text-sm">{selectedPost.publishedAt ? formatDate(selectedPost.publishedAt) : 'Not published'}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-gray-500">
                       <Clock className="h-4 w-4" />

@@ -108,7 +108,6 @@ const starterKit = StarterKit.configure({
     HTMLAttributes: {
       class: cx("mb-4 leading-relaxed"),
     },
-    keepMarks: true,
   },
   heading: {
     levels: [1, 2, 3],
