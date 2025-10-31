@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useParams } from "next/navigation"
-import { useSession } from "@/lib/auth-client"
+import { useSession, signIn } from "@/lib/auth-client"
 import { 
   Heart, 
   Share2, 
@@ -159,7 +159,11 @@ const ProjectDetailPage = () => {
     if (!project) return
     
     if (!session?.user) {
-      // Show login prompt or redirect
+      // Trigger Google sign-in directly
+      await signIn.social({
+        provider: "google",
+        callbackURL: `/projects/${slug}`
+      })
       return
     }
 
@@ -175,6 +179,12 @@ const ProjectDetailPage = () => {
       if (data.success) {
         setIsLiked(data.data.liked)
         setLikesCount(data.data.likes)
+      } else if (data.error === "Authentication required") {
+        // Trigger Google sign-in directly
+        await signIn.social({
+          provider: "google",
+          callbackURL: `/projects/${slug}`
+        })
       }
     } catch (error) {
       console.error("Error toggling like:", error)

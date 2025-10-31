@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useParams } from "next/navigation"
 import Image from "next/image"
+import { useSession, signIn } from "@/lib/auth-client"
 import { 
   ArrowLeft, 
   User, 
@@ -71,6 +72,7 @@ interface SimilarProject {
 const ProjectDetailPage = () => {
   const params = useParams()
   const slug = params.slug as string
+  const { data: session } = useSession()
   
   const [project, setProject] = useState<Project | null>(null)
   const [similarProjects, setSimilarProjects] = useState<SimilarProject[]>([])
@@ -167,6 +169,16 @@ const ProjectDetailPage = () => {
   const handleLike = async () => {
     if (!project) return
     
+    // Check if user is authenticated
+    if (!session?.user) {
+      // Trigger Google sign-in directly
+      await signIn.social({
+        provider: "google",
+        callbackURL: `/hall-of-fame/${slug}`
+      })
+      return
+    }
+    
     setIsLiking(true)
     try {
       const response = await fetch('/api/projects/likes', {
@@ -184,9 +196,11 @@ const ProjectDetailPage = () => {
         setLiked(data.data.liked)
         setLikesCount(data.data.likes)
       } else if (data.error === "Authentication required") {
-        console.log('Authentication required, redirecting...')
-        // Redirect to sign in
-        window.location.href = '/auth/signin'
+        // Trigger Google sign-in directly
+        await signIn.social({
+          provider: "google",
+          callbackURL: `/hall-of-fame/${slug}`
+        })
       } else {
         console.error('Like toggle failed:', data.error)
       }
