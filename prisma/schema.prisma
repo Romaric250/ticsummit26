@@ -663,6 +663,7 @@ model SiteFeature {
   color       String?  // Color class name
   order       Int      @default(0) // For ordering features
   active      Boolean  @default(true)
+  introText   String?  // Optional introductory text (e.g., for Mission/Vision/Values section)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -771,4 +772,16 @@ model ContactInfo {
   updatedAt   DateTime @updatedAt
 
   @@map("contact_info")
+}
+
+model MissionVisionValues {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  mission     String   // Mission statement
+  vision      String   // Vision statement
+  values      String   // Values statement
+  introText   String?  // Optional introductory text above the cards
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("mission_vision_values")
 }

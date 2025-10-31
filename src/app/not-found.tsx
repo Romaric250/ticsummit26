@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Home, ArrowLeft, Search } from "lucide-react"
+import { Home } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
@@ -46,12 +46,12 @@ export default function NotFound() {
               </p>
             </motion.div>
 
-            {/* Action Buttons */}
+            {/* Action Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="flex justify-center items-center"
             >
               <Link href="/">
                 <Button className="bg-gray-900 hover:bg-gray-800 text-white flex items-center gap-2">
@@ -59,55 +59,6 @@ export default function NotFound() {
                   Go Home
                 </Button>
               </Link>
-              <button
-                onClick={() => window.history.back()}
-                className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Go Back
-              </button>
-            </motion.div>
-
-            {/* Quick Links */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="mt-12 pt-8 border-t border-gray-200"
-            >
-              <p className="text-sm text-gray-600 mb-4">Or visit these pages:</p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/"
-                  className="text-gray-700 hover:text-gray-900 transition-colors text-sm"
-                >
-                  Home
-                </Link>
-                <Link
-                  href="/about"
-                  className="text-gray-700 hover:text-gray-900 transition-colors text-sm"
-                >
-                  About
-                </Link>
-                <Link
-                  href="/blog"
-                  className="text-gray-700 hover:text-gray-900 transition-colors text-sm"
-                >
-                  Blog
-                </Link>
-                <Link
-                  href="/hall-of-fame"
-                  className="text-gray-700 hover:text-gray-900 transition-colors text-sm"
-                >
-                  Hall of Fame
-                </Link>
-                <Link
-                  href="/schedule26"
-                  className="text-gray-700 hover:text-gray-900 transition-colors text-sm"
-                >
-                  Schedule
-                </Link>
-              </div>
             </motion.div>
           </motion.div>
         </div>

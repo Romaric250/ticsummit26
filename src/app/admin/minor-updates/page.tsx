@@ -117,6 +117,14 @@ const MinorUpdatesPage = () => {
     phone: "+237 XXX XXX XXX"
   })
 
+  // Mission/Vision/Values State
+  const [mvv, setMvv] = useState({
+    mission: "Empower young innovators through technology, mentorship, and hands-on learning experiences.",
+    vision: "Create a thriving ecosystem where young minds can innovate and build the future of Cameroon.",
+    values: "Innovation, collaboration, excellence, and impact drive everything we do.",
+    introText: "The summit provides a platform for these brilliant minds to connect with industry experts, gain valuable mentorship, and win prizes for their innovative ideas. We believe that every young person has the potential to change the world through technology."
+  })
+
   // Modal States
   const [showFounderModal, setShowFounderModal] = useState(false)
   const [showHeroCarouselModal, setShowHeroCarouselModal] = useState(false)
@@ -128,6 +136,7 @@ const MinorUpdatesPage = () => {
   const [showFeaturesModal, setShowFeaturesModal] = useState(false)
   const [showTICImpactModal, setShowTICImpactModal] = useState(false)
   const [showContactInfoModal, setShowContactInfoModal] = useState(false)
+  const [showMVVModal, setShowMVVModal] = useState(false)
   const [editingCarouselSlide, setEditingCarouselSlide] = useState<{ type: "HERO" | "STUDENTS", slide: CarouselSlide | null, index: number } | null>(null)
   const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null)
 
@@ -223,6 +232,15 @@ const MinorUpdatesPage = () => {
         const contactData = await contactRes.json()
         if (contactData.success && contactData.data) {
           setContactInfo(contactData.data)
+        }
+      }
+
+      // Fetch Mission/Vision/Values
+      const mvvRes = await fetch("/api/content/mission-vision-values")
+      if (mvvRes.ok) {
+        const mvvData = await mvvRes.json()
+        if (mvvData.success && mvvData.data) {
+          setMvv(mvvData.data)
         }
       }
 
@@ -462,6 +480,30 @@ const MinorUpdatesPage = () => {
     }
   }
 
+  const handleSaveMVV = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/mission-vision-values", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mvv)
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("Mission/Vision/Values updated successfully")
+        setShowMVVModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update Mission/Vision/Values")
+      }
+    } catch (error) {
+      console.error("Error saving Mission/Vision/Values:", error)
+      toast.error("Failed to save Mission/Vision/Values")
+    } finally {
+      setSaving(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -695,6 +737,31 @@ const MinorUpdatesPage = () => {
               </div>
             </motion.div>
 
+            {/* Mission/Vision/Values Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowMVVModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Mission/Vision/Values</h3>
+                  <p className="text-sm text-gray-600">Manage about page content</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-200 space-y-2 text-xs">
+                <div className="text-gray-600 line-clamp-1">
+                  <strong>Mission:</strong> {mvv.mission.substring(0, 50)}...
+                </div>
+                <div className="text-gray-600 line-clamp-1">
+                  <strong>Vision:</strong> {mvv.vision.substring(0, 50)}...
+                </div>
+              </div>
+            </motion.div>
+
           </div>
         </div>
 
@@ -797,6 +864,16 @@ const MinorUpdatesPage = () => {
           contactInfo={contactInfo}
           setContactInfo={setContactInfo}
           onSave={handleSaveContactInfo}
+          saving={saving}
+        />
+
+        {/* Mission/Vision/Values Modal */}
+        <MVVModal
+          isOpen={showMVVModal}
+          onClose={() => setShowMVVModal(false)}
+          mvv={mvv}
+          setMvv={setMvv}
+          onSave={handleSaveMVV}
           saving={saving}
         />
       </div>
@@ -1771,7 +1848,7 @@ const SiteFeaturesModal = ({
 }: {
   isOpen: boolean
   onClose: () => void
-  features: Array<{ id: string, title: string, description: string, iconName?: string, color?: string, order: number, active: boolean }>
+  features: Array<{ id: string, title: string, description: string, iconName?: string, color?: string, order: number, active: boolean, introText?: string }>
   setFeatures: (features: typeof features) => void
   onSave: () => void
   saving: boolean
@@ -2676,6 +2753,130 @@ const ContactInfoModal = ({
                   }}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
                   placeholder="+237 XXX XXX XXX"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+// Mission/Vision/Values Modal Component
+const MVVModal = ({
+  isOpen,
+  onClose,
+  mvv,
+  setMvv,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  mvv: { mission: string; vision: string; values: string; introText?: string }
+  setMvv: (mvv: { mission: string; vision: string; values: string; introText?: string }) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  const [currentMVV, setCurrentMVV] = useState(mvv)
+
+  useEffect(() => {
+    setCurrentMVV(mvv)
+  }, [mvv])
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Mission/Vision/Values</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Intro Text (Optional)</label>
+                <textarea
+                  rows={3}
+                  value={currentMVV.introText || ""}
+                  onChange={(e) => {
+                    const updated = { ...currentMVV, introText: e.target.value }
+                    setCurrentMVV(updated)
+                    setMvv(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="The summit provides a platform for..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mission</label>
+                <textarea
+                  rows={3}
+                  value={currentMVV.mission}
+                  onChange={(e) => {
+                    const updated = { ...currentMVV, mission: e.target.value }
+                    setCurrentMVV(updated)
+                    setMvv(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="Empower young innovators through..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vision</label>
+                <textarea
+                  rows={3}
+                  value={currentMVV.vision}
+                  onChange={(e) => {
+                    const updated = { ...currentMVV, vision: e.target.value }
+                    setCurrentMVV(updated)
+                    setMvv(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="Create a thriving ecosystem where..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Values</label>
+                <textarea
+                  rows={3}
+                  value={currentMVV.values}
+                  onChange={(e) => {
+                    const updated = { ...currentMVV, values: e.target.value }
+                    setCurrentMVV(updated)
+                    setMvv(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="Innovation, collaboration, excellence..."
                 />
               </div>
 

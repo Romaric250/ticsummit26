@@ -40,7 +40,7 @@ const Footer = () => {
       { name: "Our Story", href: "/about" },
       { name: "Mission & Vision", href: "/about/mission" },
       { name: "Team", href: "/about" },
-      { name: "Partners", href: "/about/partners" },
+      { name: "Partners", href: "/" },
     ],
     resources: [
       { name: "Blog", href: "/blog" },
@@ -161,6 +161,90 @@ const Footer = () => {
                                   "Hello TIC Summit Team,\n\n" +
                                   "I am interested in making a donation to support your mission of empowering young innovators in Cameroon.\n\n" +
                                   "Please provide me with more information about how I can contribute.\n\n" +
+                                  "Thank you,\n[Your Name]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              }
+                            }}
+                            className="text-white hover:text-white transition-colors duration-200 cursor-pointer"
+                          >
+                            {link.name}
+                          </button>
+                        </li>
+                      )
+                    }
+
+                    // Handle Sponsor button specially
+                    if (link.name === "Sponsor") {
+                      return (
+                        <li key={link.name}>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const contactRes = await fetch("/api/content/contact-info")
+                                const contactData = await contactRes.json()
+                                const email = contactData.success && contactData.data 
+                                  ? contactData.data.email 
+                                  : "info@ticsummit.org"
+                                
+                                const subject = encodeURIComponent("Sponsorship Inquiry - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I am interested in becoming a sponsor for TIC Summit to support your mission of empowering young innovators in Cameroon.\n\n" +
+                                  "Please provide me with more information about sponsorship opportunities and how my organization can contribute.\n\n" +
+                                  "Thank you,\n[Your Name/Organization]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              } catch (error) {
+                                // Fallback to default email
+                                const email = "info@ticsummit.org"
+                                const subject = encodeURIComponent("Sponsorship Inquiry - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I am interested in becoming a sponsor for TIC Summit to support your mission of empowering young innovators in Cameroon.\n\n" +
+                                  "Please provide me with more information about sponsorship opportunities and how my organization can contribute.\n\n" +
+                                  "Thank you,\n[Your Name/Organization]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              }
+                            }}
+                            className="text-white hover:text-white transition-colors duration-200 cursor-pointer"
+                          >
+                            {link.name}
+                          </button>
+                        </li>
+                      )
+                    }
+
+                    // Handle Volunteer button specially
+                    if (link.name === "Volunteer") {
+                      return (
+                        <li key={link.name}>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const contactRes = await fetch("/api/content/contact-info")
+                                const contactData = await contactRes.json()
+                                const email = contactData.success && contactData.data 
+                                  ? contactData.data.email 
+                                  : "info@ticsummit.org"
+                                
+                                const subject = encodeURIComponent("Volunteer Application - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I am interested in volunteering for TIC Summit to support your mission of empowering young innovators in Cameroon.\n\n" +
+                                  "Please provide me with more information about volunteer opportunities and how I can contribute to the summit.\n\n" +
+                                  "Thank you,\n[Your Name]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              } catch (error) {
+                                // Fallback to default email
+                                const email = "info@ticsummit.org"
+                                const subject = encodeURIComponent("Volunteer Application - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I am interested in volunteering for TIC Summit to support your mission of empowering young innovators in Cameroon.\n\n" +
+                                  "Please provide me with more information about volunteer opportunities and how I can contribute to the summit.\n\n" +
                                   "Thank you,\n[Your Name]"
                                 )
                                 window.location.href = `mailto:${email}?subject=${subject}&body=${body}`

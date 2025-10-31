@@ -55,7 +55,8 @@ export async function POST(request: NextRequest) {
         iconName: feature.iconName,
         color: feature.color,
         order: feature.order,
-        active: feature.active !== false
+        active: feature.active !== false,
+        introText: feature.introText || null
       }))
     })
 

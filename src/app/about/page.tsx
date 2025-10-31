@@ -107,13 +107,22 @@ const AboutPage = () => {
     initial: "P",
     name: "Dr. Pierre Nkeng",
     title: "Founder & CEO, TIC Summit",
-    quote: "When we started TIC Summit, we had a simple vision: to unlock the incredible potential of young minds across Cameroon. Today, seeing thousands of students transformed into innovators, entrepreneurs, and tech leaders, I know we've created something truly special."
+    quote: "When we started TIC Summit, we had a simple vision: to unlock the incredible potential of young minds across Cameroon. Today, seeing thousands of students transformed into innovators, entrepreneurs, and tech leaders, I know we've created something truly special.",
+    imageUrl: ""
   })
 
   // Team members state
   const [teamMembers, setTeamMembers] = useState<any[]>([])
   const [teamLoading, setTeamLoading] = useState(true)
   const [showTeamSection, setShowTeamSection] = useState(true)
+
+  // Mission/Vision/Values state
+  const [mvv, setMvv] = useState({
+    mission: "Empower young innovators through technology, mentorship, and hands-on learning experiences.",
+    vision: "Create a thriving ecosystem where young minds can innovate and build the future of Cameroon.",
+    values: "Innovation, collaboration, excellence, and impact drive everything we do.",
+    introText: "The summit provides a platform for these brilliant minds to connect with industry experts, gain valuable mentorship, and win prizes for their innovative ideas. We believe that every young person has the potential to change the world through technology."
+  })
 
   // Fetch TIC Impact from API
   useEffect(() => {
@@ -129,6 +138,22 @@ const AboutPage = () => {
       }
     }
     fetchTICImpact()
+  }, [])
+
+  // Fetch Mission/Vision/Values from API
+  useEffect(() => {
+    const fetchMVV = async () => {
+      try {
+        const response = await fetch("/api/content/mission-vision-values")
+        const data = await response.json()
+        if (data.success && data.data) {
+          setMvv(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching mission/vision/values:", error)
+      }
+    }
+    fetchMVV()
   }, [])
 
   // Fetch team members and settings
@@ -324,9 +349,11 @@ const AboutPage = () => {
                 <span className="block text-blue-900">Tech Innovators</span>
               </h2>
               
-              <p className="text-lg text-gray-600 mb-12 leading-relaxed">
-                The summit provides a platform for these brilliant minds to connect with industry experts, gain valuable mentorship, and win prizes for their innovative ideas. We believe that every young person has the potential to change the world through technology.
-              </p>
+              {mvv.introText && (
+                <p className="text-lg text-gray-600 mb-12 leading-relaxed">
+                  {mvv.introText}
+                </p>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="text-center">
@@ -334,7 +361,7 @@ const AboutPage = () => {
                     <Target className="w-8 h-8 text-blue-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Mission</h3>
-                  <p className="text-gray-600">Empower young innovators through technology, mentorship, and hands-on learning experiences.</p>
+                  <p className="text-gray-600">{mvv.mission}</p>
                 </div>
 
                 <div className="text-center">
@@ -342,7 +369,7 @@ const AboutPage = () => {
                     <Lightbulb className="w-8 h-8 text-green-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Vision</h3>
-                  <p className="text-gray-600">Create a thriving ecosystem where young minds can innovate and build the future of Cameroon.</p>
+                  <p className="text-gray-600">{mvv.vision}</p>
                 </div>
 
                 <div className="text-center">
@@ -350,7 +377,7 @@ const AboutPage = () => {
                     <Heart className="w-8 h-8 text-purple-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Our Values</h3>
-                  <p className="text-gray-600">Innovation, collaboration, excellence, and impact drive everything we do.</p>
+                  <p className="text-gray-600">{mvv.values}</p>
                 </div>
               </div>
             </div>
@@ -358,7 +385,7 @@ const AboutPage = () => {
         </section>
 
         {/* Timeline Section */}
-        <section className="py-20 bg-gray-50">
+        {/* <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -406,7 +433,7 @@ const AboutPage = () => {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Impact Section */}
         <section className="py-20 bg-white">
@@ -699,8 +726,17 @@ const AboutPage = () => {
             <div className="max-w-4xl mx-auto">
               <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-white">
                 <div className="text-center mb-8">
-                  <div className="w-24 h-24 bg-white rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span className="text-gray-900 font-bold text-3xl">{founderQuote.initial}</span>
+                  <div className="w-24 h-24 bg-white rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden relative">
+                    {founderQuote.imageUrl ? (
+                      <Image
+                        src={founderQuote.imageUrl}
+                        alt={founderQuote.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-900 font-bold text-3xl">{founderQuote.initial}</span>
+                    )}
                   </div>
                   
                   <h3 className="text-2xl font-bold mb-2">
