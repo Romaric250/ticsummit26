@@ -2055,7 +2055,7 @@ const TICImpactModal = ({
   isOpen: boolean
   onClose: () => void
   impact: { studentsInspired: number, teenagersTrained: number, prizeAwardsFCFA: number, ticClubsEstablished: number, subtitle?: string, description?: string }
-  setImpact: (impact: typeof impact) => void
+  setImpact: (impact: { studentsInspired: number, teenagersTrained: number, prizeAwardsFCFA: number, ticClubsEstablished: number, subtitle?: string, description?: string }) => void
   onSave: () => void
   saving: boolean
 }) => {
