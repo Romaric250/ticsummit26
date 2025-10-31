@@ -49,10 +49,35 @@ const HallOfFamePage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("newest")
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
     fetchProjects()
   }, [])
+
+  // Animate counter
+  useEffect(() => {
+    if (!loading && projects.length > 0) {
+      const duration = 2000 // 2 seconds
+      const steps = 60
+      const increment = projects.length / steps
+      const stepDuration = duration / steps
+      
+      let currentStep = 0
+      const timer = setInterval(() => {
+        currentStep++
+        const nextCount = Math.min(Math.ceil(increment * currentStep), projects.length)
+        setCount(nextCount)
+        
+        if (currentStep >= steps || nextCount >= projects.length) {
+          setCount(projects.length)
+          clearInterval(timer)
+        }
+      }, stepDuration)
+      
+      return () => clearInterval(timer)
+    }
+  }, [loading, projects.length])
 
   const fetchProjects = async () => {
     try {
@@ -98,9 +123,18 @@ const HallOfFamePage = () => {
               transition={{ duration: 0.6 }}
               className="text-center"
             >
-              <p className="text-lg text-white/90 max-w-3xl mx-auto leading-relaxed">
-                Total projects over the years: <span className="font-bold text-white text-xl">{projects.length}</span>
-              </p>
+              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
+                <span className="text-base text-white/90 font-medium">Total projects over the years:</span>
+                <motion.span
+                  key={count}
+                  initial={{ scale: 1.2, opacity: 0.8 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-3xl font-bold text-white tabular-nums"
+                >
+                  {count}
+                </motion.span>
+              </div>
             </motion.div>
           </div>
         </section>
@@ -278,7 +312,7 @@ const HallOfFamePage = () => {
                             <span>{project.views || 0}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Heart className="w-4 h-4" />
+                            <Heart className="w-4 h-4 text-red-500" />
                             <span>{project.likes || 0}</span>
                           </div>
                         </div>
@@ -307,7 +341,7 @@ const HallOfFamePage = () => {
                         )}
                         <Button
                           variant="outline"
-                          className="border-gray-300 text-gray-600 hover:bg-gray-50 cursor-pointer"
+                          className="bg-white border-gray-300 text-gray-600 hover:bg-gray-600 hover:text-white hover:border-gray-600 cursor-pointer"
                         >
                           <Share2 className="w-4 h-4" />
                         </Button>
