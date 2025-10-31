@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { 
@@ -88,13 +89,17 @@ const Footer = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <Link href="/" className="flex items-center space-x-2 mb-6">
-                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                    <span className="text-gray-900 font-bold text-lg">T</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold text-xl text-white">TIC Summit</span>
-                    <span className="text-white text-sm">Innovation Hub</span>
+                <Link href="/" className="flex items-center mb-6">
+                  <div className="relative h-12 w-auto" style={{ width: 'auto', minWidth: '150px' }}>
+                    <Image
+                      src="https://2d4r8xyx2f.ufs.sh/f/NBqaoz7VhueJfNgKY3syseo1qmkclSJ8WhTOv7rNj6uD5A3i"
+                      alt="TIC Summit Logo"
+                      width={150}
+                      height={48}
+                      className="object-contain"
+                      priority
+                      unoptimized
+                    />
                   </div>
                 </Link>
 

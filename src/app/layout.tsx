@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   description: "Cameroon's premier tech innovation program for Secondary and High school students. Now in its 6th edition, TIC Summit connects young minds with industry experts.",
   keywords: "TIC Summit, Cameroon, tech challenge, innovation, students, technology, education",
   authors: [{ name: "TIC Summit Team" }],
+  icons: {
+    icon: "https://2d4r8xyx2f.ufs.sh/f/NBqaoz7VhueJfNgKY3syseo1qmkclSJ8WhTOv7rNj6uD5A3i",
+    shortcut: "https://2d4r8xyx2f.ufs.sh/f/NBqaoz7VhueJfNgKY3syseo1qmkclSJ8WhTOv7rNj6uD5A3i",
+    apple: "https://2d4r8xyx2f.ufs.sh/f/NBqaoz7VhueJfNgKY3syseo1qmkclSJ8WhTOv7rNj6uD5A3i",
+  },
   openGraph: {
     title: "TIC Summit - Empowering Young Innovators",
     description: "Cameroon's premier tech innovation program for Secondary and High school students.",

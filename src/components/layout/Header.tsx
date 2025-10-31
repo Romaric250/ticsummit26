@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown } from "lucide-react"
@@ -54,23 +55,22 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
+          <Link href="/" className="flex items-center group">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="relative"
+              className="relative h-10 w-auto"
+              style={{ width: 'auto', minWidth: '120px' }}
             >
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-gray-900 font-bold text-sm">T</span>
-              </div>
+              <Image
+                src="https://2d4r8xyx2f.ufs.sh/f/NBqaoz7VhueJfNgKY3syseo1qmkclSJ8WhTOv7rNj6uD5A3i"
+                alt="TIC Summit Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                priority
+                unoptimized
+              />
             </motion.div>
-            <div className="flex flex-col">
-              <span className="font-bold text-lg text-white">
-                TIC Summit
-              </span>
-              <span className="text-xs text-white">
-                Innovation Hub
-              </span>
-            </div>
           </Link>
 
           {/* Desktop Navigation */}
