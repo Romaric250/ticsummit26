@@ -344,6 +344,105 @@ const ProjectDetailPage = () => {
               >
                 <ImageSlider images={project.images} title={project.title} />
               </motion.div>
+
+              {/* Demo Section */}
+              {project.demoUrl && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.35 }}
+                  className="bg-gray-50 rounded-2xl shadow-lg p-6 border border-gray-200"
+                >
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Live Demo Available</h3>
+                      <p className="text-gray-600 text-sm">Experience this project in action</p>
+                    </div>
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-colors font-medium whitespace-nowrap"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                      View Live Demo
+                    </a>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Project Details */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Project Details</h3>
+                <div className="space-y-6">
+                  {/* Team Members */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      Team Members
+                    </h4>
+                    <div className="flex flex-wrap gap-4 sm:gap-6">
+                      {project.members.map((member, index) => (
+                        <div key={index} className="flex flex-col items-center gap-2 min-w-[100px]">
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                            index === 0 ? 'bg-gray-900' : 'bg-gray-700'
+                          }`}>
+                            <User className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="text-center">
+                            <span className="text-gray-900 text-sm font-medium block">{member}</span>
+                            <p className="text-gray-600 text-xs mt-0.5">
+                              {index === 0 ? 'Lead Developer' : 'Team Member'}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tech Stack */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                      <Code className="w-4 h-4" />
+                      Tech Stack
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {project.techStack.map((tech, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full font-medium"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Project Info Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Project Phase */}
+                    {project.phase && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Project Phase</h4>
+                        <p className="text-gray-900 text-base font-medium">{project.phase}</p>
+                      </div>
+                    )}
+
+                    {/* Year */}
+                    {project.year && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Year</h4>
+                        <p className="text-gray-900 text-base font-medium">{project.year}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
 
             {/* Sidebar - Right Side */}
@@ -378,87 +477,6 @@ const ProjectDetailPage = () => {
                     <Share2 className="w-4 h-4 mr-2" />
                     Share Project
                   </Button>
-                </div>
-              </div>
-
-              {/* Project Details */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">PROJECT DETAILS</h3>
-                <div className="space-y-4">
-                  {/* Team Members */}
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      Team Members
-                    </h4>
-                    <div className="space-y-2">
-                      {project.members.map((member, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            index === 0 ? 'bg-gray-900' : 'bg-gray-700'
-                          }`}>
-                            <User className="w-4 h-4 text-white" />
-                          </div>
-                          <div>
-                            <span className="text-gray-900 text-sm font-medium">{member}</span>
-                            <p className="text-gray-600 text-xs">
-                              {index === 0 ? 'Lead Developer' : 'Designer'}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Tech Stack */}
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Code className="w-4 h-4" />
-                      Tech Stack
-                    </h4>
-                    <div className="flex flex-wrap gap-1">
-                      {project.techStack.map((tech, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Project Phase */}
-                  {project.phase && (
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-1">Project Phase</h4>
-                      <p className="text-gray-900 text-sm">{project.phase}</p>
-                    </div>
-                  )}
-
-                  {/* Year */}
-                  {project.year && (
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-1">Year</h4>
-                      <p className="text-gray-900 text-sm">{project.year}</p>
-                    </div>
-                  )}
-
-                  {/* Demo URL */}
-                  {project.demoUrl && (
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-1">Demo</h4>
-                      <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                        View Live Demo
-                      </a>
-                    </div>
-                  )}
                 </div>
               </div>
 
