@@ -62,10 +62,14 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
   const [loadingRelated, setLoadingRelated] = useState(false)
   const [subscribing, setSubscribing] = useState(false)
   const [subscribeEmail, setSubscribeEmail] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
     const load = async () => {
       try {
+        setLoading(true)
+        setNotFound(false)
         const res = await fetch(`/api/blogs/slug/${params.slug}`)
         const json = await res.json()
         if (json?.success) {
@@ -91,8 +95,15 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
 
           // Load related posts
           loadRelatedPosts(p.id)
+        } else {
+          setNotFound(true)
         }
-      } catch {}
+      } catch (error) {
+        console.error("Error loading blog post:", error)
+        setNotFound(true)
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [params.slug, session])
@@ -112,7 +123,69 @@ const BlogPostPage = ({ params }: { params: { slug: string } }) => {
     }
   }
   
-  if (!post) {
+  // Loading state
+  if (loading) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50">
+          {/* Back Button Skeleton */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+            </div>
+          </div>
+
+          {/* Hero Section Skeleton */}
+          <section className="relative py-8 lg:py-12 bg-gray-900">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+                {/* Image Skeleton */}
+                <div className="w-full h-64 lg:h-80 bg-gray-800 rounded-xl animate-pulse" />
+                
+                {/* Content Skeleton */}
+                <div className="text-white space-y-4">
+                  <div className="h-6 w-24 bg-white/20 rounded-full animate-pulse" />
+                  <div className="h-8 bg-white/20 rounded-lg animate-pulse" />
+                  <div className="h-8 bg-white/20 rounded-lg animate-pulse w-3/4" />
+                  <div className="h-4 bg-white/20 rounded animate-pulse" />
+                  <div className="h-4 bg-white/20 rounded animate-pulse w-2/3" />
+                  <div className="flex gap-4 mt-4">
+                    <div className="h-6 w-6 bg-white/20 rounded-full animate-pulse" />
+                    <div className="h-4 w-20 bg-white/20 rounded animate-pulse" />
+                    <div className="h-4 w-16 bg-white/20 rounded animate-pulse" />
+                    <div className="h-4 w-16 bg-white/20 rounded animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Content Skeleton */}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+              <div className="lg:col-span-3 space-y-6">
+                <div className="bg-white rounded-2xl shadow-lg p-8">
+                  <div className="space-y-4">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-4 bg-gray-200 rounded animate-pulse" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-8">
+                <div className="bg-white rounded-2xl shadow-lg p-6 h-40 animate-pulse" />
+                <div className="bg-white rounded-2xl shadow-lg p-6 h-64 animate-pulse" />
+                <div className="bg-gray-900 rounded-2xl p-6 h-48 animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  // Not found state
+  if (notFound || !post) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
