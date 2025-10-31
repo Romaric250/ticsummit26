@@ -81,6 +81,7 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0) => 
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const [heroImages, setHeroImages] = useState([
     {
       src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
@@ -182,17 +183,44 @@ const HeroSection = () => {
   // Auto-rotate slides
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length)
+      setIsTransitioning(true)
+      const nextIndex = (currentSlide + 1) % heroImages.length
+      setCurrentSlide(nextIndex)
+      // Preload next image
+      const img = new Image()
+      img.src = heroImages[nextIndex].src
+      img.onload = () => setIsTransitioning(false)
+      img.onerror = () => setIsTransitioning(false)
+      // Fallback timeout
+      setTimeout(() => setIsTransitioning(false), 1000)
     }, 4000)
     return () => clearInterval(interval)
-  }, [])
+  }, [currentSlide, heroImages])
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroImages.length)
+    setIsTransitioning(true)
+    const nextIndex = (currentSlide + 1) % heroImages.length
+    setCurrentSlide(nextIndex)
+    // Preload next image
+    const img = new Image()
+    img.src = heroImages[nextIndex].src
+    img.onload = () => setIsTransitioning(false)
+    img.onerror = () => setIsTransitioning(false)
+    // Fallback timeout
+    setTimeout(() => setIsTransitioning(false), 1000)
   }
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length)
+    setIsTransitioning(true)
+    const prevIndex = (currentSlide - 1 + heroImages.length) % heroImages.length
+    setCurrentSlide(prevIndex)
+    // Preload previous image
+    const img = new Image()
+    img.src = heroImages[prevIndex].src
+    img.onload = () => setIsTransitioning(false)
+    img.onerror = () => setIsTransitioning(false)
+    // Fallback timeout
+    setTimeout(() => setIsTransitioning(false), 1000)
   }
 
   const containerVariants = {
@@ -539,6 +567,12 @@ const HeroSection = () => {
             <div className="relative h-[500px] perspective-1000">
               {/* 3D Slider Container */}
               <div className="relative w-full h-full">
+                {/* Loading Overlay */}
+                {isTransitioning && (
+                  <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm rounded-3xl flex items-center justify-center z-30">
+                    <Loader2 className="w-12 h-12 text-white animate-spin" />
+                  </div>
+                )}
                 <AnimatePresence mode="wait">
                   {heroImages.map((image, index) => {
                     if (index !== currentSlide) return null
@@ -645,7 +679,17 @@ const HeroSection = () => {
                   {heroImages.map((_, index) => (
                     <motion.button
                       key={index}
-                      onClick={() => setCurrentSlide(index)}
+                      onClick={() => {
+                        setIsTransitioning(true)
+                        setCurrentSlide(index)
+                        // Preload selected image
+                        const img = new Image()
+                        img.src = heroImages[index].src
+                        img.onload = () => setIsTransitioning(false)
+                        img.onerror = () => setIsTransitioning(false)
+                        // Fallback timeout
+                        setTimeout(() => setIsTransitioning(false), 1000)
+                      }}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
                         index === currentSlide 
                           ? 'bg-white scale-125' 
@@ -723,6 +767,7 @@ const HeroSection = () => {
 // Creative Students in Action Carousel Component
 export const StudentsInActionCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const [studentImages, setStudentImages] = useState([
     {
       src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
@@ -781,23 +826,56 @@ export const StudentsInActionCarousel = () => {
   // Auto-rotate slides
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % studentImages.length)
+      setIsTransitioning(true)
+      const nextIndex = (currentSlide + 1) % studentImages.length
+      setCurrentSlide(nextIndex)
+      // Preload next image
+      const img = new Image()
+      img.src = studentImages[nextIndex].src
+      img.onload = () => setIsTransitioning(false)
+      img.onerror = () => setIsTransitioning(false)
+      // Fallback timeout
+      setTimeout(() => setIsTransitioning(false), 1000)
     }, 4000)
     return () => clearInterval(interval)
-  }, [])
+  }, [currentSlide, studentImages])
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % studentImages.length)
+    setIsTransitioning(true)
+    const nextIndex = (currentSlide + 1) % studentImages.length
+    setCurrentSlide(nextIndex)
+    // Preload next image
+    const img = new Image()
+    img.src = studentImages[nextIndex].src
+    img.onload = () => setIsTransitioning(false)
+    img.onerror = () => setIsTransitioning(false)
+    // Fallback timeout
+    setTimeout(() => setIsTransitioning(false), 1000)
   }
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + studentImages.length) % studentImages.length)
+    setIsTransitioning(true)
+    const prevIndex = (currentSlide - 1 + studentImages.length) % studentImages.length
+    setCurrentSlide(prevIndex)
+    // Preload previous image
+    const img = new Image()
+    img.src = studentImages[prevIndex].src
+    img.onload = () => setIsTransitioning(false)
+    img.onerror = () => setIsTransitioning(false)
+    // Fallback timeout
+    setTimeout(() => setIsTransitioning(false), 1000)
   }
 
   return (
     <div className="relative w-full h-[500px]">
       {/* Main Image with Creative Layout */}
       <div className="relative w-full h-full">
+        {/* Loading Overlay */}
+        {isTransitioning && (
+          <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm rounded-3xl flex items-center justify-center z-30">
+            <Loader2 className="w-12 h-12 text-white animate-spin" />
+          </div>
+        )}
         <AnimatePresence mode="wait">
           {studentImages.map((image, index) => {
             if (index !== currentSlide) return null
@@ -835,7 +913,7 @@ export const StudentsInActionCarousel = () => {
                 {/* Main Image with Creative Mask */}
                 <div className="relative w-full h-full group">
                   <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl">
-                    <CarouselImage 
+                    <CarouselImage
                       src={image.src}
                       alt={image.title}
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
@@ -868,7 +946,17 @@ export const StudentsInActionCarousel = () => {
             {studentImages.map((_, index) => (
               <motion.button
                 key={index}
-                onClick={() => setCurrentSlide(index)}
+                onClick={() => {
+                  setIsTransitioning(true)
+                  setCurrentSlide(index)
+                  // Preload selected image
+                  const img = new Image()
+                  img.src = studentImages[index].src
+                  img.onload = () => setIsTransitioning(false)
+                  img.onerror = () => setIsTransitioning(false)
+                  // Fallback timeout
+                  setTimeout(() => setIsTransitioning(false), 1000)
+                }}
                 className={`relative w-8 h-8 rounded-full transition-all duration-300 ${
                   index === currentSlide 
                     ? 'bg-gray-900 scale-110' 

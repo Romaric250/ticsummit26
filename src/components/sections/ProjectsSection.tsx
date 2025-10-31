@@ -91,14 +91,11 @@ const ProjectsSection = () => {
     },
   }
 
-  const ProjectCard = ({ project, index }: { project: Project; index: number }) => (
-    <motion.div
-      variants={itemVariants}
-      className="group relative"
-    >
-      <div className="bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-gray-700">
+  const ProjectCard = ({ project, index }: { project: Project; index: number }) => {
+    const cardContent = (
+      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-gray-200 h-full flex flex-col">
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden flex-shrink-0">
           {project.images && project.images.length > 0 ? (
             <img
               src={project.images[Math.floor(Math.random() * project.images.length)]}
@@ -115,7 +112,7 @@ const ProjectsSection = () => {
               }}
             />
           ) : null}
-          <div className={`w-full h-full bg-gray-700 flex items-center justify-center ${project.images && project.images.length > 0 ? 'hidden' : ''}`}>
+          <div className={`w-full h-full bg-gray-100 flex items-center justify-center ${project.images && project.images.length > 0 ? 'hidden' : ''}`}>
             <div className="text-center text-gray-400">
               <Award className="w-8 h-8 mx-auto mb-2" />
               <p className="text-xs font-medium">No Image</p>
@@ -125,7 +122,7 @@ const ProjectsSection = () => {
           {/* Year Badge */}
           {project.year && (
             <div className="absolute top-3 left-3">
-              <span className="px-2 py-1 bg-gray-600 text-white text-xs font-medium rounded-full">
+              <span className="px-2 py-1 bg-gray-900 text-white text-xs font-medium rounded-full">
                 {project.year}
               </span>
             </div>
@@ -133,56 +130,56 @@ const ProjectsSection = () => {
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-4 flex-1 flex flex-col">
           {/* Title and Status */}
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-lg font-bold text-white line-clamp-2 flex-1 group-hover:text-blue-400 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex-1 group-hover:text-gray-700 transition-colors">
               {project.title}
             </h3>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 ${
-              project.status === "WINNER" ? "bg-yellow-600 text-yellow-100" :
-              project.status === "FINALIST" ? "bg-blue-600 text-blue-100" :
-              project.status === "APPROVED" ? "bg-green-600 text-green-100" :
-              "bg-gray-600 text-gray-100"
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 flex-shrink-0 ${
+              project.status === "WINNER" ? "bg-yellow-500 text-white" :
+              project.status === "FINALIST" ? "bg-blue-500 text-white" :
+              project.status === "APPROVED" ? "bg-green-500 text-white" :
+              "bg-gray-300 text-gray-700"
             }`}>
               {project.status.replace("_", " ")}
             </span>
           </div>
 
           {/* Description */}
-          <p className="text-gray-300 text-sm mb-3 line-clamp-2">
+          <p className="text-gray-600 text-sm mb-3 line-clamp-2 flex-shrink-0">
             {project.description}
           </p>
 
           {/* Tech Stack */}
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-1 mb-3 flex-shrink-0">
             {project.techStack.slice(0, 2).map((tech) => (
               <span
                 key={tech}
-                className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full"
+                className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
               >
                 {tech}
               </span>
             ))}
             {project.techStack.length > 2 && (
-              <span className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-full">
+              <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
                 +{project.techStack.length - 2}
               </span>
             )}
           </div>
 
           {/* Members */}
-          <div className="flex items-center space-x-2 mb-3">
-            <User className="w-4 h-4 text-gray-400" />
+          <div className="flex items-center space-x-2 mb-3 flex-shrink-0">
+            <User className="w-4 h-4 text-gray-500" />
             <div className="flex flex-wrap gap-1">
               {project.members.slice(0, 2).map((member, index) => (
-                <span key={index} className="text-gray-400 text-sm">
+                <span key={index} className="text-gray-600 text-sm">
                   {member}
                   {index < Math.min(project.members.length, 2) - 1 && ", "}
                 </span>
               ))}
               {project.members.length > 2 && (
-                <span className="text-gray-400 text-sm">
+                <span className="text-gray-600 text-sm">
                   +{project.members.length - 2} more
                 </span>
               )}
@@ -190,7 +187,7 @@ const ProjectsSection = () => {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
+          <div className="flex items-center justify-between text-sm text-gray-500 mb-4 flex-shrink-0">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
                 <Eye className="w-4 h-4" />
@@ -204,49 +201,63 @@ const ProjectsSection = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 mt-auto">
             {project.slug ? (
-              <Link href={`/hall-of-fame/${project.slug}`}>
-                <Button className="flex-1 bg-white hover:bg-gray-100 text-gray-900 text-sm font-medium">
-                  <Eye className="w-4 h-4 mr-2" />
-                  View Details
-                </Button>
-              </Link>
+              <Button className="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium">
+                <Eye className="w-4 h-4 mr-2" />
+                View Details
+              </Button>
             ) : (
-              <Button className="flex-1 bg-gray-600 text-gray-300 text-sm font-medium" disabled>
+              <Button className="flex-1 bg-gray-300 text-gray-600 text-sm font-medium" disabled>
                 <Eye className="w-4 h-4 mr-2" />
                 View Details
               </Button>
             )}
-            <Button
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                // Share functionality can be added here
+              }}
+              className="bg-white hover:bg-gray-200 border border-gray-300 rounded-lg px-3 py-2 text-gray-700 transition-colors flex items-center justify-center"
             >
               <Share2 className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
 
           {/* Category */}
-          <div className="mt-3 text-right">
+          <div className="mt-3 text-right flex-shrink-0">
             <span className="text-gray-500 text-sm">{project.category}</span>
           </div>
         </div>
       </div>
-    </motion.div>
-  )
+    )
+
+    if (project.slug) {
+      return (
+        <motion.div
+          variants={itemVariants}
+          className="group relative h-full"
+        >
+          <Link href={`/hall-of-fame/${project.slug}`} className="block h-full">
+            {cardContent}
+          </Link>
+        </motion.div>
+      )
+    }
+
+    return (
+      <motion.div
+        variants={itemVariants}
+        className="group relative h-full"
+      >
+        {cardContent}
+      </motion.div>
+    )
+  }
 
   return (
-    <section className="py-16 bg-gray-50 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600"></div>
-        <div className="absolute inset-0 opacity-10">
-          <div className="w-full h-full" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
-          }}></div>
-        </div>
-      </div>
+    <section className="py-16 bg-white relative overflow-hidden">
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
@@ -258,7 +269,7 @@ const ProjectsSection = () => {
         >
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center space-x-2 bg-blue-100 text-blue-900 rounded-full px-4 py-2 mb-6"
+            className="inline-flex items-center space-x-2 bg-gray-100 text-gray-900 rounded-full px-4 py-2 mb-6"
           >
             <Star className="w-4 h-4" />
             <span className="text-sm font-medium">Featured Projects</span>
@@ -268,9 +279,9 @@ const ProjectsSection = () => {
             variants={itemVariants}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
           >
-            Innovation Solutions
-            <span className="block text-blue-900">
-              Empowering the Next
+            Hall of Fame
+            <span className="block text-gray-700">
+              Celebrating Innovation
             </span>
           </motion.h2>
 
@@ -288,35 +299,35 @@ const ProjectsSection = () => {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden">
-                <div className="h-48 bg-gray-700 animate-pulse"></div>
+              <div key={i} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden animate-pulse">
+                <div className="h-48 bg-gray-200"></div>
                 <div className="p-4 space-y-3">
                   <div className="flex justify-between items-start">
-                    <div className="h-5 bg-gray-700 animate-pulse rounded w-3/4"></div>
-                    <div className="h-6 bg-gray-700 animate-pulse rounded-full w-16"></div>
+                    <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-6 bg-gray-200 rounded-full w-16"></div>
                   </div>
-                  <div className="h-4 bg-gray-700 animate-pulse rounded w-full"></div>
-                  <div className="h-4 bg-gray-700 animate-pulse rounded w-2/3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
                   <div className="flex gap-1">
-                    <div className="h-6 bg-gray-700 animate-pulse rounded-full w-12"></div>
-                    <div className="h-6 bg-gray-700 animate-pulse rounded-full w-16"></div>
+                    <div className="h-6 bg-gray-200 rounded-full w-12"></div>
+                    <div className="h-6 bg-gray-200 rounded-full w-16"></div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-700 animate-pulse rounded"></div>
-                    <div className="h-4 bg-gray-700 animate-pulse rounded w-20"></div>
+                    <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded w-20"></div>
                   </div>
                   <div className="flex justify-between">
                     <div className="flex gap-4">
-                      <div className="h-4 bg-gray-700 animate-pulse rounded w-8"></div>
-                      <div className="h-4 bg-gray-700 animate-pulse rounded w-8"></div>
+                      <div className="h-4 bg-gray-200 rounded w-8"></div>
+                      <div className="h-4 bg-gray-200 rounded w-8"></div>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <div className="h-10 bg-gray-700 animate-pulse rounded flex-1"></div>
-                    <div className="h-10 bg-gray-700 animate-pulse rounded w-10"></div>
+                    <div className="h-10 bg-gray-200 rounded flex-1"></div>
+                    <div className="h-10 bg-gray-200 rounded w-10"></div>
                   </div>
                   <div className="text-right">
-                    <div className="h-4 bg-gray-700 animate-pulse rounded w-16 ml-auto"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16 ml-auto"></div>
                   </div>
                 </div>
               </div>
@@ -331,7 +342,7 @@ const ProjectsSection = () => {
             </div>
             <Button 
               onClick={fetchFeaturedProjects}
-              className="bg-blue-900 hover:bg-blue-800 text-white"
+              className="bg-gray-900 hover:bg-gray-800 text-white"
             >
               Try Again
             </Button>
@@ -353,7 +364,9 @@ const ProjectsSection = () => {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-12"
           >
             {projects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
+              <div key={project.id} className="h-full">
+                <ProjectCard project={project} index={index} />
+              </div>
             ))}
           </motion.div>
         )}
@@ -370,20 +383,20 @@ const ProjectsSection = () => {
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center space-x-3 bg-white rounded-xl px-6 py-3 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              className="inline-flex items-center space-x-3 bg-gray-50 rounded-xl px-6 py-3 shadow-sm border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-300 group cursor-pointer"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center">
                 <Star className="w-5 h-5 text-white" />
               </div>
               <div className="text-left">
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-bold text-gray-900 group-hover:text-gray-700 transition-colors">
                   Hall of Fame
                 </h3>
                 <p className="text-gray-600 text-xs">
                   Explore all amazing projects
                 </p>
               </div>
-              <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
+              <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-300" />
             </motion.div>
           </Link>
         </motion.div>
@@ -396,7 +409,7 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 max-w-xl mx-auto">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-200 max-w-xl mx-auto">
             <h3 className="text-xl font-bold text-gray-900 mb-3">
               Ready to Showcase Your Innovation?
             </h3>
@@ -405,12 +418,12 @@ const ProjectsSection = () => {
               Submit your project ideas and compete for amazing prizes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-blue-900 hover:bg-blue-800 text-white group" size="lg">
+              <Button className="bg-gray-900 hover:bg-gray-800 text-white group" size="lg">
                 Submit Project
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Link href="/hall-of-fame">
-                <Button variant="outline" size="lg" className="border-blue-900 text-blue-900 hover:bg-blue-50">
+                <Button variant="outline" size="lg" className="border-gray-300 text-gray-900 hover:bg-gray-50">
                   View All Projects
                 </Button>
               </Link>
