@@ -252,11 +252,11 @@ const ProjectDetailPage = () => {
   if (error || !project) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-white text-2xl mb-4">Project Not Found</h1>
+            <h1 className="text-gray-900 text-2xl mb-4">Project Not Found</h1>
             <Link href="/hall-of-fame">
-              <Button className="bg-gray-600 hover:bg-gray-700 text-white">
+              <Button className="bg-gray-900 hover:bg-gray-800 text-white">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Hall of Fame
               </Button>
@@ -269,10 +269,19 @@ const ProjectDetailPage = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-gray-50">
+        {/* Back Button */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Link href="/hall-of-fame" className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Hall of Fame</span>
+            </Link>
+          </div>
+        </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content - Left Side */}
             <motion.div
@@ -290,33 +299,33 @@ const ProjectDetailPage = () => {
                     {project.status.replace('_', ' ')}
                   </span>
                   {project.year && (
-                    <span className="px-3 py-1 bg-gray-600 text-white text-sm font-medium rounded-full">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-900 text-sm font-medium rounded-full">
                       {project.year}
                     </span>
                   )}
                 </div>
                 
-                <h1 className="text-4xl lg:text-5xl font-bold text-purple-400 leading-tight">
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                   {project.title}
                 </h1>
                 
               {/* About Project */}
-              <h2 className="text-lg font-semibold text-white mb-3">About Project</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">About Project</h2>
               
               {/* Project Description */}
-              <p className="text-lg text-gray-300 leading-relaxed">
+              <p className="text-lg text-gray-700 leading-relaxed">
                 {project.description}
               </p>
               </div>
 
               {/* Project Stats */}
-              <div className="flex items-center gap-6 text-gray-400">
+              <div className="flex items-center gap-6 text-gray-600">
                 <div className="flex items-center gap-2">
                   <Eye className="w-4 h-4" />
                   <span>{project.views.toLocaleString()} views</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4" />
+                  <Heart className="w-4 h-4 text-red-500" />
                   <span>{project.likes} likes</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -331,7 +340,7 @@ const ProjectDetailPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="bg-gray-800 rounded-xl p-6"
+                className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200"
               >
                 <ImageSlider images={project.images} title={project.title} />
               </motion.div>
@@ -345,8 +354,8 @@ const ProjectDetailPage = () => {
               className="lg:col-span-1 space-y-6"
             >
               {/* Action Buttons */}
-              <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-sm font-semibold text-white mb-4">ACTIONS</h3>
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">ACTIONS</h3>
                 <div className="space-y-3">
                   <Button
                     onClick={handleLike}
@@ -354,7 +363,7 @@ const ProjectDetailPage = () => {
                     className={`w-full py-2 text-sm font-medium transition-all duration-200 ${
                       liked 
                         ? 'bg-red-600 hover:bg-red-700 text-white' 
-                        : 'bg-purple-600 hover:bg-purple-700 text-white'
+                        : 'bg-gray-900 hover:bg-gray-800 text-white'
                     }`}
                   >
                     <Heart className={`w-4 h-4 mr-2 ${liked ? 'fill-current' : ''}`} />
@@ -364,7 +373,7 @@ const ProjectDetailPage = () => {
                   <Button
                     onClick={() => setShowShareModal(true)}
                     variant="outline"
-                    className="w-full py-2 text-sm font-medium border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    className="w-full py-2 text-sm font-medium bg-white border-gray-300 text-gray-600 hover:bg-gray-600 hover:text-white hover:border-gray-600"
                   >
                     <Share2 className="w-4 h-4 mr-2" />
                     Share Project
@@ -373,12 +382,12 @@ const ProjectDetailPage = () => {
               </div>
 
               {/* Project Details */}
-              <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-sm font-semibold text-white mb-4">PROJECT DETAILS</h3>
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">PROJECT DETAILS</h3>
                 <div className="space-y-4">
                   {/* Team Members */}
                   <div>
-                    <h4 className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       <Users className="w-4 h-4" />
                       Team Members
                     </h4>
@@ -386,13 +395,13 @@ const ProjectDetailPage = () => {
                       {project.members.map((member, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            index === 0 ? 'bg-purple-600' : 'bg-blue-500'
+                            index === 0 ? 'bg-gray-900' : 'bg-gray-700'
                           }`}>
                             <User className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <span className="text-white text-sm font-medium">{member}</span>
-                            <p className="text-gray-400 text-xs">
+                            <span className="text-gray-900 text-sm font-medium">{member}</span>
+                            <p className="text-gray-600 text-xs">
                               {index === 0 ? 'Lead Developer' : 'Designer'}
                             </p>
                           </div>
@@ -403,7 +412,7 @@ const ProjectDetailPage = () => {
 
                   {/* Tech Stack */}
                   <div>
-                    <h4 className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       <Code className="w-4 h-4" />
                       Tech Stack
                     </h4>
@@ -411,7 +420,7 @@ const ProjectDetailPage = () => {
                       {project.techStack.map((tech, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-gray-600 text-white text-xs rounded-full"
+                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium"
                         >
                           {tech}
                         </span>
@@ -422,28 +431,28 @@ const ProjectDetailPage = () => {
                   {/* Project Phase */}
                   {project.phase && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-400 mb-1">Project Phase</h4>
-                      <p className="text-white text-sm">{project.phase}</p>
+                      <h4 className="text-sm font-medium text-gray-700 mb-1">Project Phase</h4>
+                      <p className="text-gray-900 text-sm">{project.phase}</p>
                     </div>
                   )}
 
                   {/* Year */}
                   {project.year && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-400 mb-1">Year</h4>
-                      <p className="text-white text-sm">{project.year}</p>
+                      <h4 className="text-sm font-medium text-gray-700 mb-1">Year</h4>
+                      <p className="text-gray-900 text-sm">{project.year}</p>
                     </div>
                   )}
 
                   {/* Demo URL */}
                   {project.demoUrl && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-400 mb-1">Demo</h4>
+                      <h4 className="text-sm font-medium text-gray-700 mb-1">Demo</h4>
                       <a
                         href={project.demoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-gray-400 hover:text-gray-300 transition-colors text-sm"
+                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors text-sm"
                       >
                         <ExternalLink className="w-3 h-3" />
                         View Live Demo
@@ -454,8 +463,8 @@ const ProjectDetailPage = () => {
               </div>
 
               {/* Similar Projects */}
-              <div className="bg-gray-800 rounded-xl p-6">
-                <h3 className="text-sm font-semibold text-white mb-4">SIMILAR PROJECTS</h3>
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">SIMILAR PROJECTS</h3>
                 
                 {similarProjects.length > 0 ? (
                   <div className="space-y-3">
@@ -465,7 +474,7 @@ const ProjectDetailPage = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer group"
+                        className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer group border border-gray-200"
                         onClick={() => {
                           if (similarProject.slug) {
                             window.location.href = `/hall-of-fame/${similarProject.slug}`
@@ -473,7 +482,7 @@ const ProjectDetailPage = () => {
                         }}
                       >
                         {/* Project Image */}
-                        <div className="relative h-20 bg-gray-600 rounded-lg mb-2 overflow-hidden">
+                        <div className="relative h-20 bg-gray-200 rounded-lg mb-2 overflow-hidden">
                           {similarProject.images && similarProject.images.length > 0 ? (
                             <Image
                               src={similarProject.images[0]}
@@ -483,18 +492,18 @@ const ProjectDetailPage = () => {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Award className="w-6 h-6 text-gray-500" />
+                              <Award className="w-6 h-6 text-gray-400" />
                             </div>
                           )}
                         </div>
 
                         {/* Project Info */}
                         <div className="space-y-1">
-                          <h4 className="text-white font-medium text-sm line-clamp-1 group-hover:text-gray-200 transition-colors">
+                          <h4 className="text-gray-900 font-medium text-sm line-clamp-1 group-hover:text-gray-600 transition-colors">
                             {similarProject.title}
                           </h4>
                           {similarProject.year && (
-                            <p className="text-gray-400 text-xs">
+                            <p className="text-gray-600 text-xs">
                               {similarProject.year}
                             </p>
                           )}
@@ -505,11 +514,11 @@ const ProjectDetailPage = () => {
                 ) : (
                   <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="bg-gray-700 rounded-lg p-3 animate-pulse">
-                        <div className="h-20 bg-gray-600 rounded-lg mb-2"></div>
+                      <div key={i} className="bg-gray-50 rounded-lg p-3 animate-pulse border border-gray-200">
+                        <div className="h-20 bg-gray-200 rounded-lg mb-2"></div>
                         <div className="space-y-1">
-                          <div className="h-4 bg-gray-600 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-600 rounded w-1/4"></div>
+                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                         </div>
                       </div>
                     ))}
@@ -520,7 +529,7 @@ const ProjectDetailPage = () => {
                 <Link href="/hall-of-fame">
                   <Button
                     variant="outline"
-                    className="w-full mt-4 py-2 text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    className="w-full mt-4 py-2 text-sm border-gray-300 text-gray-600 hover:bg-gray-50"
                   >
                     View All Projects
                   </Button>
@@ -539,13 +548,13 @@ const ProjectDetailPage = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-gray-800 rounded-xl p-6 w-full max-w-md"
+            className="bg-white rounded-xl p-6 w-full max-w-md"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Share Project</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Share Project</h3>
               <button
                 onClick={() => setShowShareModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -553,7 +562,7 @@ const ProjectDetailPage = () => {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Project URL
                 </label>
                 <div className="flex gap-2">
@@ -561,13 +570,13 @@ const ProjectDetailPage = () => {
                     type="text"
                     value={`${window.location.origin}/hall-of-fame/${project?.slug}`}
                     readOnly
-                    className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
                   />
                   <Button
                     onClick={() => {
                       navigator.clipboard.writeText(`${window.location.origin}/hall-of-fame/${project?.slug}`)
                     }}
-                    className="px-4 py-2 text-sm"
+                    className="px-4 py-2 text-sm bg-gray-900 hover:bg-gray-800 text-white"
                   >
                     Copy
                   </Button>
