@@ -49,35 +49,9 @@ const HallOfFamePage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("newest")
-  const [count, setCount] = useState(0)
-
   useEffect(() => {
     fetchProjects()
   }, [])
-
-  // Animate counter
-  useEffect(() => {
-    if (!loading && projects.length > 0) {
-      const duration = 2000 // 2 seconds
-      const steps = 60
-      const increment = projects.length / steps
-      const stepDuration = duration / steps
-      
-      let currentStep = 0
-      const timer = setInterval(() => {
-        currentStep++
-        const nextCount = Math.min(Math.ceil(increment * currentStep), projects.length)
-        setCount(nextCount)
-        
-        if (currentStep >= steps || nextCount >= projects.length) {
-          setCount(projects.length)
-          clearInterval(timer)
-        }
-      }, stepDuration)
-      
-      return () => clearInterval(timer)
-    }
-  }, [loading, projects.length])
 
   const fetchProjects = async () => {
     try {
@@ -114,33 +88,8 @@ const HallOfFamePage = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="relative pt-24 pb-8 bg-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
-            >
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
-                <span className="text-base text-white/90 font-medium">Total projects over the years:</span>
-                <motion.span
-                  key={count}
-                  initial={{ scale: 1.2, opacity: 0.8 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-3xl font-bold text-white tabular-nums"
-                >
-                  {count}
-                </motion.span>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
         {/* Filters */}
-        <section className="py-6 bg-white border-b border-gray-200">
+        <section className="pt-24 pb-6 bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <div className="flex flex-col sm:flex-row gap-4">
