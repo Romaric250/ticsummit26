@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { 
   Facebook, 
   Twitter, 
@@ -14,11 +15,31 @@ import {
 import { Button } from "@/components/ui/Button"
 
 const Footer = () => {
+  const [contactInfo, setContactInfo] = useState({
+    address: "Yaoundé, Cameroon",
+    email: "info@ticsummit.org",
+    phone: "+237 XXX XXX XXX"
+  })
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch("/api/content/contact-info")
+        const data = await response.json()
+        if (data.success && data.data) {
+          setContactInfo(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching contact info:", error)
+      }
+    }
+    fetchContactInfo()
+  }, [])
   const footerLinks = {
     about: [
       { name: "Our Story", href: "/about" },
       { name: "Mission & Vision", href: "/about/mission" },
-      { name: "Team", href: "/about/team" },
+      { name: "Team", href: "/about" },
       { name: "Partners", href: "/about/partners" },
     ],
     resources: [
@@ -81,16 +102,18 @@ const Footer = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3 text-white">
                     <MapPin className="w-5 h-5 text-white" />
-                    <span>Yaoundé, Cameroon</span>
+                    <span>{contactInfo.address}</span>
                   </div>
                   <div className="flex items-center space-x-3 text-white">
                     <Mail className="w-5 h-5 text-white" />
-                    <span>info@ticsummit.org</span>
+                    <span>{contactInfo.email}</span>
                   </div>
-                  <div className="flex items-center space-x-3 text-white">
-                    <Phone className="w-5 h-5 text-white" />
-                    <span>+237 XXX XXX XXX</span>
-                  </div>
+                  {contactInfo.phone && (
+                    <div className="flex items-center space-x-3 text-white">
+                      <Phone className="w-5 h-5 text-white" />
+                      <span>{contactInfo.phone}</span>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             </div>
@@ -108,16 +131,61 @@ const Footer = () => {
                   {category}
                 </h3>
                 <ul className="space-y-3">
-                  {links.map((link) => (
-                    <li key={link.name}>
-                      <Link
-                        href={link.href}
-                        className="text-white hover:text-white transition-colors duration-200"
-                      >
-                        {link.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {links.map((link) => {
+                    // Handle Donate button specially
+                    if (link.name === "Donate") {
+                      return (
+                        <li key={link.name}>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const contactRes = await fetch("/api/content/contact-info")
+                                const contactData = await contactRes.json()
+                                const email = contactData.success && contactData.data 
+                                  ? contactData.data.email 
+                                  : "info@ticsummit.org"
+                                
+                                const subject = encodeURIComponent("Donation Inquiry - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I am interested in making a donation to support your mission of empowering young innovators in Cameroon.\n\n" +
+                                  "Please provide me with more information about how I can contribute.\n\n" +
+                                  "Thank you,\n[Your Name]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              } catch (error) {
+                                // Fallback to default email
+                                const email = "info@ticsummit.org"
+                                const subject = encodeURIComponent("Donation Inquiry - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I am interested in making a donation to support your mission of empowering young innovators in Cameroon.\n\n" +
+                                  "Please provide me with more information about how I can contribute.\n\n" +
+                                  "Thank you,\n[Your Name]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              }
+                            }}
+                            className="text-white hover:text-white transition-colors duration-200 cursor-pointer"
+                          >
+                            {link.name}
+                          </button>
+                        </li>
+                      )
+                    }
+                    
+                    // For other links, navigate normally - 404 page will catch non-existent pages
+                    return (
+                      <li key={link.name}>
+                        <Link
+                          href={link.href}
+                          className="text-white hover:text-white transition-colors duration-200"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    )
+                  })}
                 </ul>
               </motion.div>
             ))}
@@ -146,7 +214,7 @@ const Footer = () => {
             </div>
             
             <div className="text-white text-sm">
-              © 2024 TIC Summit. All rights reserved.
+              © 2025 TIC Summit. All rights reserved.
             </div>
           </div>
         </div>

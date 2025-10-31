@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star } from "lucide-react"
+import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star, Mail, Phone, MapPin } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 import { useUploadThing } from "@/lib/uploadthing"
@@ -110,6 +110,13 @@ const MinorUpdatesPage = () => {
     description: "Transforming lives and building the future of tech in Cameroon"
   })
 
+  // Contact Info State
+  const [contactInfo, setContactInfo] = useState({
+    address: "Yaoundé, Cameroon",
+    email: "info@ticsummit.org",
+    phone: "+237 XXX XXX XXX"
+  })
+
   // Modal States
   const [showFounderModal, setShowFounderModal] = useState(false)
   const [showHeroCarouselModal, setShowHeroCarouselModal] = useState(false)
@@ -120,6 +127,7 @@ const MinorUpdatesPage = () => {
   const [showStatsModal, setShowStatsModal] = useState(false)
   const [showFeaturesModal, setShowFeaturesModal] = useState(false)
   const [showTICImpactModal, setShowTICImpactModal] = useState(false)
+  const [showContactInfoModal, setShowContactInfoModal] = useState(false)
   const [editingCarouselSlide, setEditingCarouselSlide] = useState<{ type: "HERO" | "STUDENTS", slide: CarouselSlide | null, index: number } | null>(null)
   const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null)
 
@@ -206,6 +214,15 @@ const MinorUpdatesPage = () => {
         const partnersData = await partnersRes.json()
         if (partnersData.success) {
           setPartners(partnersData.data.sort((a: any, b: any) => a.order - b.order))
+        }
+      }
+
+      // Fetch Contact Info
+      const contactRes = await fetch("/api/content/contact-info")
+      if (contactRes.ok) {
+        const contactData = await contactRes.json()
+        if (contactData.success && contactData.data) {
+          setContactInfo(contactData.data)
         }
       }
 
@@ -420,6 +437,31 @@ const MinorUpdatesPage = () => {
     }
   }
 
+  const handleSaveContactInfo = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/contact-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contactInfo)
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("Contact info updated successfully")
+        setShowContactInfoModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update contact info")
+      }
+    } catch (error) {
+      console.error("Error saving contact info:", error)
+      toast.error("Failed to save contact info")
+    } finally {
+      setSaving(false)
+    }
+  }
+
 
   if (loading) {
     return (
@@ -620,6 +662,39 @@ const MinorUpdatesPage = () => {
               </div>
             </motion.div>
 
+            {/* Contact Info Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowContactInfoModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Contact Info</h3>
+                  <p className="text-sm text-gray-600">Manage footer contact</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-200 space-y-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-600 line-clamp-1">{contactInfo.address}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-600 line-clamp-1">{contactInfo.email}</span>
+                </div>
+                {contactInfo.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-gray-500" />
+                    <span className="text-gray-600 line-clamp-1">{contactInfo.phone}</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
           </div>
         </div>
 
@@ -712,6 +787,16 @@ const MinorUpdatesPage = () => {
           impact={ticImpact}
           setImpact={setTicImpact}
           onSave={handleSaveTICImpact}
+          saving={saving}
+        />
+
+        {/* Contact Info Modal */}
+        <ContactInfoModal
+          isOpen={showContactInfoModal}
+          onClose={() => setShowContactInfoModal(false)}
+          contactInfo={contactInfo}
+          setContactInfo={setContactInfo}
+          onSave={handleSaveContactInfo}
           saving={saving}
         />
       </div>
@@ -2505,6 +2590,115 @@ const PartnerEditor = ({
         </div>
       </div>
     </div>
+  )
+}
+
+// Contact Info Modal Component
+const ContactInfoModal = ({
+  isOpen,
+  onClose,
+  contactInfo,
+  setContactInfo,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  contactInfo: { address: string; email: string; phone?: string }
+  setContactInfo: (info: { address: string; email: string; phone?: string }) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  const [currentInfo, setCurrentInfo] = useState(contactInfo)
+
+  useEffect(() => {
+    setCurrentInfo(contactInfo)
+  }, [contactInfo])
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <input
+                  type="text"
+                  value={currentInfo.address}
+                  onChange={(e) => {
+                    const updated = { ...currentInfo, address: e.target.value }
+                    setCurrentInfo(updated)
+                    setContactInfo(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  placeholder="Yaoundé, Cameroon"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={currentInfo.email}
+                  onChange={(e) => {
+                    const updated = { ...currentInfo, email: e.target.value }
+                    setCurrentInfo(updated)
+                    setContactInfo(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  placeholder="info@ticsummit.org"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone (Optional)</label>
+                <input
+                  type="text"
+                  value={currentInfo.phone || ""}
+                  onChange={(e) => {
+                    const updated = { ...currentInfo, phone: e.target.value }
+                    setCurrentInfo(updated)
+                    setContactInfo(updated)
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+                  placeholder="+237 XXX XXX XXX"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   )
 }
 

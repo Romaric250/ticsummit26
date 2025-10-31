@@ -761,3 +761,14 @@ enum PhaseStatus {
   ACTIVE
   UPCOMING
 }
+
+model ContactInfo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  address     String   // e.g., "Yaoundé, Cameroon"
+  email       String   // e.g., "info@ticsummit.org"
+  phone       String?  // e.g., "+237 XXX XXX XXX"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("contact_info")
+}
