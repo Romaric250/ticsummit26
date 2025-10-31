@@ -10,12 +10,12 @@ export const ProjectCardSkeleton = ({ index = 0 }: ProjectCardSkeletonProps) => 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700"
+      className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-lg"
     >
       {/* Image Skeleton */}
-      <div className="relative h-48 bg-gray-700 animate-pulse">
+      <div className="relative h-40 bg-gray-100 animate-pulse">
         <div className="absolute top-3 left-3">
-          <div className="w-12 h-6 bg-gray-600 rounded-full animate-pulse"></div>
+          <div className="w-12 h-6 bg-gray-200 rounded-full animate-pulse"></div>
         </div>
       </div>
 
@@ -24,33 +24,32 @@ export const ProjectCardSkeleton = ({ index = 0 }: ProjectCardSkeletonProps) => 
         {/* Title and Status */}
         <div className="flex items-start justify-between">
           <div className="flex-1 space-y-2">
-            <div className="h-5 bg-gray-700 rounded animate-pulse w-3/4"></div>
-            <div className="h-4 bg-gray-700 rounded animate-pulse w-1/2"></div>
+            <div className="h-5 bg-gray-200 rounded animate-pulse w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
           </div>
-          <div className="w-16 h-6 bg-gray-700 rounded-full animate-pulse ml-2"></div>
+          <div className="w-16 h-6 bg-gray-200 rounded-full animate-pulse ml-2"></div>
         </div>
 
         {/* Description */}
         <div className="space-y-2">
-          <div className="h-4 bg-gray-700 rounded animate-pulse"></div>
-          <div className="h-4 bg-gray-700 rounded animate-pulse w-5/6"></div>
-          <div className="h-4 bg-gray-700 rounded animate-pulse w-2/3"></div>
+          <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded animate-pulse w-5/6"></div>
         </div>
 
         {/* Tech Stack */}
         <div className="flex gap-2">
-          <div className="w-12 h-6 bg-gray-700 rounded animate-pulse"></div>
-          <div className="w-16 h-6 bg-gray-700 rounded animate-pulse"></div>
-          <div className="w-14 h-6 bg-gray-700 rounded animate-pulse"></div>
+          <div className="w-12 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+          <div className="w-16 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+          <div className="w-14 h-6 bg-gray-200 rounded-full animate-pulse"></div>
         </div>
 
         {/* Members */}
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-gray-700 rounded animate-pulse"></div>
+          <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
           <div className="flex gap-1">
-            <div className="w-16 h-4 bg-gray-700 rounded animate-pulse"></div>
-            <div className="w-20 h-4 bg-gray-700 rounded animate-pulse"></div>
-            <div className="w-12 h-4 bg-gray-700 rounded animate-pulse"></div>
+            <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
+            <div className="w-20 h-4 bg-gray-200 rounded animate-pulse"></div>
+            <div className="w-12 h-4 bg-gray-200 rounded animate-pulse"></div>
           </div>
         </div>
 
@@ -58,21 +57,21 @@ export const ProjectCardSkeleton = ({ index = 0 }: ProjectCardSkeletonProps) => 
         <div className="flex items-center justify-between">
           <div className="flex gap-4">
             <div className="flex items-center gap-1">
-              <div className="w-4 h-4 bg-gray-700 rounded animate-pulse"></div>
-              <div className="w-8 h-4 bg-gray-700 rounded animate-pulse"></div>
+              <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="w-8 h-4 bg-gray-200 rounded animate-pulse"></div>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-4 h-4 bg-gray-700 rounded animate-pulse"></div>
-              <div className="w-8 h-4 bg-gray-700 rounded animate-pulse"></div>
+              <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="w-8 h-4 bg-gray-200 rounded animate-pulse"></div>
             </div>
           </div>
-          <div className="w-12 h-4 bg-gray-700 rounded animate-pulse"></div>
+          <div className="w-12 h-4 bg-gray-200 rounded animate-pulse"></div>
         </div>
 
         {/* Actions */}
         <div className="flex space-x-2">
-          <div className="flex-1 h-10 bg-gray-700 rounded animate-pulse"></div>
-          <div className="w-10 h-10 bg-gray-700 rounded animate-pulse"></div>
+          <div className="flex-1 h-10 bg-gray-200 rounded animate-pulse"></div>
+          <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
         </div>
       </div>
     </motion.div>
@@ -224,44 +223,34 @@ interface HallOfFameSkeletonProps {
 
 export const HallOfFameSkeleton = ({ count = 6 }: HallOfFameSkeletonProps) => {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section Skeleton */}
-      <section className="relative py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <section className="relative py-8 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-6">
-            <div className="h-16 bg-gray-700 rounded animate-pulse w-80 mx-auto"></div>
-            <div className="h-6 bg-gray-700 rounded animate-pulse w-96 mx-auto"></div>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                  <div className="h-8 bg-gray-600 rounded animate-pulse w-12 mb-2"></div>
-                  <div className="h-4 bg-gray-600 rounded animate-pulse w-20"></div>
-                </div>
-              ))}
-            </div>
+          <div className="text-center">
+            <div className="h-6 bg-white/20 rounded animate-pulse w-80 mx-auto"></div>
           </div>
         </div>
       </section>
 
       {/* Filters Skeleton */}
-      <section className="py-8 bg-gray-800">
+      <section className="py-6 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
-              <div className="h-12 bg-gray-700 rounded-lg animate-pulse"></div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="w-5 h-5 bg-gray-700 rounded animate-pulse"></div>
-              <div className="h-12 bg-gray-700 rounded-lg animate-pulse w-32"></div>
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
+              <div className="relative sm:w-48">
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Projects Grid Skeleton */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: count }).map((_, index) => (
