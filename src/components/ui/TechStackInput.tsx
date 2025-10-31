@@ -41,13 +41,13 @@ export const TechStackInput = ({ value, onChange, placeholder = "Add technology.
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
-          className="flex-1 px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          className="flex-1 px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary"
         />
         <Button
           type="button"
           onClick={addTech}
           size="sm"
-          className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+          className="bg-primary hover:bg-primary/90 text-white cursor-pointer"
         >
           <Plus className="w-4 h-4" />
         </Button>
@@ -58,7 +58,7 @@ export const TechStackInput = ({ value, onChange, placeholder = "Add technology.
           {value.map((tech, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1 px-3 py-1 bg-blue-600 text-white text-sm rounded-full"
+              className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-800 border border-gray-200 text-sm rounded-full"
             >
               {tech}
               <button

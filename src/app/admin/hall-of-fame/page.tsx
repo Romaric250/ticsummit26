@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
+import { ProjectFormModal } from "@/components/admin/ProjectFormModal"
 
 interface Project {
   id: string
@@ -50,6 +51,8 @@ const HallOfFameAdmin = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingProjectId, setEditingProjectId] = useState<string | undefined>(undefined)
 
   const categories = ["all", "Web", "Mobile", "IoT", "AI", "Blockchain", "Other"]
   const statuses = ["all", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED", "FINALIST", "WINNER"]
@@ -108,7 +111,7 @@ const HallOfFameAdmin = () => {
       case "UNDER_REVIEW": return "bg-yellow-50 text-yellow-800 border-yellow-200"
       case "APPROVED": return "bg-green-50 text-green-800 border-green-200"
       case "REJECTED": return "bg-red-50 text-red-800 border-red-200"
-      case "FINALIST": return "bg-blue-50 text-blue-800 border-blue-200"
+      case "FINALIST": return "bg-gray-100 text-gray-800 border-gray-200"
       case "WINNER": return "bg-purple-50 text-purple-800 border-purple-200"
       default: return "bg-gray-100 text-gray-800 border-gray-200"
     }
@@ -116,7 +119,7 @@ const HallOfFameAdmin = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      "Web": "bg-blue-100 text-blue-800",
+      "Web": "bg-gray-100 text-gray-800",
       "Mobile": "bg-indigo-100 text-indigo-800",
       "IoT": "bg-green-100 text-green-800",
       "AI": "bg-purple-100 text-purple-800",
@@ -173,19 +176,20 @@ const HallOfFameAdmin = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Hall of Fame Management</h1>
                 <p className="text-gray-600 mt-1">Manage student projects and achievements</p>
               </div>
-              <Link href="/admin/hall-of-fame/new">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all shadow-md cursor-pointer"
-                >
-                  <Plus className="h-5 w-5" />
-                  Add Project
-                </motion.button>
-              </Link>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setEditingProjectId(undefined)
+                  setIsModalOpen(true)
+                }}
+                className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all shadow-md cursor-pointer"
+              >
+                <Plus className="h-5 w-5" />
+                Add Project
+              </motion.button>
             </div>
           </div>
         </div>
@@ -194,46 +198,38 @@ const HallOfFameAdmin = () => {
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200">
-                <div className="flex items-center">
-                  <Trophy className="w-8 h-8 text-yellow-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-yellow-600">Total Projects</p>
-                    <p className="text-2xl font-bold text-yellow-900">{projects.length}</p>
-                  </div>
+              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 border border-yellow-200">
+                <div className="flex flex-col items-center text-center">
+                  <Trophy className="w-6 h-6 text-yellow-600 mb-1.5" />
+                  <p className="text-xs font-medium text-yellow-600">Total Projects</p>
+                  <p className="text-xl font-bold text-yellow-900">{projects.length}</p>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-                <div className="flex items-center">
-                  <Star className="w-8 h-8 text-purple-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-purple-600">Winners</p>
-                    <p className="text-2xl font-bold text-purple-900">
-                      {projects.filter(p => p.status === "WINNER").length}
-                    </p>
-                  </div>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 border border-purple-200">
+                <div className="flex flex-col items-center text-center">
+                  <Star className="w-6 h-6 text-purple-600 mb-1.5" />
+                  <p className="text-xs font-medium text-purple-600">Winners</p>
+                  <p className="text-xl font-bold text-purple-900">
+                    {projects.filter(p => p.status === "WINNER").length}
+                  </p>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-                <div className="flex items-center">
-                  <Award className="w-8 h-8 text-green-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-green-600">Approved</p>
-                    <p className="text-2xl font-bold text-green-900">
-                      {projects.filter(p => p.status === "APPROVED").length}
-                    </p>
-                  </div>
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 border border-green-200">
+                <div className="flex flex-col items-center text-center">
+                  <Award className="w-6 h-6 text-green-600 mb-1.5" />
+                  <p className="text-xs font-medium text-green-600">Approved</p>
+                  <p className="text-xl font-bold text-green-900">
+                    {projects.filter(p => p.status === "APPROVED").length}
+                  </p>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center">
-                  <Eye className="w-8 h-8 text-blue-600" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-blue-600">Under Review</p>
-                    <p className="text-2xl font-bold text-blue-900">
-                      {projects.filter(p => p.status === "UNDER_REVIEW").length}
-                    </p>
-                  </div>
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 border border-gray-200">
+                <div className="flex flex-col items-center text-center">
+                  <Eye className="w-6 h-6 text-gray-600 mb-1.5" />
+                  <p className="text-xs font-medium text-gray-600">Under Review</p>
+                  <p className="text-xl font-bold text-gray-900">
+                    {projects.filter(p => p.status === "UNDER_REVIEW").length}
+                  </p>
                 </div>
               </div>
             </div>
@@ -403,22 +399,24 @@ const HallOfFameAdmin = () => {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
+                            className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
                             title="View"
                           >
                             <Eye className="h-5 w-5" />
                           </motion.button>
                         </Link>
-                        <Link href={`/admin/hall-of-fame/${project.id}`}>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
-                            title="Edit"
-                          >
-                            <Edit className="h-5 w-5" />
-                          </motion.button>
-                        </Link>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setEditingProjectId(project.id)
+                            setIsModalOpen(true)
+                          }}
+                          className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
+                          title="Edit"
+                        >
+                          <Edit className="h-5 w-5" />
+                        </motion.button>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -496,6 +494,19 @@ const HallOfFameAdmin = () => {
             </div>
           )}
         </AnimatePresence>
+
+        {/* Project Form Modal */}
+        <ProjectFormModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setEditingProjectId(undefined)
+          }}
+          onSuccess={() => {
+            fetchProjects()
+          }}
+          projectId={editingProjectId}
+        />
       </div>
     </Layout>
   )
