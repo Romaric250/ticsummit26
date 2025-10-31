@@ -241,7 +241,7 @@ const HeroSection = () => {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut" as const,
+        ease: [0.16, 1, 0.3, 1] as const, // easeOut cubic-bezier equivalent
       },
     },
   }
@@ -337,7 +337,7 @@ const HeroSection = () => {
                       duration: 3,
                       repeat: Infinity,
                       delay: i * 0.2,
-                      ease: "easeOut"
+                      ease: [0.16, 1, 0.3, 1] as const
                     }}
                   />
                 ))}
