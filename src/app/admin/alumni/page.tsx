@@ -26,7 +26,6 @@ import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 import { AnimatePresence } from "framer-motion"
-import { AlumniListSkeleton } from "@/components/ui/AlumniSkeleton"
 
 interface Alumni {
   id: string
@@ -218,10 +217,37 @@ const AdminAlumniPage = () => {
             </div>
           </div>
 
-          {/* Alumni Grid */}
-          <div className="bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <AlumniListSkeleton count={6} />
+          {/* Alumni List */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="divide-y divide-gray-200">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="p-6 animate-pulse">
+                    <div className="flex items-start justify-between gap-4">
+                      {/* Image Skeleton */}
+                      <div className="flex-shrink-0 w-32 h-32 bg-gray-200 rounded-lg"></div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+                          <div className="h-5 bg-gray-200 rounded-full w-20"></div>
+                        </div>
+                        <div className="h-4 bg-gray-200 rounded w-2/3 mb-3"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+                        <div className="flex items-center gap-4 flex-wrap">
+                          <div className="h-3 bg-gray-200 rounded w-24"></div>
+                          <div className="h-3 bg-gray-200 rounded w-16"></div>
+                          <div className="h-3 bg-gray-200 rounded w-20"></div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
+                        <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
+                        <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -341,8 +367,7 @@ const AdminAlumniPage = () => {
           </div>
         </div>
 
-        {/* Alumni Grid */}
-        <div className="bg-white">
+          {/* Alumni List */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {error ? (
               <div className="text-center py-12">
@@ -351,23 +376,23 @@ const AdminAlumniPage = () => {
                   <p className="text-lg font-semibold">Failed to load alumni</p>
                   <p className="text-sm text-gray-600">{error}</p>
                 </div>
-                <Button onClick={fetchAlumni} className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={fetchAlumni} className="bg-gray-900 hover:bg-gray-800 text-white">
                   Try Again
                 </Button>
               </div>
             ) : filteredAlumni.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">
-                  <Users className="w-16 h-16 mx-auto" />
+                  <Users className="w-12 h-12 mx-auto mb-2" />
+                  <p className="text-lg font-semibold">
+                    {alumni.length === 0 ? "No alumni yet" : "No alumni found"}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {alumni.length === 0 
+                      ? "Get started by adding your first alumni profile." 
+                      : "Try adjusting your search criteria."}
+                  </p>
                 </div>
-                <h3 className="text-xl font-medium text-gray-600 mb-2">
-                  {alumni.length === 0 ? "No alumni yet" : "No alumni found"}
-                </h3>
-                <p className="text-gray-500 mb-6">
-                  {alumni.length === 0 
-                    ? "Get started by adding your first alumni profile." 
-                    : "Try adjusting your search criteria."}
-                </p>
                 {alumni.length === 0 && (
                   <Link href="/admin/alumni/new">
                     <Button className="bg-gray-900 hover:bg-gray-800 text-white">
@@ -378,117 +403,128 @@ const AdminAlumniPage = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredAlumni.map((alumnus) => (
-                  <motion.div
-                    key={alumnus.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="p-6">
-                      <div className="flex items-center space-x-4 mb-4">
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                          {alumnus.profileImage ? (
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="divide-y divide-gray-200">
+                  {filteredAlumni.map((alumnus, index) => (
+                    <motion.div
+                      key={alumnus.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="p-6 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        {/* Profile Image */}
+                        {alumnus.profileImage ? (
+                          <div className="flex-shrink-0">
                             <img
                               src={alumnus.profileImage}
                               alt={alumnus.name}
-                              className="w-12 h-12 rounded-full object-cover"
+                              className="w-32 h-32 object-cover rounded-lg border border-gray-200"
                             />
-                          ) : (
-                            <Users className="w-6 h-6 text-gray-400" />
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-32 h-32 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                            <Users className="h-8 w-8 text-gray-400" />
+                          </div>
+                        )}
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-lg font-semibold text-gray-900">{alumnus.name}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                              alumnus.isActive
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {alumnus.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 mt-1">{alumnus.email}</p>
+                          {alumnus.bio && (
+                            <p className="text-gray-600 mt-2 line-clamp-2">{alumnus.bio}</p>
                           )}
+                          <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 flex-wrap">
+                            {alumnus.currentRole && (
+                              <>
+                                <div className="flex items-center gap-1">
+                                  <Briefcase className="w-4 h-4" />
+                                  <span>{alumnus.currentRole}</span>
+                                </div>
+                                <span>•</span>
+                              </>
+                            )}
+                            {alumnus.company && (
+                              <>
+                                <div className="flex items-center gap-1">
+                                  <Building className="w-4 h-4" />
+                                  <span>{alumnus.company}</span>
+                                </div>
+                                <span>•</span>
+                              </>
+                            )}
+                            {alumnus.location && (
+                              <>
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{alumnus.location}</span>
+                                </div>
+                                <span>•</span>
+                              </>
+                            )}
+                            {alumnus.graduationYear && (
+                              <>
+                                <div className="flex items-center gap-1">
+                                  <GraduationCap className="w-4 h-4" />
+                                  <span>Graduated {alumnus.graduationYear}</span>
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900">{alumnus.name}</h3>
-                          <p className="text-sm text-gray-600">{alumnus.email}</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => handleToggleStatus(alumnus.id)}
-                            className={`p-1 rounded-full ${
+                            className={`p-2 rounded-lg transition-all cursor-pointer ${
                               alumnus.isActive 
                                 ? 'text-green-600 hover:bg-green-50' 
                                 : 'text-gray-400 hover:bg-gray-50'
                             }`}
+                            title={alumnus.isActive ? 'Deactivate' : 'Activate'}
                           >
-                            {alumnus.isActive ? (
-                              <Eye className="w-4 h-4" />
-                            ) : (
-                              <EyeOff className="w-4 h-4" />
-                            )}
-                          </button>
-                          <div className="relative">
-                            <button className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full">
-                              <MoreVertical className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 mb-4">
-                        {alumnus.currentRole && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Briefcase className="w-4 h-4" />
-                            <span>{alumnus.currentRole}</span>
-                          </div>
-                        )}
-                        {alumnus.company && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Building className="w-4 h-4" />
-                            <span>{alumnus.company}</span>
-                          </div>
-                        )}
-                        {alumnus.location && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <MapPin className="w-4 h-4" />
-                            <span>{alumnus.location}</span>
-                          </div>
-                        )}
-                        {alumnus.graduationYear && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <GraduationCap className="w-4 h-4" />
-                            <span>Graduated {alumnus.graduationYear}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {alumnus.bio && (
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">{alumnus.bio}</p>
-                      )}
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-2 h-2 rounded-full ${alumnus.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                          <span className="text-sm text-gray-600">
-                            {alumnus.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
+                            {alumnus.isActive ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                          </motion.button>
                           <Link href={`/admin/alumni/${alumnus.slug}`}>
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-3 h-3 mr-1" />
-                              Edit
-                            </Button>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
+                              title="Edit"
+                            >
+                              <Edit className="h-5 w-5" />
+                            </motion.button>
                           </Link>
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => handleDelete(alumnus.id)}
-                            className="bg-white text-red-600 border-red-300 hover:bg-white hover:text-red-600"
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
+                            title="Delete"
                           >
-                            <Trash2 className="w-3 h-3 mr-1" />
-                            Delete
-                          </Button>
+                            <Trash2 className="h-5 w-5" />
+                          </motion.button>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
-        </div>
 
         {/* Delete Confirmation Modal */}
         <AnimatePresence>
