@@ -11,10 +11,11 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
     const specialty = searchParams.get('specialty')
     const location = searchParams.get('location')
-    const isActive = searchParams.get('isActive') !== 'false' // Default to true
+    const isActiveParam = searchParams.get('isActive')
+    const isActive = isActiveParam === null || isActiveParam === 'true' // Default to true
 
     const whereClause: Record<string, unknown> = {
-      isActive: isActive === true || isActive === 'true'
+      isActive
     }
 
     // Add search filters

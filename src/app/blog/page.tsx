@@ -124,7 +124,7 @@ const BlogPage = () => {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeOut",
+        ease: [0.16, 1, 0.3, 1] as const, // easeOut cubic-bezier equivalent
       },
     },
   }
