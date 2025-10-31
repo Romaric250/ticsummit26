@@ -48,10 +48,6 @@ const PartnersSection = () => {
     fetchPartners()
   }, [])
 
-  if (loading || partners.length === 0) {
-    return null
-  }
-
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,57 +66,70 @@ const PartnersSection = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8 items-center">
-            {partners.map((partner, index) => (
-              <motion.div
-                key={partner.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="flex flex-col items-center justify-center"
-              >
-                {partner.website ? (
-                  <a
-                    href={partner.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center justify-center w-full h-32 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all"
-                  >
-                    <div className="relative w-full h-20 mb-2">
-                      <Image
-                        src={partner.logoUrl}
-                        alt={partner.name}
-                        fill
-                        className="object-contain filter grayscale hover:grayscale-0 transition-all"
-                      />
-                    </div>
-                    {showNames && (
-                      <p className="text-sm font-medium text-gray-700 mt-2 text-center group-hover:text-gray-900">
-                        {partner.name}
-                      </p>
-                    )}
-                  </a>
-                ) : (
-                  <div className="flex flex-col items-center justify-center w-full h-32 p-4 bg-gray-50 rounded-lg">
-                    <div className="relative w-full h-20 mb-2">
-                      <Image
-                        src={partner.logoUrl}
-                        alt={partner.name}
-                        fill
-                        className="object-contain filter grayscale"
-                      />
-                    </div>
-                    {showNames && (
-                      <p className="text-sm font-medium text-gray-700 mt-2 text-center">
-                        {partner.name}
-                      </p>
-                    )}
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8 items-center">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="flex flex-col items-center justify-center">
+                  <div className="w-full h-48 p-6 bg-gray-50 rounded-lg animate-pulse">
+                    <div className="w-full h-32 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
                   </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          ) : partners.length === 0 ? null : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8 items-center">
+              {partners.map((partner, index) => (
+                <motion.div
+                  key={partner.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex flex-col items-center justify-center"
+                >
+                  {partner.website ? (
+                    <a
+                      href={partner.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex flex-col items-center justify-center w-full h-48 p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all"
+                    >
+                      <div className="relative w-full h-32 mb-3">
+                        <Image
+                          src={partner.logoUrl}
+                          alt={partner.name}
+                          fill
+                          className="object-contain filter grayscale hover:grayscale-0 transition-all"
+                        />
+                      </div>
+                      {showNames && (
+                        <p className="text-base font-medium text-gray-700 mt-2 text-center group-hover:text-gray-900">
+                          {partner.name}
+                        </p>
+                      )}
+                    </a>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-48 p-6 bg-gray-50 rounded-lg">
+                      <div className="relative w-full h-32 mb-3">
+                        <Image
+                          src={partner.logoUrl}
+                          alt={partner.name}
+                          fill
+                          className="object-contain filter grayscale"
+                        />
+                      </div>
+                      {showNames && (
+                        <p className="text-base font-medium text-gray-700 mt-2 text-center">
+                          {partner.name}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
