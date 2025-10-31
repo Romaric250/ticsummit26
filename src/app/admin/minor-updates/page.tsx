@@ -42,6 +42,23 @@ interface TeamMember {
   active: boolean
 }
 
+interface FAQ {
+  id?: string
+  question: string
+  answer: string
+  order: number
+  active: boolean
+}
+
+interface Partner {
+  id?: string
+  name: string
+  logoUrl: string
+  website?: string
+  order: number
+  active: boolean
+}
+
 const MinorUpdatesPage = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -60,6 +77,12 @@ const MinorUpdatesPage = () => {
   
   // Team Members State
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+
+  // FAQ State
+  const [faqs, setFaqs] = useState<FAQ[]>([])
+
+  // Partners State
+  const [partners, setPartners] = useState<Partner[]>([])
 
   // Site Stats State
   const [siteStats, setSiteStats] = useState({
@@ -92,6 +115,8 @@ const MinorUpdatesPage = () => {
   const [showHeroCarouselModal, setShowHeroCarouselModal] = useState(false)
   const [showStudentsCarouselModal, setShowStudentsCarouselModal] = useState(false)
   const [showTeamModal, setShowTeamModal] = useState(false)
+  const [showFAQModal, setShowFAQModal] = useState(false)
+  const [showPartnersModal, setShowPartnersModal] = useState(false)
   const [showStatsModal, setShowStatsModal] = useState(false)
   const [showFeaturesModal, setShowFeaturesModal] = useState(false)
   const [showTICImpactModal, setShowTICImpactModal] = useState(false)
@@ -163,6 +188,24 @@ const MinorUpdatesPage = () => {
         const impactData = await impactRes.json()
         if (impactData.success && impactData.data) {
           setTicImpact(impactData.data)
+        }
+      }
+
+      // Fetch FAQs
+      const faqRes = await fetch("/api/content/faq")
+      if (faqRes.ok) {
+        const faqData = await faqRes.json()
+        if (faqData.success) {
+          setFaqs(faqData.data.sort((a: any, b: any) => a.order - b.order))
+        }
+      }
+
+      // Fetch Partners
+      const partnersRes = await fetch("/api/content/partners")
+      if (partnersRes.ok) {
+        const partnersData = await partnersRes.json()
+        if (partnersData.success) {
+          setPartners(partnersData.data.sort((a: any, b: any) => a.order - b.order))
         }
       }
 
@@ -247,6 +290,56 @@ const MinorUpdatesPage = () => {
     } catch (error) {
       console.error("Error saving team members:", error)
       toast.error("Failed to save team members")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSaveFAQs = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/faq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ faqs })
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("FAQs updated successfully")
+        setShowFAQModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update FAQs")
+      }
+    } catch (error) {
+      console.error("Error saving FAQs:", error)
+      toast.error("Failed to save FAQs")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSavePartners = async () => {
+    try {
+      setSaving(true)
+      const response = await fetch("/api/content/partners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ partners })
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        toast.success("Partners updated successfully")
+        setShowPartnersModal(false)
+        await fetchData()
+      } else {
+        toast.error("Failed to update partners")
+      }
+    } catch (error) {
+      console.error("Error saving partners:", error)
+      toast.error("Failed to save partners")
     } finally {
       setSaving(false)
     }
@@ -422,6 +515,40 @@ const MinorUpdatesPage = () => {
               </div>
             </motion.div>
 
+            {/* FAQ Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowFAQModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">FAQs</h3>
+                  <p className="text-sm text-gray-600">{faqs.length} questions</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Partners Card */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
+              onClick={() => setShowPartnersModal(true)}
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <Star className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Partners</h3>
+                  <p className="text-sm text-gray-600">{partners.length} partners</p>
+                </div>
+              </div>
+            </motion.div>
+
             {/* Site Stats Card */}
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -535,6 +662,26 @@ const MinorUpdatesPage = () => {
           teamMembers={teamMembers}
           setTeamMembers={setTeamMembers}
           onSave={handleSaveTeamMembers}
+          saving={saving}
+        />
+
+        {/* FAQ Modal */}
+        <FAQModal
+          isOpen={showFAQModal}
+          onClose={() => setShowFAQModal(false)}
+          faqs={faqs}
+          setFaqs={setFaqs}
+          onSave={handleSaveFAQs}
+          saving={saving}
+        />
+
+        {/* Partners Modal */}
+        <PartnersModal
+          isOpen={showPartnersModal}
+          onClose={() => setShowPartnersModal(false)}
+          partners={partners}
+          setPartners={setPartners}
+          onSave={handleSavePartners}
           saving={saving}
         />
 
@@ -1851,6 +1998,513 @@ const TICImpactModal = ({
         </div>
       )}
     </AnimatePresence>
+  )
+}
+
+// FAQ Modal Component
+const FAQModal = ({
+  isOpen,
+  onClose,
+  faqs,
+  setFaqs,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  faqs: FAQ[]
+  setFaqs: (faqs: FAQ[]) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+
+  const handleAddFAQ = () => {
+    const newFAQ: FAQ = {
+      question: "",
+      answer: "",
+      order: faqs.length,
+      active: true
+    }
+    setFaqs([...faqs, newFAQ])
+    setEditingIndex(faqs.length)
+  }
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">FAQs</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleAddFAQ}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add FAQ
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {faqs.map((faq, index) => (
+                  <FAQEditor
+                    key={faq.id || index}
+                    faq={faq}
+                    index={index}
+                    isEditing={editingIndex === index}
+                    onEdit={() => setEditingIndex(index)}
+                    onCancel={() => setEditingIndex(null)}
+                    onChange={(updated) => {
+                      const newFaqs = [...faqs]
+                      newFaqs[index] = updated
+                      setFaqs(newFaqs)
+                    }}
+                    onDelete={() => {
+                      const updated = faqs.filter((_, i) => i !== index)
+                      updated.forEach((f, i) => { f.order = i })
+                      setFaqs(updated)
+                      setEditingIndex(null)
+                    }}
+                    onMove={(direction) => {
+                      const newFaqs = [...faqs]
+                      const newIndex = direction === "up" ? index - 1 : index + 1
+                      if (newIndex < 0 || newIndex >= newFaqs.length) return
+                      const temp = newFaqs[index]
+                      newFaqs[index] = newFaqs[newIndex]
+                      newFaqs[newIndex] = temp
+                      newFaqs[index].order = index
+                      newFaqs[newIndex].order = newIndex
+                      setFaqs(newFaqs)
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+// FAQ Editor Component
+const FAQEditor = ({
+  faq,
+  index,
+  isEditing,
+  onEdit,
+  onCancel,
+  onChange,
+  onDelete,
+  onMove
+}: {
+  faq: FAQ
+  index: number
+  isEditing: boolean
+  onEdit: () => void
+  onCancel: () => void
+  onChange: (faq: FAQ) => void
+  onDelete: () => void
+  onMove: (direction: "up" | "down") => void
+}) => {
+  const [currentFAQ, setCurrentFAQ] = useState(faq)
+
+  useEffect(() => {
+    setCurrentFAQ(faq)
+  }, [faq])
+
+  if (!isEditing) {
+    return (
+      <div className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="flex-1">
+          <h4 className="font-medium text-gray-900 mb-1">{currentFAQ.question || "Untitled Question"}</h4>
+          <p className="text-sm text-gray-600 line-clamp-2">{currentFAQ.answer || "No answer"}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => onMove("up")} disabled={index === 0} className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg disabled:opacity-50">
+            <ArrowUp className="w-4 h-4" />
+          </button>
+          <button onClick={() => onMove("down")} className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg">
+            <ArrowDown className="w-4 h-4" />
+          </button>
+          <button onClick={onEdit} className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg">
+            <Edit className="w-4 h-4" />
+          </button>
+          <button onClick={onDelete} className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Question</label>
+        <input
+          type="text"
+          value={currentFAQ.question}
+          onChange={(e) => {
+            const updated = { ...currentFAQ, question: e.target.value }
+            setCurrentFAQ(updated)
+            onChange(updated)
+          }}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Answer</label>
+        <textarea
+          rows={4}
+          value={currentFAQ.answer}
+          onChange={(e) => {
+            const updated = { ...currentFAQ, answer: e.target.value }
+            setCurrentFAQ(updated)
+            onChange(updated)
+          }}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary resize-none"
+        />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={currentFAQ.active}
+            onChange={(e) => {
+              const updated = { ...currentFAQ, active: e.target.checked }
+              setCurrentFAQ(updated)
+              onChange(updated)
+            }}
+            className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-primary"
+          />
+          <span className="text-sm text-gray-700">Active</span>
+        </label>
+        <div className="flex gap-2">
+          <button onClick={onCancel} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Partners Modal Component
+const PartnersModal = ({
+  isOpen,
+  onClose,
+  partners,
+  setPartners,
+  onSave,
+  saving
+}: {
+  isOpen: boolean
+  onClose: () => void
+  partners: Partner[]
+  setPartners: (partners: Partner[]) => void
+  onSave: () => void
+  saving: boolean
+}) => {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+
+  const handleAddPartner = () => {
+    const newPartner: Partner = {
+      name: "",
+      logoUrl: "",
+      order: partners.length,
+      active: true
+    }
+    setPartners([...partners, newPartner])
+    setEditingIndex(partners.length)
+  }
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Partners</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleAddPartner}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Partner
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {partners.map((partner, index) => (
+                  <PartnerEditor
+                    key={partner.id || index}
+                    partner={partner}
+                    index={index}
+                    isEditing={editingIndex === index}
+                    onEdit={() => setEditingIndex(index)}
+                    onCancel={() => setEditingIndex(null)}
+                    onChange={(updated) => {
+                      const newPartners = [...partners]
+                      newPartners[index] = updated
+                      setPartners(newPartners)
+                    }}
+                    onDelete={() => {
+                      const updated = partners.filter((_, i) => i !== index)
+                      updated.forEach((p, i) => { p.order = i })
+                      setPartners(updated)
+                      setEditingIndex(null)
+                    }}
+                    onMove={(direction) => {
+                      const newPartners = [...partners]
+                      const newIndex = direction === "up" ? index - 1 : index + 1
+                      if (newIndex < 0 || newIndex >= newPartners.length) return
+                      const temp = newPartners[index]
+                      newPartners[index] = newPartners[newIndex]
+                      newPartners[newIndex] = temp
+                      newPartners[index].order = index
+                      newPartners[newIndex].order = newIndex
+                      setPartners(newPartners)
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onSave}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+// Partner Editor Component
+const PartnerEditor = ({
+  partner,
+  index,
+  isEditing,
+  onEdit,
+  onCancel,
+  onChange,
+  onDelete,
+  onMove
+}: {
+  partner: Partner
+  index: number
+  isEditing: boolean
+  onEdit: () => void
+  onCancel: () => void
+  onChange: (partner: Partner) => void
+  onDelete: () => void
+  onMove: (direction: "up" | "down") => void
+}) => {
+  const [uploading, setUploading] = useState(false)
+  const [currentPartner, setCurrentPartner] = useState(partner)
+
+  useEffect(() => {
+    setCurrentPartner(partner)
+  }, [partner])
+
+  const { startUpload } = useUploadThing("blogImage", {
+    onClientUploadComplete: (res) => {
+      if (res?.[0]?.url) {
+        const updated = { ...currentPartner, logoUrl: res[0].url }
+        setCurrentPartner(updated)
+        onChange(updated)
+        setUploading(false)
+        toast.success("Logo uploaded successfully")
+      } else {
+        setUploading(false)
+        toast.error("Upload completed but no URL received")
+      }
+    },
+    onUploadError: (error) => {
+      console.error("Upload error:", error)
+      setUploading(false)
+      toast.error("Failed to upload logo")
+    },
+  })
+
+  if (!isEditing) {
+    return (
+      <div className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+            {currentPartner.logoUrl ? (
+              <img src={currentPartner.logoUrl} alt={currentPartner.name} className="w-full h-full object-contain" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <ImageIcon className="w-6 h-6 text-gray-400" />
+              </div>
+            )}
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-900">{currentPartner.name || "Untitled Partner"}</h4>
+            {currentPartner.website && (
+              <p className="text-sm text-gray-600">{currentPartner.website}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => onMove("up")} disabled={index === 0} className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg disabled:opacity-50">
+            <ArrowUp className="w-4 h-4" />
+          </button>
+          <button onClick={() => onMove("down")} className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg">
+            <ArrowDown className="w-4 h-4" />
+          </button>
+          <button onClick={onEdit} className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg">
+            <Edit className="w-4 h-4" />
+          </button>
+          <button onClick={onDelete} className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+            {currentPartner.logoUrl ? (
+              <img src={currentPartner.logoUrl} alt={currentPartner.name} className="w-full h-full object-contain" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <ImageIcon className="w-8 h-8 text-gray-400" />
+              </div>
+            )}
+          </div>
+          <label className="mt-2 block px-3 py-1.5 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 text-center cursor-pointer">
+            {uploading ? "Uploading..." : "Upload Logo"}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploading}
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  setUploading(true)
+                  startUpload([file])
+                }
+              }}
+            />
+          </label>
+        </div>
+
+        <div className="flex-1 space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Organization Name</label>
+            <input
+              type="text"
+              value={currentPartner.name}
+              onChange={(e) => {
+                const updated = { ...currentPartner, name: e.target.value }
+                setCurrentPartner(updated)
+                onChange(updated)
+              }}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Website URL (Optional)</label>
+            <input
+              type="url"
+              value={currentPartner.website || ""}
+              onChange={(e) => {
+                const updated = { ...currentPartner, website: e.target.value }
+                setCurrentPartner(updated)
+                onChange(updated)
+              }}
+              placeholder="https://example.com"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={currentPartner.active}
+                onChange={(e) => {
+                  const updated = { ...currentPartner, active: e.target.checked }
+                  setCurrentPartner(updated)
+                  onChange(updated)
+                }}
+                className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="text-sm text-gray-700">Active</span>
+            </label>
+            <button onClick={onCancel} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

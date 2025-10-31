@@ -10,7 +10,8 @@ const SettingsPage = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [siteSettings, setSiteSettings] = useState({
-    showTeamSection: true
+    showTeamSection: true,
+    showPartnerNames: true
   })
 
   useEffect(() => {
@@ -126,6 +127,31 @@ const SettingsPage = () => {
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
                       siteSettings.showTeamSection ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Show Partner Names</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Display organization names alongside partner logos on the home page
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    const updated = { ...siteSettings, showPartnerNames: !siteSettings.showPartnerNames }
+                    handleSaveSiteSettings(updated)
+                  }}
+                  disabled={saving}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 ${
+                    siteSettings.showPartnerNames ? "bg-gray-900" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      siteSettings.showPartnerNames ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>

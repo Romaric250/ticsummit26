@@ -686,10 +686,36 @@ model TICImpact {
 model SiteSettings {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   showTeamSection Boolean  @default(true) // Whether to show team section on about page
+  showPartnerNames Boolean @default(true) // Whether to show partner names with logos
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+model FAQ {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  question    String
+  answer      String
+  order       Int      @default(0) // For ordering FAQs
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+model Partner {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   // Organization name
+  logoUrl     String   // Partner logo URL
+  website     String?  // Optional website URL
+  order       Int      @default(0) // For ordering partners
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("partners")
 }
 
 model HomeCarousel {

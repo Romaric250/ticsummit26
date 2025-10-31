@@ -12,7 +12,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: settings || {
-        showTeamSection: true
+        showTeamSection: true,
+        showPartnerNames: true
       }
     })
   } catch (error) {
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { showTeamSection } = body
+    const { showTeamSection, showPartnerNames } = body
 
     // Get existing settings or create new one
     const existing = await prisma.siteSettings.findFirst()
@@ -45,11 +46,17 @@ export async function POST(request: NextRequest) {
     if (existing) {
       settingsData = await prisma.siteSettings.update({
         where: { id: existing.id },
-        data: { showTeamSection: showTeamSection !== undefined ? showTeamSection : true }
+        data: {
+          showTeamSection: showTeamSection !== undefined ? showTeamSection : (existing.showTeamSection ?? true),
+          showPartnerNames: showPartnerNames !== undefined ? showPartnerNames : (existing.showPartnerNames ?? true)
+        }
       })
     } else {
       settingsData = await prisma.siteSettings.create({
-        data: { showTeamSection: showTeamSection !== undefined ? showTeamSection : true }
+        data: {
+          showTeamSection: showTeamSection !== undefined ? showTeamSection : true,
+          showPartnerNames: showPartnerNames !== undefined ? showPartnerNames : true
+        }
       })
     }
 
