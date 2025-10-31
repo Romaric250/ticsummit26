@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
     const created = await prisma.teamMember.createMany({
       data: members.map((member: any) => ({
         name: member.name,
+        slug: member.slug || member.name.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim(),
         role: member.role,
         bio: member.bio,
         imageUrl: member.imageUrl,

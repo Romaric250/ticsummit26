@@ -589,14 +589,14 @@ const AboutPage = () => {
               ) : teamMembers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                   {teamMembers.map((member, index) => (
-                    <motion.div
-                      key={member.id || index}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center hover:shadow-xl transition-shadow"
-                    >
+                    <Link key={member.id || index} href={member.slug ? `/team/${member.slug}` : "#"}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.1 }}
+                        className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center hover:shadow-xl transition-shadow cursor-pointer"
+                      >
                       <div className="w-24 h-24 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden">
                         {member.imageUrl ? (
                           <Image
@@ -676,7 +676,8 @@ const AboutPage = () => {
                           )}
                         </div>
                       )}
-                    </motion.div>
+                      </motion.div>
+                    </Link>
                   ))}
                 </div>
               ) : (

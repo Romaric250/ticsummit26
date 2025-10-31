@@ -627,6 +627,7 @@ model FounderQuote {
 model TeamMember {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
+  slug        String   @unique // URL-friendly identifier
   role        String   // e.g., "Co-Founder", "Technical Lead", etc.
   bio         String?
   imageUrl    String?

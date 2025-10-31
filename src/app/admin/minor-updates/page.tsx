@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, Settings, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star, ToggleLeft, ToggleRight } from "lucide-react"
+import { Save, Plus, Trash2, Edit, X, ImageIcon, ArrowUp, ArrowDown, Users, FileText, Quote, BarChart3, Lightbulb, Target, Award, Heart, Globe, Trophy, Star } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import { toast } from "sonner"
 import { useUploadThing } from "@/lib/uploadthing"
@@ -30,6 +30,7 @@ interface CarouselSlide {
 interface TeamMember {
   id?: string
   name: string
+  slug: string
   role: string
   bio?: string
   imageUrl?: string
@@ -84,11 +85,6 @@ const MinorUpdatesPage = () => {
     ticClubsEstablished: 25,
     subtitle: "in 4 Years",
     description: "Transforming lives and building the future of tech in Cameroon"
-  })
-
-  // Site Settings State
-  const [siteSettings, setSiteSettings] = useState({
-    showTeamSection: true
   })
 
   // Modal States
@@ -170,14 +166,6 @@ const MinorUpdatesPage = () => {
         }
       }
 
-      // Fetch Site Settings
-      const settingsRes = await fetch("/api/content/site-settings")
-      if (settingsRes.ok) {
-        const settingsData = await settingsRes.json()
-        if (settingsData.success && settingsData.data) {
-          setSiteSettings(settingsData.data)
-        }
-      }
     } catch (error) {
       console.error("Error fetching data:", error)
       toast.error("Failed to load content")
@@ -339,34 +327,6 @@ const MinorUpdatesPage = () => {
     }
   }
 
-  const handleSaveSiteSettings = async (newSettings?: typeof siteSettings) => {
-    try {
-      setSaving(true)
-      const settingsToSave = newSettings || siteSettings
-      const response = await fetch("/api/content/site-settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settingsToSave)
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        toast.success("Settings updated successfully")
-        if (newSettings) {
-          setSiteSettings(newSettings)
-        } else {
-          await fetchData()
-        }
-      } else {
-        toast.error("Failed to update settings")
-      }
-    } catch (error) {
-      console.error("Error saving settings:", error)
-      toast.error("Failed to save settings")
-    } finally {
-      setSaving(false)
-    }
-  }
 
   if (loading) {
     return (
@@ -533,44 +493,6 @@ const MinorUpdatesPage = () => {
               </div>
             </motion.div>
 
-            {/* Site Settings Card */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
-                  <Settings className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">Site Settings</h3>
-                  <p className="text-sm text-gray-600">Control page visibility</p>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Show Team Section</p>
-                    <p className="text-xs text-gray-600">Display team section on about page</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const updated = { ...siteSettings, showTeamSection: !siteSettings.showTeamSection }
-                      handleSaveSiteSettings(updated)
-                    }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                      siteSettings.showTeamSection ? "bg-gray-900" : "bg-gray-300"
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        siteSettings.showTeamSection ? "translate-x-6" : "translate-x-1"
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
 
@@ -1172,6 +1094,7 @@ const TeamMembersModal = ({
   const handleAddMember = () => {
     const newMember: TeamMember = {
       name: "",
+      slug: "",
       role: "",
       bio: "",
       order: teamMembers.length,
@@ -1391,7 +1314,9 @@ const TeamMemberEditor = ({
                 type="text"
                 value={currentMember.name}
                 onChange={(e) => {
-                  const updated = { ...currentMember, name: e.target.value }
+                  const name = e.target.value
+                  const slug = name.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim()
+                  const updated = { ...currentMember, name, slug: slug || currentMember.slug }
                   setCurrentMember(updated)
                   onChange(updated)
                 }}
@@ -1411,6 +1336,23 @@ const TeamMemberEditor = ({
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
               />
             </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL-friendly)</label>
+            <input
+              type="text"
+              value={currentMember.slug || ""}
+              onChange={(e) => {
+                const slug = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').trim()
+                const updated = { ...currentMember, slug }
+                setCurrentMember(updated)
+                onChange(updated)
+              }}
+              placeholder="john-doe"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary"
+            />
+            <p className="text-xs text-gray-500 mt-1">Used in URL: /team/[slug]</p>
           </div>
 
           <div>
