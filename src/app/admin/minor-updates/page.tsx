@@ -1752,7 +1752,7 @@ const SiteStatsModal = ({
   isOpen: boolean
   onClose: () => void
   stats: { studentsReached: number, schoolsVisited: number, successfulProjects: number, daysOfInnovation: number }
-  setStats: (stats: typeof stats) => void
+  setStats: (stats: { studentsReached: number, schoolsVisited: number, successfulProjects: number, daysOfInnovation: number }) => void
   onSave: () => void
   saving: boolean
 }) => {
