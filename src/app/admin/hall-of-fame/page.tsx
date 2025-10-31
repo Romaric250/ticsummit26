@@ -395,16 +395,6 @@ const HallOfFameAdmin = () => {
 
                       {/* Actions */}
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <Link href={`/hall-of-fame/${project.id}`}>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
-                            title="View"
-                          >
-                            <Eye className="h-5 w-5" />
-                          </motion.button>
-                        </Link>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
