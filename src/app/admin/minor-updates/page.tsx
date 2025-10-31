@@ -101,7 +101,7 @@ const MinorUpdatesPage = () => {
   ])
 
   // TIC Impact State
-  const [ticImpact, setTicImpact] = useState({
+  const [ticImpact, setTicImpact] = useState<{ studentsInspired: number; teenagersTrained: number; prizeAwardsFCFA: number; ticClubsEstablished: number; subtitle?: string; description?: string }>({
     studentsInspired: 1000,
     teenagersTrained: 5000,
     prizeAwardsFCFA: 2.0,
@@ -852,7 +852,7 @@ const MinorUpdatesPage = () => {
           isOpen={showTICImpactModal}
           onClose={() => setShowTICImpactModal(false)}
           impact={ticImpact}
-          setImpact={setTicImpact}
+          setImpact={(impact) => setTicImpact(impact)}
           onSave={handleSaveTICImpact}
           saving={saving}
         />

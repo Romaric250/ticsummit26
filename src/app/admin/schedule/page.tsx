@@ -159,7 +159,7 @@ const ScheduleAdminPage = () => {
   const handleSetActive = (phaseIndex: number) => {
     const updated = phases.map((phase, index) => ({
       ...phase,
-      status: index === phaseIndex ? "ACTIVE" : phase.status === "ACTIVE" ? "UPCOMING" : phase.status
+      status: (index === phaseIndex ? "ACTIVE" : phase.status === "ACTIVE" ? "UPCOMING" : phase.status) as "COMPLETED" | "ACTIVE" | "UPCOMING"
     }))
     setPhases(updated)
   }
