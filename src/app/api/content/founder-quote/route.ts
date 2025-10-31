@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { initial, name, title, quote } = body
+    const { initial, name, title, quote, imageUrl } = body
 
     if (!initial || !name || !title || !quote) {
       return NextResponse.json(
@@ -50,11 +50,11 @@ export async function POST(request: NextRequest) {
     if (existing) {
       quoteData = await prisma.founderQuote.update({
         where: { id: existing.id },
-        data: { initial, name, title, quote }
+        data: { initial, name, title, quote, imageUrl: imageUrl || null }
       })
     } else {
       quoteData = await prisma.founderQuote.create({
-        data: { initial, name, title, quote }
+        data: { initial, name, title, quote, imageUrl: imageUrl || null }
       })
     }
 
