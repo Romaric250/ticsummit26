@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   Calendar, 
@@ -39,8 +39,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 const Schedule26Page = () => {
   const [activePhase, setActivePhase] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-
-  const timeline = [
+  const [timeline, setTimeline] = useState([
     {
       id: "outreach",
       title: "Outreach & School Visits",
@@ -153,7 +152,50 @@ const Schedule26Page = () => {
       color: "bg-yellow-500",
       participants: "50+ finalists"
     }
-  ]
+  ])
+
+  // Fetch timeline phases from API
+  useEffect(() => {
+    const fetchTimelinePhases = async () => {
+      try {
+        const response = await fetch("/api/content/timeline-phases")
+        const data = await response.json()
+        if (data.success && data.data.length > 0) {
+          // Map database phases to the component format
+          const mappedPhases = data.data.map((phase: any, index: number) => {
+            // Find matching icon
+            const iconMap: Record<string, any> = {
+              Globe, Users, BookOpen, Code, Target, Presentation, Trophy
+            }
+            const icon = iconMap[phase.iconName] || Globe
+            
+            return {
+              id: phase.id,
+              title: phase.title,
+              duration: phase.duration,
+              status: phase.status.toLowerCase(),
+              description: phase.description,
+              details: phase.details || [],
+              icon,
+              color: phase.color || "bg-gray-500",
+              participants: phase.participants || ""
+            }
+          })
+          
+          setTimeline(mappedPhases)
+          
+          // Set active phase index
+          const activeIndex = mappedPhases.findIndex((p: any) => p.status === "active")
+          if (activeIndex !== -1) {
+            setActivePhase(activeIndex)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching timeline phases:", error)
+      }
+    }
+    fetchTimelinePhases()
+  }, [])
 
   const chartOptions = {
     chart: {

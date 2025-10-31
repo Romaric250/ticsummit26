@@ -608,3 +608,61 @@ enum ApplicationStatus {
   APPROVED
   REJECTED
 }
+
+// ===================== CONTENT MANAGEMENT =====================
+
+model FounderQuote {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  initial   String   // The letter initial (e.g., "P")
+  name      String   // Full name (e.g., "Dr. Pierre Nkeng")
+  title     String   // Title (e.g., "Founder & CEO, TIC Summit")
+  quote     String   // The quote text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("founder_quote")
+}
+
+model HomeCarousel {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        CarouselType
+  imageUrl    String
+  title       String
+  subtitle    String?
+  description String?
+  category    String?
+  order       Int      @default(0) // For ordering slides
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("home_carousels")
+}
+
+enum CarouselType {
+  HERO      // Main hero carousel
+  STUDENTS  // Students in action carousel
+}
+
+model TimelinePhase {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  duration    String   // e.g., "Jan - Mar 2025"
+  status      PhaseStatus @default(UPCOMING)
+  description String
+  details     String[] // Array of detail strings
+  iconName    String?  // Name of icon from lucide-react
+  color       String?  // Color class name (e.g., "bg-green-500")
+  participants String? // e.g., "5000+ students"
+  order       Int      @default(0) // For ordering/swapping phases
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("timeline_phases")
+}
+
+enum PhaseStatus {
+  COMPLETED
+  ACTIVE
+  UPCOMING
+}

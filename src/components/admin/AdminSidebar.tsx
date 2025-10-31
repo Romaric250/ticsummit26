@@ -13,7 +13,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Edit
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { signOut } from "@/lib/auth-client"
@@ -52,6 +53,11 @@ const AdminSidebar = () => {
       name: "Alumni Stories",
       href: "/admin/alumni",
       icon: GraduationCap
+    },
+    {
+      name: "Minor Updates",
+      href: "/admin/minor-updates",
+      icon: Edit
     },
     {
       name: "Settings",

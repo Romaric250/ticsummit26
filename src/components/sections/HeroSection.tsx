@@ -36,13 +36,7 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0) => 
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
-  
-  // Animated counters
-  const studentsCount = useCountUp(1500, 2500)
-  const schoolsCount = useCountUp(28, 2000)
-  const daysCount = useCountUp(3, 1500)
-  
-  const heroImages = [
+  const [heroImages, setHeroImages] = useState([
     {
       src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
       title: "TIC Summit Program",
@@ -67,7 +61,40 @@ const HeroSection = () => {
       subtitle: "Student Projects",
       description: "Amazing creations"
     }
-  ]
+  ])
+  
+  // Animated counters
+  const studentsCount = useCountUp(1500, 2500)
+  const schoolsCount = useCountUp(28, 2000)
+  const daysCount = useCountUp(3, 1500)
+
+  // Fetch hero carousel from API
+  useEffect(() => {
+    const fetchHeroCarousel = async () => {
+      try {
+        const response = await fetch("/api/content/carousels")
+        const data = await response.json()
+        if (data.success) {
+          const heroSlides = data.data
+            .filter((c: any) => c.type === "HERO" && c.active)
+            .sort((a: any, b: any) => a.order - b.order)
+            .map((c: any) => ({
+              src: c.imageUrl,
+              title: c.title,
+              subtitle: c.subtitle || "",
+              description: c.description || ""
+            }))
+          
+          if (heroSlides.length > 0) {
+            setHeroImages(heroSlides)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching hero carousel:", error)
+      }
+    }
+    fetchHeroCarousel()
+  }, [])
 
   const stats = [
     { icon: Users, value: "1500+", label: "Students Reached" },
@@ -619,8 +646,7 @@ const HeroSection = () => {
 // Creative Students in Action Carousel Component
 export const StudentsInActionCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
-  
-  const studentImages = [
+  const [studentImages, setStudentImages] = useState([
     {
       src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
       title: "Innovation in Progress",
@@ -645,7 +671,35 @@ export const StudentsInActionCarousel = () => {
       description: "Amazing student creations",
       category: "Showcase"
     }
-  ]
+  ])
+
+  // Fetch students carousel from API
+  useEffect(() => {
+    const fetchStudentsCarousel = async () => {
+      try {
+        const response = await fetch("/api/content/carousels")
+        const data = await response.json()
+        if (data.success) {
+          const studentSlides = data.data
+            .filter((c: any) => c.type === "STUDENTS" && c.active)
+            .sort((a: any, b: any) => a.order - b.order)
+            .map((c: any) => ({
+              src: c.imageUrl,
+              title: c.title,
+              description: c.description || "",
+              category: c.category || ""
+            }))
+          
+          if (studentSlides.length > 0) {
+            setStudentImages(studentSlides)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching students carousel:", error)
+      }
+    }
+    fetchStudentsCarousel()
+  }, [])
 
   // Auto-rotate slides
   useEffect(() => {

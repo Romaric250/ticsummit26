@@ -96,8 +96,30 @@ const AboutPage = () => {
   const [featuredAlumni, setFeaturedAlumni] = useState<Alumni[]>([])
   const [alumniLoading, setAlumniLoading] = useState(true)
 
+  // Founder quote state
+  const [founderQuote, setFounderQuote] = useState({
+    initial: "P",
+    name: "Dr. Pierre Nkeng",
+    title: "Founder & CEO, TIC Summit",
+    quote: "When we started TIC Summit, we had a simple vision: to unlock the incredible potential of young minds across Cameroon. Today, seeing thousands of students transformed into innovators, entrepreneurs, and tech leaders, I know we've created something truly special."
+  })
+
   useEffect(() => {
     fetchFeaturedAlumni()
+    
+    // Fetch founder quote
+    const fetchFounderQuote = async () => {
+      try {
+        const response = await fetch("/api/content/founder-quote")
+        const data = await response.json()
+        if (data.success && data.data) {
+          setFounderQuote(data.data)
+        }
+      } catch (error) {
+        console.error("Error fetching founder quote:", error)
+      }
+    }
+    fetchFounderQuote()
   }, [])
 
   const fetchFeaturedAlumni = async () => {
@@ -455,32 +477,24 @@ const AboutPage = () => {
               <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-white">
                 <div className="text-center mb-8">
                   <div className="w-24 h-24 bg-white rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span className="text-gray-900 font-bold text-3xl">P</span>
+                    <span className="text-gray-900 font-bold text-3xl">{founderQuote.initial}</span>
                   </div>
                   
                   <h3 className="text-2xl font-bold mb-2">
-                    Dr. Pierre Nkeng
+                    {founderQuote.name}
                   </h3>
                   
                   <p className="text-blue-300 mb-6">
-                    Founder & CEO, TIC Summit
+                    {founderQuote.title}
                   </p>
                 </div>
                 
                 <div className="text-center">
                   <Quote className="w-8 h-8 text-blue-300 mx-auto mb-6" />
                   
-                  <blockquote className="text-lg leading-relaxed mb-8">
-                    "When we started TIC Summit, we had a simple vision: to unlock the incredible potential of young minds across Cameroon. Today, seeing thousands of students transformed into innovators, entrepreneurs, and tech leaders, I know we've created something truly special."
+                  <blockquote className="text-lg leading-relaxed">
+                    "{founderQuote.quote}"
                   </blockquote>
-                  
-                  <Button
-                    size="lg"
-                    className="bg-white text-gray-900 hover:bg-gray-100 group"
-                  >
-                    Read Full Story
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
                 </div>
               </div>
             </div>
