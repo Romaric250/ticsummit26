@@ -93,7 +93,7 @@ const MinorUpdatesPage = () => {
   })
 
   // Site Features State
-  const [siteFeatures, setSiteFeatures] = useState([
+  const [siteFeatures, setSiteFeatures] = useState<Array<{ id: string; title: string; description: string; iconName?: string; color?: string; order: number; active: boolean; introText?: string }>>([
     { id: "", title: "Our Mission", description: "To empower young innovators across Cameroon through technology, mentorship, and hands-on learning experiences.", iconName: "Target", color: "bg-blue-500", order: 0, active: true },
     { id: "", title: "Innovation Focus", description: "We provide a platform for brilliant minds to connect with industry experts and develop cutting-edge solutions.", iconName: "Lightbulb", color: "bg-yellow-500", order: 1, active: true },
     { id: "", title: "Community Building", description: "Creating a strong network of young tech enthusiasts who support and inspire each other's growth.", iconName: "Users", color: "bg-green-500", order: 2, active: true },
@@ -842,7 +842,7 @@ const MinorUpdatesPage = () => {
           isOpen={showFeaturesModal}
           onClose={() => setShowFeaturesModal(false)}
           features={siteFeatures}
-          setFeatures={setSiteFeatures}
+          setFeatures={(features) => setSiteFeatures(features)}
           onSave={handleSaveFeatures}
           saving={saving}
         />
@@ -1849,7 +1849,7 @@ const SiteFeaturesModal = ({
   isOpen: boolean
   onClose: () => void
   features: Array<{ id: string, title: string, description: string, iconName?: string, color?: string, order: number, active: boolean, introText?: string }>
-  setFeatures: (features: typeof features) => void
+  setFeatures: (features: Array<{ id: string, title: string, description: string, iconName?: string, color?: string, order: number, active: boolean, introText?: string }>) => void
   onSave: () => void
   saving: boolean
 }) => {
