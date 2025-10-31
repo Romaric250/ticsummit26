@@ -38,7 +38,7 @@ const Footer = () => {
   const footerLinks = {
     about: [
       { name: "Our Story", href: "/about" },
-      { name: "Mission & Vision", href: "/about/mission" },
+      { name: "Mission & Vision", href: "/about" },
       { name: "Team", href: "/about" },
       { name: "Partners", href: "/" },
     ],
@@ -106,12 +106,76 @@ const Footer = () => {
                   </div>
                   <div className="flex items-center space-x-3 text-white">
                     <Mail className="w-5 h-5 text-white" />
-                    <span>{contactInfo.email}</span>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const contactRes = await fetch("/api/content/contact-info")
+                          const contactData = await contactRes.json()
+                          const email = contactData.success && contactData.data 
+                            ? contactData.data.email 
+                            : contactInfo.email
+                          
+                          const subject = encodeURIComponent("Contact Inquiry - TIC Summit")
+                          const body = encodeURIComponent(
+                            "Hello TIC Summit Team,\n\n" +
+                            "I would like to get in touch with you regarding TIC Summit.\n\n" +
+                            "Please provide me with more information.\n\n" +
+                            "Thank you,\n[Your Name]"
+                          )
+                          window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                        } catch (error) {
+                          // Fallback to default email
+                          const subject = encodeURIComponent("Contact Inquiry - TIC Summit")
+                          const body = encodeURIComponent(
+                            "Hello TIC Summit Team,\n\n" +
+                            "I would like to get in touch with you regarding TIC Summit.\n\n" +
+                            "Please provide me with more information.\n\n" +
+                            "Thank you,\n[Your Name]"
+                          )
+                          window.location.href = `mailto:${contactInfo.email}?subject=${subject}&body=${body}`
+                        }
+                      }}
+                      className="hover:underline cursor-pointer transition-colors duration-200"
+                    >
+                      {contactInfo.email}
+                    </button>
                   </div>
                   {contactInfo.phone && (
                     <div className="flex items-center space-x-3 text-white">
                       <Phone className="w-5 h-5 text-white" />
-                      <span>{contactInfo.phone}</span>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const contactRes = await fetch("/api/content/contact-info")
+                            const contactData = await contactRes.json()
+                            const email = contactData.success && contactData.data 
+                              ? contactData.data.email 
+                              : contactInfo.email
+                            
+                            const subject = encodeURIComponent("Contact Inquiry - TIC Summit")
+                            const body = encodeURIComponent(
+                              "Hello TIC Summit Team,\n\n" +
+                              "I would like to contact you regarding TIC Summit.\n\n" +
+                              "Please reach out to me at your earliest convenience.\n\n" +
+                              "Thank you,\n[Your Name]"
+                            )
+                            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                          } catch (error) {
+                            // Fallback to default email
+                            const subject = encodeURIComponent("Contact Inquiry - TIC Summit")
+                            const body = encodeURIComponent(
+                              "Hello TIC Summit Team,\n\n" +
+                              "I would like to contact you regarding TIC Summit.\n\n" +
+                              "Please reach out to me at your earliest convenience.\n\n" +
+                              "Thank you,\n[Your Name]"
+                            )
+                            window.location.href = `mailto:${contactInfo.email}?subject=${subject}&body=${body}`
+                          }
+                        }}
+                        className="hover:underline cursor-pointer transition-colors duration-200"
+                      >
+                        {contactInfo.phone}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -132,6 +196,48 @@ const Footer = () => {
                 </h3>
                 <ul className="space-y-3">
                   {links.map((link) => {
+                    // Handle Contact Us button specially
+                    if (link.name === "Contact Us") {
+                      return (
+                        <li key={link.name}>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const contactRes = await fetch("/api/content/contact-info")
+                                const contactData = await contactRes.json()
+                                const email = contactData.success && contactData.data 
+                                  ? contactData.data.email 
+                                  : "info@ticsummit.org"
+                                
+                                const subject = encodeURIComponent("Contact Inquiry - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I would like to get in touch with you regarding TIC Summit.\n\n" +
+                                  "Please provide me with more information.\n\n" +
+                                  "Thank you,\n[Your Name]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              } catch (error) {
+                                // Fallback to default email
+                                const email = "info@ticsummit.org"
+                                const subject = encodeURIComponent("Contact Inquiry - TIC Summit")
+                                const body = encodeURIComponent(
+                                  "Hello TIC Summit Team,\n\n" +
+                                  "I would like to get in touch with you regarding TIC Summit.\n\n" +
+                                  "Please provide me with more information.\n\n" +
+                                  "Thank you,\n[Your Name]"
+                                )
+                                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+                              }
+                            }}
+                            className="text-white hover:text-white transition-colors duration-200 cursor-pointer"
+                          >
+                            {link.name}
+                          </button>
+                        </li>
+                      )
+                    }
+
                     // Handle Donate button specially
                     if (link.name === "Donate") {
                       return (
