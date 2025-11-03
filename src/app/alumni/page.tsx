@@ -165,10 +165,10 @@ const AlumniPage = () => {
                 <span className="text-sm font-medium">Success Stories</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              {/* <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="block text-white">Our Amazing</span>
                 <span className="block text-white">Alumni</span>
-              </h1>
+              </h1> */}
 
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Discover the incredible journeys of our graduates who are making their mark in the tech world.
@@ -204,7 +204,7 @@ const AlumniPage = () => {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       type="text"
-                      placeholder="Search alumni..."
+                      placeholder={loading ? "Search alumni..." : `Search from ${alumni.length} alumn${alumni.length !== 1 ? 'i' : 'us'}...`}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-900"
