@@ -99,6 +99,62 @@ const BlogPostPage = () => {
     load()
   }, [slug, session])
 
+  // Make YouTube iframes responsive
+  useEffect(() => {
+    if (!post) return
+
+    const makeVideosResponsive = () => {
+      const blogContent = document.querySelector('.blog-content')
+      if (!blogContent) return
+
+      // Find all YouTube iframes that are not already wrapped
+      const youtubeIframes = blogContent.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]')
+      
+      youtubeIframes.forEach((iframeElement) => {
+        const iframe = iframeElement as HTMLIFrameElement
+        
+        // Skip if already wrapped in a responsive container
+        if (iframe.parentElement?.hasAttribute('data-youtube-video')) {
+          return
+        }
+        
+        // Skip if already wrapped by our wrapper
+        if (iframe.parentElement?.classList.contains('youtube-responsive-wrapper')) {
+          return
+        }
+
+        // Create a wrapper div
+        const wrapper = document.createElement('div')
+        wrapper.className = 'youtube-responsive-wrapper'
+        wrapper.style.cssText = 'position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 1.5rem 0; border-radius: 0.5rem;'
+        
+        // Insert wrapper before iframe
+        iframe.parentNode?.insertBefore(wrapper, iframe)
+        
+        // Move iframe into wrapper
+        wrapper.appendChild(iframe)
+        
+        // Style the iframe
+        iframe.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 0.5rem;'
+      })
+    }
+
+    // Run after a short delay to ensure DOM is updated
+    const timeoutId = setTimeout(makeVideosResponsive, 100)
+    
+    // Also run after DOM mutations
+    const observer = new MutationObserver(makeVideosResponsive)
+    const blogContent = document.querySelector('.blog-content')
+    if (blogContent) {
+      observer.observe(blogContent, { childList: true, subtree: true })
+    }
+
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
+    }
+  }, [post])
+
   const loadRelatedPosts = async (excludeId: string) => {
     try {
       setLoadingRelated(true)
@@ -427,6 +483,60 @@ const BlogPostPage = () => {
                   color: #f3f4f6 !important;
                   padding: 0.125rem 0.375rem !important;
                   border-radius: 0.25rem !important;
+                }
+                /* YouTube Video Responsive Styles - Wrapped in div[data-youtube-video] */
+                .blog-content div[data-youtube-video] {
+                  position: relative !important;
+                  width: 100% !important;
+                  padding-bottom: 56.25% !important;
+                  height: 0 !important;
+                  overflow: hidden !important;
+                  margin: 1.5rem 0 !important;
+                  border-radius: 0.5rem !important;
+                }
+                .blog-content div[data-youtube-video] iframe {
+                  position: absolute !important;
+                  top: 0 !important;
+                  left: 0 !important;
+                  width: 100% !important;
+                  height: 100% !important;
+                  border: none !important;
+                  border-radius: 0.5rem !important;
+                }
+                /* YouTube responsive wrapper (created by JS) */
+                .blog-content .youtube-responsive-wrapper {
+                  position: relative !important;
+                  width: 100% !important;
+                  padding-bottom: 56.25% !important;
+                  height: 0 !important;
+                  overflow: hidden !important;
+                  margin: 1.5rem 0 !important;
+                  border-radius: 0.5rem !important;
+                }
+                .blog-content .youtube-responsive-wrapper iframe {
+                  position: absolute !important;
+                  top: 0 !important;
+                  left: 0 !important;
+                  width: 100% !important;
+                  height: 100% !important;
+                  border: none !important;
+                  border-radius: 0.5rem !important;
+                }
+                /* Responsive wrapper for any iframe */
+                .blog-content > iframe {
+                  display: block !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  height: auto !important;
+                  min-height: 200px !important;
+                  margin: 1.5rem auto !important;
+                }
+                /* Ensure images are responsive too */
+                .blog-content img {
+                  max-width: 100% !important;
+                  height: auto !important;
+                  border-radius: 0.5rem !important;
+                  margin: 1.5rem 0 !important;
                 }
               `}} />
               <motion.article variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
