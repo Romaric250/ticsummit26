@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import Link from "next/link"
 import { toast } from "sonner"
+import { StructuredData } from "@/components/seo/StructuredData"
+import { generateWebSiteSchema, generateBreadcrumbSchema } from "@/lib/seo"
 
 // Loaded from API
 interface BlogPostItem {
@@ -50,464 +52,222 @@ const categories = [
 ]
 
 const BlogPage = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [postsToShow, setPostsToShow] = useState(6)
   const [posts, setPosts] = useState<BlogPostItem[]>([])
-  const [subscribeEmail, setSubscribeEmail] = useState("")
-  const [subscribing, setSubscribing] = useState(false)
+  const [filteredPosts, setFilteredPosts] = useState<BlogPostItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
-  // Fetch blogs from API
   useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true)
-        const res = await fetch('/api/blogs')
-        const json = await res.json()
-        if (json?.success) {
-          // Only show published blogs
-          setPosts((json.data as BlogPostItem[]).filter((p) => p.published))
-        }
-      } catch (e) {
-        console.error("Error loading posts:", e)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
+    fetchPosts()
   }, [])
 
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    
-    const matchesCategory = selectedCategory === "All" || post.category === selectedCategory
+  useEffect(() => {
+    filterPosts()
+  }, [posts, selectedCategory, searchTerm])
 
-    return matchesSearch && matchesCategory
-  })
-
-  const featuredPosts = filteredPosts.filter(post => post.featured)
-  const regularPosts = filteredPosts.filter(post => !post.featured)
-  const displayedPosts = [...featuredPosts, ...regularPosts].slice(0, postsToShow)
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
+  const fetchPosts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch("/api/blogs")
+      const data = await response.json()
+      
+      if (data.success) {
+        const publishedPosts = data.data.filter((post: BlogPostItem) => post.published)
+        setPosts(publishedPosts)
+      } else {
+        setError("Failed to load blog posts")
+      }
+    } catch (err) {
+      console.error("Error fetching posts:", err)
+      setError("Failed to load blog posts")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.16, 1, 0.3, 1] as const, // easeOut cubic-bezier equivalent
-      },
-    },
+  const filterPosts = () => {
+    let filtered = [...posts]
+
+    // Filter by category
+    if (selectedCategory !== "All") {
+      filtered = filtered.filter(post => post.category === selectedCategory)
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase()
+      filtered = filtered.filter(post =>
+        post.title.toLowerCase().includes(searchLower) ||
+        post.excerpt.toLowerCase().includes(searchLower) ||
+        post.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
+        post.category.toLowerCase().includes(searchLower)
+      )
+    }
+
+    setFilteredPosts(filtered)
   }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
     })
   }
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blog' },
+  ])
+
   return (
     <Layout>
+      {/* Structured Data */}
+      <StructuredData data={breadcrumbSchema} />
+      
       <div className="min-h-screen bg-gray-50 pt-16">
         {/* Hero Section */}
-        <section className="relative py-8 bg-gray-900">
+        <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-center text-white"
+              className="text-center max-w-3xl mx-auto"
             >
-              <p className="text-lg text-white/90 max-w-3xl mx-auto leading-relaxed">
-                Discover the latest news, success stories, and insights from the TIC Summit community
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+                TIC Summit Blog
+              </h1>
+              <p className="text-xl text-white/90 mb-8">
+                Stay updated with the latest insights, stories, and innovations from the TIC Summit community
               </p>
             </motion.div>
           </div>
         </section>
 
         {/* Search and Filter Section */}
-        <section className="py-6 bg-white border-b border-gray-200">
+        <section className="py-8 bg-white border-b border-gray-200">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Search */}
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Search articles..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-900"
-                  />
-                </div>
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+              {/* Search */}
+              <div className="relative flex-1 w-full md:w-auto max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900"
+                />
+              </div>
 
-                {/* Category Filter */}
-                <div className="relative sm:w-48">
-                  <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent appearance-none bg-white text-gray-900"
+              {/* Category Filter */}
+              <div className="flex gap-2 flex-wrap">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      selectedCategory === category
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
+                    {category}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
         {/* Blog Posts Grid */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-              <div className="space-y-12">
-                {/* Featured Posts Skeleton */}
-                <div>
-                  <div className="h-8 w-48 bg-gray-300 rounded animate-pulse mb-8" />
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {[...Array(2)].map((_, i) => (
-                      <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                        <div className="w-full h-48 bg-gray-200 animate-pulse" />
-                        <div className="p-6 space-y-4">
-                          <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
-                          <div className="h-4 bg-gray-200 rounded animate-pulse" />
-                          <div className="h-4 bg-gray-200 rounded animate-pulse w-5/6" />
-                          <div className="flex gap-4 mt-4">
-                            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
-                            <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* Regular Posts Skeleton */}
-                <div>
-                  <div className="h-8 w-40 bg-gray-300 rounded animate-pulse mb-8" />
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                        <div className="w-full h-40 bg-gray-200 animate-pulse" />
-                        <div className="p-6 space-y-3">
-                          <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3" />
-                          <div className="h-4 bg-gray-200 rounded animate-pulse" />
-                          <div className="h-4 bg-gray-200 rounded animate-pulse w-4/5" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="flex items-center justify-center py-20">
+                <div className="animate-spin h-12 w-12 border-4 border-gray-900 border-t-transparent rounded-full" />
+              </div>
+            ) : error ? (
+              <div className="text-center py-20">
+                <p className="text-red-600">{error}</p>
+                <Button onClick={fetchPosts} className="mt-4">
+                  Try Again
+                </Button>
+              </div>
+            ) : filteredPosts.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-gray-600 text-lg">No blog posts found.</p>
               </div>
             ) : (
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="space-y-12"
-              >
-              {/* Featured Posts */}
-              {featuredPosts.length > 0 && (
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-8">Featured Articles</h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {featuredPosts.map((post, index) => (
-                      <motion.article
-                        key={post.id}
-                        variants={itemVariants}
-                        className="group"
-                      >
-                        <Link href={`/blog/${post.slug}`}>
-                          <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer h-full flex flex-col">
-                            {/* Featured Badge */}
-                            <div className="relative">
-                              <img
-                                src={post.image || "https://placehold.co/400x200"}
-                                alt={post.title}
-                                className="w-full h-40 object-cover"
-                              />
-                              <div className="absolute top-4 left-4">
-                                <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                  Featured
-                                </span>
-                              </div>
-                              <div className="absolute top-4 right-4">
-                                <span className="bg-white/90 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                                  {post.category}
-                                </span>
-                              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                  {filteredPosts.map((post, index) => (
+                    <motion.article
+                      key={post.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                    >
+                      <Link href={`/blog/${post.slug}`}>
+                        <div className="relative h-48 bg-gray-200 overflow-hidden">
+                          {post.image ? (
+                            <img
+                              src={post.image}
+                              alt={post.title}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                              <Tag className="w-12 h-12 text-gray-400" />
                             </div>
-
-                            <div className="p-6 flex flex-col flex-1">
-                              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                                <div className="flex items-center space-x-2">
-                                  <img
-                                    src={post.author?.image || "https://placehold.co/48x48"}
-                                    alt={post.author?.name || "Author"}
-                                    className="w-6 h-6 rounded-full"
-                                  />
-                                  <span className="line-clamp-1">{post.author?.name || 'Unknown Author'}</span>
-                                </div>
-                                <div className="flex items-center space-x-1 flex-shrink-0">
-                                  <Calendar className="w-4 h-4" />
-                                  <span className="text-xs">{formatDate(post.publishedAt || post.createdAt)}</span>
-                                </div>
-                              </div>
-
-                              <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors line-clamp-2 min-h-[3rem]">
-                                {post.title}
-                              </h3>
-
-                              <p className="text-gray-600 mb-3 line-clamp-2 flex-1">
-                                {post.excerpt}
-                              </p>
-
-                              {/* Tags */}
-                              <div className="flex flex-wrap gap-2 mb-4 min-h-[1.75rem]">
-                                {post.tags.slice(0, 2).map((tag, tagIndex) => (
-                                  <span
-                                    key={tagIndex}
-                                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                                {post.tags.length > 2 && (
-                                  <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
-                                    +{post.tags.length - 2}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Stats */}
-                              <div className="flex items-center justify-between mt-auto">
-                                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                                  <div className="flex items-center space-x-1">
-                                    <Eye className="w-4 h-4" />
-                                    <span>{post.views}</span>
-                                  </div>
-                                  <div className="flex items-center space-x-1">
-                                    <Heart className="w-4 h-4" />
-                                    <span>{post.likesCount}</span>
-                                  </div>
-                                </div>
-                                <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
-                              </div>
+                          )}
+                          {post.featured && (
+                            <div className="absolute top-4 left-4 bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                              Featured
                             </div>
+                          )}
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xs font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded">
+                              {post.category}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {formatDate(post.publishedAt || post.createdAt)}
+                            </span>
                           </div>
-                        </Link>
-                      </motion.article>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Regular Posts */}
-              {regularPosts.length > 0 && (
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-8">Latest Articles</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {regularPosts.slice(0, postsToShow - featuredPosts.length).map((post, index) => (
-                      <motion.article
-                        key={post.id}
-                        variants={itemVariants}
-                        className="group"
-                      >
-                        <Link href={`/blog/${post.slug}`}>
-                          <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer h-full flex flex-col">
-                            <div className="relative">
-                              <img
-                                src={post.image || "https://placehold.co/400x200"}
-                                alt={post.title}
-                                className="w-full h-40 object-cover"
-                              />
-                              <div className="absolute top-4 right-4">
-                                <span className="bg-white/90 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                                  {post.category}
-                                </span>
+                          <h2 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                            {post.title}
+                          </h2>
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                            {post.excerpt}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-gray-500">
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-1">
+                                <Eye className="w-4 h-4" />
+                                <span>{post.views}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Heart className="w-4 h-4" />
+                                <span>{post.likesCount}</span>
                               </div>
                             </div>
-
-                            <div className="p-6 flex flex-col flex-1">
-                              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                                <div className="flex items-center space-x-2">
-                                  <img
-                                    src={post.author?.image || "https://placehold.co/48x48"}
-                                    alt={post.author?.name || "Author"}
-                                    className="w-6 h-6 rounded-full"
-                                  />
-                                  <span className="line-clamp-1">{post.author?.name || 'Unknown Author'}</span>
-                                </div>
-                                <div className="flex items-center space-x-1 flex-shrink-0">
-                                  <Calendar className="w-4 h-4" />
-                                  <span className="text-xs">{formatDate(post.publishedAt || post.createdAt)}</span>
-                                </div>
-                              </div>
-
-                              <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors line-clamp-2 min-h-[3rem]">
-                                {post.title}
-                              </h3>
-
-                              <p className="text-gray-600 mb-3 line-clamp-2 flex-1">
-                                {post.excerpt}
-                              </p>
-
-                              {/* Tags */}
-                              <div className="flex flex-wrap gap-2 mb-4 min-h-[1.75rem]">
-                                {post.tags.slice(0, 2).map((tag, tagIndex) => (
-                                  <span
-                                    key={tagIndex}
-                                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                                {post.tags.length > 2 && (
-                                  <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
-                                    +{post.tags.length - 2}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Stats */}
-                              <div className="flex items-center justify-between mt-auto">
-                                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                                  <div className="flex items-center space-x-1">
-                                    <Eye className="w-4 h-4" />
-                                    <span>{post.views}</span>
-                                  </div>
-                                  <div className="flex items-center space-x-1">
-                                    <Heart className="w-4 h-4" />
-                                    <span>{post.likesCount}</span>
-                                  </div>
-                                </div>
-                                <ArrowRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
-                              </div>
-                            </div>
+                            {post.readTime && (
+                              <span>{post.readTime}</span>
+                            )}
                           </div>
-                        </Link>
-                      </motion.article>
-                    ))}
-                  </div>
+                        </div>
+                      </Link>
+                    </motion.article>
+                  ))}
                 </div>
-              )}
-
-              {/* Load More Button */}
-              {displayedPosts.length < filteredPosts.length && (
-                <div className="text-center">
-                  <Button
-                    size="lg"
-                    className="bg-gray-900 hover:bg-gray-800 text-white"
-                    onClick={() => setPostsToShow(postsToShow + 6)}
-                  >
-                    Load More Articles
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-              )}
-
-              {/* No Results */}
-              {filteredPosts.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center py-12"
-                >
-                  <div className="text-gray-400 mb-4">
-                    <Search className="w-16 h-16 mx-auto" />
-                  </div>
-                  <h3 className="text-xl font-medium text-gray-600 mb-2">No articles found</h3>
-                  <p className="text-gray-500">Try adjusting your search criteria</p>
-                </motion.div>
-              )}
-              </motion.div>
+              </>
             )}
-          </div>
-        </section>
-
-        {/* Newsletter Signup */}
-        <section className="py-16 bg-gray-900">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center text-white"
-            >
-              <h2 className="text-4xl font-bold mb-6">Stay Updated</h2>
-              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Get the latest TIC Summit news, success stories, and insights delivered to your inbox
-              </p>
-              <form 
-                onSubmit={async (e) => {
-                  e.preventDefault()
-                  if (!subscribeEmail || !subscribeEmail.includes('@')) {
-                    toast.error("Please enter a valid email address")
-                    return
-                  }
-                  try {
-                    setSubscribing(true)
-                    const res = await fetch('/api/newsletter/subscribe', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ email: subscribeEmail })
-                    })
-                    const json = await res.json()
-                    if (json.success) {
-                      toast.success("Successfully subscribed to our newsletter!")
-                      setSubscribeEmail("")
-                    } else {
-                      toast.error(json.error || "Failed to subscribe")
-                    }
-                  } catch (error) {
-                    console.error("Error subscribing:", error)
-                    toast.error("Failed to subscribe")
-                  } finally {
-                    setSubscribing(false)
-                  }
-                }}
-                className="max-w-md mx-auto"
-              >
-                <div className="flex gap-4">
-                  <input
-                    type="email"
-                    value={subscribeEmail}
-                    onChange={(e) => setSubscribeEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="flex-1 px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent"
-                  />
-                  <Button 
-                    type="submit"
-                    disabled={subscribing}
-                    className="bg-white hover:bg-white text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {subscribing ? "Subscribing..." : "Subscribe"}
-                  </Button>
-                </div>
-              </form>
-            </motion.div>
           </div>
         </section>
       </div>

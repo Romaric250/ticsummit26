@@ -100,7 +100,7 @@ const PartnersSection = () => {
                           src={partner.logoUrl}
                           alt={partner.name}
                           fill
-                          className="object-contain filter grayscale hover:grayscale-0 transition-all"
+                          className="object-contain transition-all"
                         />
                       </div>
                       {showNames && (
@@ -116,7 +116,7 @@ const PartnersSection = () => {
                           src={partner.logoUrl}
                           alt={partner.name}
                           fill
-                          className="object-contain filter grayscale"
+                          className="object-contain"
                         />
                       </div>
                       {showNames && (

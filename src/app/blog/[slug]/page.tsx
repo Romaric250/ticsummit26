@@ -19,6 +19,8 @@ import Link from "next/link"
 import { useSession, signIn } from "@/lib/auth-client"
 import { ShareModal } from "@/components/ui/ShareModal"
 import { toast } from "sonner"
+import { StructuredData } from "@/components/seo/StructuredData"
+import { generateBlogPostSchema, generateBreadcrumbSchema } from "@/lib/seo"
 
 interface BlogPostItem {
   id: string
@@ -677,6 +679,18 @@ const BlogPostPage = () => {
           url={`/blog/${post.slug}`}
           title={post.title}
         />
+      )}
+      
+      {/* Structured Data */}
+      {post && (
+        <>
+          <StructuredData data={generateBlogPostSchema(post)} />
+          <StructuredData data={generateBreadcrumbSchema([
+            { name: 'Home', url: '/' },
+            { name: 'Blog', url: '/blog' },
+            { name: post.title, url: `/blog/${post.slug}` },
+          ])} />
+        </>
       )}
     </Layout>
   )
