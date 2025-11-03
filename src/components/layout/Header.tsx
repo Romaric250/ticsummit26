@@ -90,8 +90,8 @@ const Header = () => {
                   href={item.href}
                   className={`flex items-center space-x-1 px-3 py-2 transition-colors relative ${
                     pathname === item.href 
-                      ? 'text-white bg-white/10 rounded-lg' 
-                      : 'text-white hover:text-white'
+                      ? 'text-white bg-white/10 rounded-lg font-semibold text-sm' 
+                      : 'text-white hover:text-white text-sm'
                   }`}
                   onMouseEnter={() => item.hasDropdown && setIsMoreOpen(true)}
                   onMouseLeave={() => item.hasDropdown && setIsMoreOpen(false)}
@@ -106,26 +106,6 @@ const Header = () => {
                       className="absolute inset-0 bg-white/10 rounded-lg"
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
-                  )}
-                  {/* Spinning highlight for Schedule26 */}
-                  {item.name === "Schedule26" && (
-                    <>
-                      <motion.div
-                        className="absolute inset-0 rounded-lg border-2 border-white/30"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                      />
-                      <motion.div
-                        className="absolute -inset-1 rounded-lg border border-white/20"
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      />
-                      <motion.div
-                        className="absolute -inset-2 rounded-lg border border-white/10"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                      />
-                    </>
                   )}
                 </Link>
 

@@ -27,11 +27,14 @@ import {
   Camera,
   Globe,
   Heart,
-  Sparkles
+  Sparkles,
+  Mail
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import dynamic from "next/dynamic"
+// import { toast } from "sonner"
+import { AnimatePresence } from "framer-motion"
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
@@ -39,6 +42,16 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 const Schedule26Page = () => {
   const [activePhase, setActivePhase] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  // const [showVolunteerModal, setShowVolunteerModal] = useState(false)
+  // const [volunteerForm, setVolunteerForm] = useState({
+  //   name: '',
+  //   email: '',
+  //   phone: '',
+  //   role: '',
+  //   experience: '',
+  //   motivation: '',
+  //   availability: ''
+  // })
   const [timeline, setTimeline] = useState([
     {
       id: "outreach",
@@ -188,6 +201,9 @@ const Schedule26Page = () => {
           const activeIndex = mappedPhases.findIndex((p: any) => p.status === "active")
           if (activeIndex !== -1) {
             setActivePhase(activeIndex)
+          } else {
+            // If no active phase, default to first phase
+            setActivePhase(0)
           }
         }
       } catch (error) {
@@ -265,7 +281,7 @@ const Schedule26Page = () => {
       case "completed":
         return <CheckCircle className="w-5 h-5 text-green-500" />
       case "active":
-        return <Circle className="w-5 h-5 text-blue-500 fill-current animate-pulse" />
+        return <Circle className="w-5 h-5 text-gray-900 fill-current animate-pulse" />
       case "upcoming":
         return <Circle className="w-5 h-5 text-gray-400" />
       default:
@@ -278,7 +294,7 @@ const Schedule26Page = () => {
       case "completed":
         return "border-green-500 bg-green-50"
       case "active":
-        return "border-blue-500 bg-blue-50"
+        return "border-gray-900 bg-gray-100"
       case "upcoming":
         return "border-gray-300 bg-gray-50"
       default:
@@ -310,9 +326,9 @@ const Schedule26Page = () => {
                 <span className="text-sm font-medium">TIC Summit 2026 Timeline</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              {/* <h1 className="text-2xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="block text-white">Journey to the TIC Summit 2026</span>
-              </h1>
+              </h1> */}
             </motion.div>
           </div>
         </section>
@@ -345,7 +361,9 @@ const Schedule26Page = () => {
               
               {/* Timeline Items */}
               <div className="space-y-16">
-                {timeline.map((phase, index) => (
+                {timeline.map((phase, index) => {
+                  const isActive = phase.status === "active"
+                  return (
                   <motion.div
                     key={phase.id}
                     initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -356,15 +374,54 @@ const Schedule26Page = () => {
                     {/* Timeline Card */}
                     <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
                       <motion.div 
-                        className="bg-white rounded-2xl p-6 shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 !bg-white"
+                        className={`rounded-2xl p-6 shadow-xl border-2 hover:shadow-2xl transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-gray-100 border-gray-900 ring-4 ring-gray-300 ring-opacity-50' 
+                            : 'bg-white border-gray-200'
+                        }`}
                         whileHover={{ scale: 1.02, y: -5 }}
                         initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                        animate={{ 
+                          opacity: 1, 
+                          y: 0,
+                          ...(isActive && {
+                            boxShadow: [
+                              "0 0 20px rgba(17, 24, 39, 0.2)",
+                              "0 0 40px rgba(17, 24, 39, 0.4)",
+                              "0 0 20px rgba(17, 24, 39, 0.2)"
+                            ]
+                          })
+                        }}
+                        transition={{ 
+                          duration: 0.6, 
+                          delay: index * 0.1,
+                          ...(isActive && { boxShadow: { duration: 2, repeat: Infinity } })
+                        }}
                       >
+                        {/* Active Badge */}
+                        {isActive && (
+                          <motion.div 
+                            className="inline-block bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-bold mb-4 mr-2"
+                            initial={{ scale: 0 }}
+                            animate={{ 
+                              scale: [1, 1.05, 1],
+                              opacity: [1, 0.9, 1]
+                            }}
+                            transition={{ 
+                              duration: 2,
+                              repeat: Infinity,
+                              delay: index * 0.1 + 0.2
+                            }}
+                          >
+                            LIVE NOW
+                          </motion.div>
+                        )}
+                        
                         {/* Date Badge */}
                         <motion.div 
-                          className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium mb-4"
+                          className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 ${
+                            isActive ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700'
+                          }`}
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
@@ -374,7 +431,9 @@ const Schedule26Page = () => {
                         
                         {/* Title */}
                         <motion.h3 
-                          className="text-2xl font-bold text-gray-900 mb-3"
+                          className={`text-2xl font-bold mb-3 ${
+                            isActive ? 'text-gray-900' : 'text-gray-900'
+                          }`}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
@@ -416,17 +475,23 @@ const Schedule26Page = () => {
                     </div>
                     
                     {/* Timeline Node */}
-                    <div className="flex-shrink-0 w-16 h-16 flex items-center justify-center">
+                    <div className="flex-shrink-0 w-16 h-16 flex items-center justify-center relative">
                       <motion.div 
-                        className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}
+                        className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg ${
+                          isActive ? 'ring-4 ring-gray-400 ring-offset-2' : ''
+                        }`}
                         initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
+                        animate={{ 
+                          scale: isActive ? [1, 1.1, 1] : 1, 
+                          rotate: 0
+                        }}
                         transition={{ 
                           duration: 0.6, 
                           delay: index * 0.1 + 0.3,
                           type: "spring",
                           stiffness: 200,
-                          damping: 15
+                          damping: 15,
+                          ...(isActive && { scale: { duration: 2, repeat: Infinity } })
                         }}
                         whileHover={{ scale: 1.1, rotate: 5 }}
                       >
@@ -439,19 +504,35 @@ const Schedule26Page = () => {
                           {index + 1}
                         </motion.span>
                       </motion.div>
+                      {/* Pulsing effect for active phase */}
+                      {isActive && (
+                        <motion.div
+                          className="absolute inset-0 rounded-full bg-gray-900"
+                          animate={{
+                            scale: [1, 1.5, 1.5],
+                            opacity: [0.3, 0, 0]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeOut"
+                          }}
+                        />
+                      )}
                     </div>
                     
                     {/* Spacer */}
                     <div className="w-5/12"></div>
                   </motion.div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           </div>
         </section>
 
         {/* Current Phase Section */}
-        <section className="py-16 bg-gray-900">
+        <section className="py-16 bg-gray-900" id="current-phase">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -461,13 +542,13 @@ const Schedule26Page = () => {
             >
               {/* LIVE NOW Badge */}
               <motion.div 
-                className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium mb-6 relative overflow-hidden"
+                className="inline-block bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium mb-6 relative overflow-hidden"
                 animate={{ 
                   scale: [1, 1.05, 1],
                   boxShadow: [
-                    "0 0 0 0 rgba(59, 130, 246, 0.4)",
-                    "0 0 0 10px rgba(59, 130, 246, 0)",
-                    "0 0 0 0 rgba(59, 130, 246, 0)"
+                    "0 0 0 0 rgba(17, 24, 39, 0.4)",
+                    "0 0 0 10px rgba(17, 24, 39, 0)",
+                    "0 0 0 0 rgba(17, 24, 39, 0)"
                   ]
                 }}
                 transition={{ 
@@ -498,16 +579,16 @@ const Schedule26Page = () => {
                   className="absolute inset-0 rounded-2xl"
                   animate={{
                     background: [
-                      "linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6)",
-                      "linear-gradient(45deg, #8b5cf6, #06b6d4, #3b82f6, #8b5cf6)",
-                      "linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4)",
-                      "linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6)"
+                      "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)",
+                      "linear-gradient(45deg, #374151, #6b7280, #111827, #374151)",
+                      "linear-gradient(45deg, #6b7280, #111827, #374151, #6b7280)",
+                      "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)"
                     ]
                   }}
                   transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                   style={{
                     padding: "2px",
-                    background: "linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6)",
+                    background: "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)",
                     backgroundSize: "400% 400%"
                   }}
                 >
@@ -515,16 +596,16 @@ const Schedule26Page = () => {
                     className="bg-white rounded-2xl p-8 shadow-xl border border-gray-200 relative"
                     animate={{ 
                       boxShadow: [
-                        "0 0 20px rgba(59, 130, 246, 0.3)",
-                        "0 0 40px rgba(59, 130, 246, 0.6)",
-                        "0 0 20px rgba(59, 130, 246, 0.3)"
+                        "0 0 20px rgba(17, 24, 39, 0.2)",
+                        "0 0 40px rgba(17, 24, 39, 0.4)",
+                        "0 0 20px rgba(17, 24, 39, 0.2)"
                       ]
                     }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
                     {/* Pulsing Background Effect */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 rounded-2xl"
+                      className="absolute inset-0 bg-gradient-to-r from-gray-400/10 via-gray-500/10 to-gray-600/10 rounded-2xl"
                       animate={{ 
                         opacity: [0.3, 0.6, 0.3],
                         scale: [1, 1.01, 1]
@@ -535,22 +616,24 @@ const Schedule26Page = () => {
                     {/* Content */}
                     <div className="relative z-10">
                   {/* Phase Header */}
+                  {timeline.length > 0 && timeline[activePhase] && (
+                    <>
                   <div className="flex items-center space-x-4 mb-6">
-                    <div className={`w-16 h-16 ${timeline[activePhase].color} rounded-2xl flex items-center justify-center`}>
+                    <div className={`w-16 h-16 ${timeline[activePhase]?.color || 'bg-gray-900'} rounded-2xl flex items-center justify-center`}>
                       {(() => {
-                        const IconComponent = timeline[activePhase].icon
+                        const IconComponent = timeline[activePhase]?.icon || BookOpen
                         return <IconComponent className="w-8 h-8 text-white" />
                       })()}
                     </div>
                     <div>
-                      <h3 className="text-3xl font-bold text-gray-900">{timeline[activePhase].title}</h3>
-                      <p className="text-gray-600">{timeline[activePhase].duration}</p>
+                      <h3 className="text-3xl font-bold text-gray-900">{timeline[activePhase]?.title || 'Current Phase'}</h3>
+                      <p className="text-gray-600">{timeline[activePhase]?.duration || ''}</p>
                     </div>
                   </div>
                   
                   {/* Description */}
                   <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                    {timeline[activePhase].description}
+                    {timeline[activePhase]?.description || 'No description available'}
                   </p>
                   
                   {/* Stats */}
@@ -571,9 +654,9 @@ const Schedule26Page = () => {
                   
                   {/* Activities */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-                    {timeline[activePhase].details.map((detail, index) => (
+                    {(timeline[activePhase]?.details || []).map((detail, index) => (
                       <div key={index} className="flex items-start space-x-3 bg-gray-100 rounded-lg p-4">
-                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${timeline[activePhase].color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
+                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${(timeline[activePhase]?.color || 'bg-gray-900').replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
                         <span className="text-gray-700 text-sm leading-relaxed">{detail}</span>
                       </div>
                     ))}
@@ -581,10 +664,46 @@ const Schedule26Page = () => {
                   
                   {/* Action Buttons */}
                   <div className="flex justify-center">
-                    <Button className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg">
+                    <Button 
+                      className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg"
+                      onClick={() => {
+                        const emailSubject = 'TIC Summit 2026 Volunteer Application'
+                        const emailBody = `Dear TIC Summit Team,
+
+I am writing to express my interest in volunteering for TIC Summit 2026.
+
+Personal Information:
+- Name: [Your Full Name]
+- Email: [Your Email Address]
+- Phone: [Your Phone Number]
+
+Volunteer Application Details:
+- Preferred Role: [e.g., Event Coordinator, Mentor, Technical Support, etc.]
+
+Relevant Experience:
+[Briefly describe your relevant experience, skills, or background]
+
+Motivation:
+[Tell us what motivates you to volunteer for TIC Summit 2026]
+
+Availability:
+[When are you available? (e.g., Weekends, Evenings, Specific dates...)]
+
+I am excited about the opportunity to contribute to TIC Summit 2026 and help make it a success. I look forward to hearing from you.
+
+Best regards,
+[Your Name]
+[Your Email]
+[Your Phone Number]`
+                        const mailtoLink = `mailto:info@ticsummit.org?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`
+                        window.open(mailtoLink)
+                      }}
+                    >
                       Do you want to volunteer? Apply here
                     </Button>
                   </div>
+                  </>
+                  )}
                     </div>
                   </motion.div>
                 </motion.div>
@@ -607,7 +726,42 @@ const Schedule26Page = () => {
                 Be part of TIC Summit 2026 and shape the future of technology and innovation.
               </p>
               <div className="flex justify-center">
-                <Button size="xl" className="bg-gray-900 hover:bg-gray-800 text-white group">
+                <Button 
+                  size="xl" 
+                  className="bg-gray-900 hover:bg-gray-800 text-white group"
+                  onClick={() => {
+                    const emailSubject = 'TIC Summit 2026 Volunteer Application'
+                    const emailBody = `Dear TIC Summit Team,
+
+I am writing to express my interest in volunteering for TIC Summit 2026.
+
+Personal Information:
+- Name: [Your Full Name]
+- Email: [Your Email Address]
+- Phone: [Your Phone Number]
+
+Volunteer Application Details:
+- Preferred Role: [e.g., Event Coordinator, Mentor, Technical Support, etc.]
+
+Relevant Experience:
+[Briefly describe your relevant experience, skills, or background]
+
+Motivation:
+[Tell us what motivates you to volunteer for TIC Summit 2026]
+
+Availability:
+[When are you available? (e.g., Weekends, Evenings, Specific dates...)]
+
+I am excited about the opportunity to contribute to TIC Summit 2026 and help make it a success. I look forward to hearing from you.
+
+Best regards,
+[Your Name]
+[Your Email]
+[Your Phone Number]`
+                    const mailtoLink = `mailto:info@ticsummit.org?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`
+                    window.open(mailtoLink)
+                  }}
+                >
                   Do you want to volunteer? Apply here
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -616,6 +770,22 @@ const Schedule26Page = () => {
           </div>
         </section>
       </div>
+
+      {/* Volunteer Application Modal - Commented out for now */}
+      {/* <AnimatePresence>
+        {showVolunteerModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-xl shadow-xl w-full max-w-2xl my-auto"
+            >
+              Modal content commented out
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence> */}
     </Layout>
   )
 }
