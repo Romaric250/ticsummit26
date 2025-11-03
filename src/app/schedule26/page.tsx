@@ -42,135 +42,24 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 const Schedule26Page = () => {
   const [activePhase, setActivePhase] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  // const [showVolunteerModal, setShowVolunteerModal] = useState(false)
-  // const [volunteerForm, setVolunteerForm] = useState({
-  //   name: '',
-  //   email: '',
-  //   phone: '',
-  //   role: '',
-  //   experience: '',
-  //   motivation: '',
-  //   availability: ''
-  // })
-  const [timeline, setTimeline] = useState([
-    {
-      id: "outreach",
-      title: "Outreach & School Visits",
-      duration: "Jan - Mar 2025",
-      status: "completed",
-      description: "Visiting schools across Cameroon to introduce TIC Summit and form tech clubs",
-      details: [
-        "Visit 50+ secondary and high schools",
-        "Present TIC Summit program to students",
-        "Establish tech clubs in participating schools",
-        "Train club mentors and coordinators"
-      ],
-      icon: Globe,
-      color: "bg-green-500",
-      participants: "5000+ students"
-    },
-    {
-      id: "club-formation",
-      title: "TICTAP Club Formation",
-      duration: "Mar - Apr 2025",
-      status: "completed",
-      description: "Forming and organizing tech clubs in schools with structured mentorship",
-      details: [
-        "Establish 100+ TICTAP clubs nationwide",
-        "Assign industry mentors to each club",
-        "Provide learning resources and materials",
-        "Set up online collaboration platforms"
-      ],
-      icon: Users,
-      color: "bg-blue-500",
-      participants: "2000+ club members"
-    },
-    {
-      id: "mentorship",
-      title: "Club Mentorship Program",
-      duration: "Apr - Jun 2025",
-      status: "active",
-      description: "Ongoing mentorship and skill development for club members",
-      details: [
-        "Weekly mentorship sessions",
-        "Technical skill workshops",
-        "Project-based learning",
-        "Industry expert guest sessions"
-      ],
-      icon: BookOpen,
-      color: "bg-purple-500",
-      participants: "1500+ active members"
-    },
-    {
-      id: "mini-hackathons",
-      title: "Mini Hackathons",
-      duration: "Jun - Aug 2025",
-      status: "upcoming",
-      description: "Regional mini hackathons to prepare students for the main summit",
-      details: [
-        "6 regional mini hackathons",
-        "48-hour coding challenges",
-        "Industry judges and mentors",
-        "Prizes and recognition for winners"
-      ],
-      icon: Code,
-      color: "bg-orange-500",
-      participants: "800+ participants"
-    },
-    {
-      id: "project-submission",
-      title: "Project Submission",
-      duration: "Aug - Sep 2025",
-      status: "upcoming",
-      description: "Students submit their innovative projects for summit consideration",
-      details: [
-        "Project proposal submissions",
-        "Technical documentation review",
-        "Innovation and impact assessment",
-        "Selection for semifinals"
-      ],
-      icon: Target,
-      color: "bg-red-500",
-      participants: "500+ projects"
-    },
-    {
-      id: "semifinals",
-      title: "Semifinals",
-      duration: "Sep - Oct 2025",
-      status: "upcoming",
-      description: "Regional semifinals to select the best projects for the main summit",
-      details: [
-        "Regional semifinal competitions",
-        "Project presentations and demos",
-        "Technical interviews",
-        "Selection of finalists"
-      ],
-      icon: Presentation,
-      color: "bg-indigo-500",
-      participants: "100+ semifinalists"
-    },
-    {
-      id: "finals",
-      title: "TIC Summit Finals",
-      duration: "Nov 2025",
-      status: "upcoming",
-      description: "The grand finale - 3 days of innovation, competition, and celebration",
-      details: [
-        "3-day intensive summit",
-        "Final project presentations",
-        "Industry networking sessions",
-        "Awards ceremony and celebration"
-      ],
-      icon: Trophy,
-      color: "bg-yellow-500",
-      participants: "50+ finalists"
-    }
-  ])
+  const [timeline, setTimeline] = useState<Array<{
+    id: string
+    title: string
+    duration: string
+    status: string
+    description: string
+    details: string[]
+    icon: any
+    color: string
+    participants: string
+  }>>([])
+  const [loading, setLoading] = useState(true)
 
   // Fetch timeline phases from API
   useEffect(() => {
     const fetchTimelinePhases = async () => {
       try {
+        setLoading(true)
         const response = await fetch("/api/content/timeline-phases")
         const data = await response.json()
         if (data.success && data.data.length > 0) {
@@ -208,6 +97,8 @@ const Schedule26Page = () => {
         }
       } catch (error) {
         console.error("Error fetching timeline phases:", error)
+      } finally {
+        setLoading(false)
       }
     }
     fetchTimelinePhases()
@@ -253,29 +144,6 @@ const Schedule26Page = () => {
     }))
   }]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.16, 1, 0.3, 1] as const, // easeOut cubic-bezier equivalent
-      },
-    },
-  }
-
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
@@ -302,6 +170,33 @@ const Schedule26Page = () => {
     }
   }
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Loading timeline...</p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (timeline.length === 0) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No Timeline Data</h2>
+            <p className="text-gray-600">Timeline phases will appear here once configured.</p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 pb-24">
@@ -309,221 +204,111 @@ const Schedule26Page = () => {
         <section className="relative py-20 bg-gray-900 overflow-hidden">
           {/* Background Elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse" />
-            <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: "1s" }} />
+            <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
+            <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full blur-xl" />
             <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
           </div>
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-2 relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center text-white"
-            >
+            <div className="text-center text-white">
               <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
                 <Calendar className="w-5 h-5 text-white" />
                 <span className="text-sm font-medium">TIC Summit 2026 Timeline</span>
               </div>
-
-              {/* <h1 className="text-2xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                <span className="block text-white">Journey to the TIC Summit 2026</span>
-              </h1> */}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* Timeline Overview */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-16"
-            >
+            <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Timeline Overview</h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Visual representation of the complete TIC Summit 2026 journey
               </p>
-            </motion.div>
+            </div>
 
             {/* Timeline */}
             <div className="relative max-w-4xl mx-auto">
               {/* Timeline Line */}
-              <motion.div 
-                className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-300"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ duration: 1.5, delay: 0.5 }}
-                style={{ originY: 0 }}
-              ></motion.div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-300"></div>
               
               {/* Timeline Items */}
               <div className="space-y-16">
                 {timeline.map((phase, index) => {
                   const isActive = phase.status === "active"
                   return (
-                  <motion.div
+                  <div
                     key={phase.id}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
                     className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
                   >
                     {/* Timeline Card */}
                     <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
-                      <motion.div 
-                        className={`rounded-2xl p-6 shadow-xl border-2 hover:shadow-2xl transition-all duration-300 ${
+                      <div 
+                        className={`rounded-2xl p-6 shadow-xl border-2 hover:shadow-2xl transition-shadow duration-300 ${
                           isActive 
                             ? 'bg-gray-100 border-gray-900 ring-4 ring-gray-300 ring-opacity-50' 
                             : 'bg-white border-gray-200'
                         }`}
-                        whileHover={{ scale: 1.02, y: -5 }}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ 
-                          opacity: 1, 
-                          y: 0,
-                          ...(isActive && {
-                            boxShadow: [
-                              "0 0 20px rgba(17, 24, 39, 0.2)",
-                              "0 0 40px rgba(17, 24, 39, 0.4)",
-                              "0 0 20px rgba(17, 24, 39, 0.2)"
-                            ]
-                          })
-                        }}
-                        transition={{ 
-                          duration: 0.6, 
-                          delay: index * 0.1,
-                          ...(isActive && { boxShadow: { duration: 2, repeat: Infinity } })
-                        }}
                       >
                         {/* Active Badge */}
                         {isActive && (
-                          <motion.div 
-                            className="inline-block bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-bold mb-4 mr-2"
-                            initial={{ scale: 0 }}
-                            animate={{ 
-                              scale: [1, 1.05, 1],
-                              opacity: [1, 0.9, 1]
-                            }}
-                            transition={{ 
-                              duration: 2,
-                              repeat: Infinity,
-                              delay: index * 0.1 + 0.2
-                            }}
-                          >
+                          <div className="inline-block bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-bold mb-4 mr-2">
                             LIVE NOW
-                          </motion.div>
+                          </div>
                         )}
                         
                         {/* Date Badge */}
-                        <motion.div 
+                        <div 
                           className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 ${
                             isActive ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700'
                           }`}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
                         >
                           {phase.duration}
-                        </motion.div>
+                        </div>
                         
                         {/* Title */}
-                        <motion.h3 
-                          className={`text-2xl font-bold mb-3 ${
-                            isActive ? 'text-gray-900' : 'text-gray-900'
-                          }`}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-                        >
+                        <h3 className="text-2xl font-bold mb-3 text-gray-900">
                           {phase.title}
-                        </motion.h3>
+                        </h3>
                         
                         {/* Description */}
-                        <motion.p 
-                          className="text-gray-600 mb-4"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
-                        >
+                        <p className="text-gray-600 mb-4">
                           {phase.description}
-                        </motion.p>
+                        </p>
                         
                         {/* Activities */}
-                        <motion.div 
-                          className="space-y-2"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, delay: index * 0.1 + 0.5 }}
-                        >
+                        <div className="space-y-2">
                           {phase.details.slice(0, 3).map((detail, detailIndex) => (
-                            <motion.div 
+                            <div 
                               key={detailIndex} 
                               className="flex items-center space-x-2"
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ duration: 0.3, delay: index * 0.1 + 0.6 + detailIndex * 0.1 }}
                             >
                               <div className={`w-2 h-2 rounded-full ${phase.color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
                               <span className="text-gray-600 text-sm">{detail}</span>
-                            </motion.div>
+                            </div>
                           ))}
-                        </motion.div>
-                      </motion.div>
+                        </div>
+                      </div>
                     </div>
                     
                     {/* Timeline Node */}
                     <div className="flex-shrink-0 w-16 h-16 flex items-center justify-center relative">
-                      <motion.div 
+                      <div 
                         className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg ${
                           isActive ? 'ring-4 ring-gray-400 ring-offset-2' : ''
                         }`}
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ 
-                          scale: isActive ? [1, 1.1, 1] : 1, 
-                          rotate: 0
-                        }}
-                        transition={{ 
-                          duration: 0.6, 
-                          delay: index * 0.1 + 0.3,
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 15,
-                          ...(isActive && { scale: { duration: 2, repeat: Infinity } })
-                        }}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
                       >
-                        <motion.span 
-                          className="text-white font-bold text-lg"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 + 0.6 }}
-                        >
+                        <span className="text-white font-bold text-lg">
                           {index + 1}
-                        </motion.span>
-                      </motion.div>
-                      {/* Pulsing effect for active phase */}
-                      {isActive && (
-                        <motion.div
-                          className="absolute inset-0 rounded-full bg-gray-900"
-                          animate={{
-                            scale: [1, 1.5, 1.5],
-                            opacity: [0.3, 0, 0]
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeOut"
-                          }}
-                        />
-                      )}
+                        </span>
+                      </div>
                     </div>
                     
                     {/* Spacer */}
                     <div className="w-5/12"></div>
-                  </motion.div>
+                  </div>
                   )
                 })}
               </div>
@@ -534,85 +319,26 @@ const Schedule26Page = () => {
         {/* Current Phase Section */}
         <section className="py-16 bg-gray-900" id="current-phase">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center"
-            >
+            <div className="text-center">
               {/* LIVE NOW Badge */}
-              <motion.div 
-                className="inline-block bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium mb-6 relative overflow-hidden"
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  boxShadow: [
-                    "0 0 0 0 rgba(17, 24, 39, 0.4)",
-                    "0 0 0 10px rgba(17, 24, 39, 0)",
-                    "0 0 0 0 rgba(17, 24, 39, 0)"
-                  ]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <motion.span
-                  animate={{ opacity: [1, 0.7, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  LIVE NOW
-                </motion.span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  animate={{ x: ["-100%", "100%"] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                />
-              </motion.div>
+              <div className="inline-block bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium mb-6">
+                LIVE NOW
+              </div>
               
               <h2 className="text-4xl font-bold text-white mb-8">Current Phase</h2>
               
               {/* Current Phase Card */}
               <div className="max-w-4xl mx-auto relative overflow-hidden">
-                {/* Animated Border */}
-                <motion.div
+                {/* Border */}
+                <div
                   className="absolute inset-0 rounded-2xl"
-                  animate={{
-                    background: [
-                      "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)",
-                      "linear-gradient(45deg, #374151, #6b7280, #111827, #374151)",
-                      "linear-gradient(45deg, #6b7280, #111827, #374151, #6b7280)",
-                      "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)"
-                    ]
-                  }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                   style={{
                     padding: "2px",
                     background: "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)",
                     backgroundSize: "400% 400%"
                   }}
                 >
-                  <motion.div 
-                    className="bg-white rounded-2xl p-8 shadow-xl border border-gray-200 relative"
-                    animate={{ 
-                      boxShadow: [
-                        "0 0 20px rgba(17, 24, 39, 0.2)",
-                        "0 0 40px rgba(17, 24, 39, 0.4)",
-                        "0 0 20px rgba(17, 24, 39, 0.2)"
-                      ]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    {/* Pulsing Background Effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-gray-400/10 via-gray-500/10 to-gray-600/10 rounded-2xl"
-                      animate={{ 
-                        opacity: [0.3, 0.6, 0.3],
-                        scale: [1, 1.01, 1]
-                      }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    />
-                    
+                  <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-200 relative">
                     {/* Content */}
                     <div className="relative z-10">
                   {/* Phase Header */}
@@ -705,22 +431,17 @@ Best regards,
                   </>
                   )}
                     </div>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* Call to Action */}
         <section className="py-16 pb-48 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center"
-            >
+            <div className="text-center">
               <h2 className="text-4xl font-bold text-white mb-6">Ready to Join the Journey?</h2>
               <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
                 Be part of TIC Summit 2026 and shape the future of technology and innovation.
@@ -766,7 +487,7 @@ Best regards,
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
       </div>
