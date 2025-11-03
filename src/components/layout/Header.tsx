@@ -26,11 +26,21 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Check if we should animate (only on first load, persisted across route changes)
+  const shouldAnimate = typeof window !== 'undefined' && !sessionStorage.getItem('headerAnimated')
+  
+  useEffect(() => {
+    if (shouldAnimate && typeof window !== 'undefined') {
+      sessionStorage.setItem('headerAnimated', 'true')
+    }
+  }, [shouldAnimate])
+
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
     { name: "Schedule26", href: "/schedule26" },
-    { name: "Recap", href: "/recap" },
+    { name: "Mentors", href: "/mentors" },
+    { name: "Ambassadors", href: "/ambassadors" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
     { name: "Blog", href: "/blog" },
     { 
@@ -38,8 +48,6 @@ const Header = () => {
       href: "#",
       hasDropdown: true,
       dropdownItems: [
-        { name: "Mentors", href: "/mentors" },
-        { name: "Ambassadors", href: "/ambassadors" },
         { name: "Alumni", href: "/alumni" },
         ...((session?.user as any)?.role === "ADMIN" ? [{ name: "Admin Dashboard", href: "/admin" }] : [])
       ]
@@ -48,9 +56,9 @@ const Header = () => {
 
   return (
     <motion.header
-      initial={{ y: -100 }}
+      initial={shouldAnimate ? { y: -100 } : false}
       animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+      transition={shouldAnimate ? { duration: 0.6, ease: [0.16, 1, 0.3, 1] } : { duration: 0 }}
       className="fixed top-0 left-0 right-0 z-50 bg-gray-900 shadow-lg"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">

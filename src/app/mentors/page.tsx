@@ -165,10 +165,10 @@ const MentorsPage = () => {
                 <span className="text-sm font-medium">Learn from Industry Leaders</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              {/* <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="block text-white">Meet Our</span>
                 <span className="block text-white">Expert Mentors</span>
-              </h1>
+              </h1> */}
 
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Industry veterans who guide students on their journey to becoming tech innovators.

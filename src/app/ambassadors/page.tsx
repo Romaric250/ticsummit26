@@ -130,10 +130,10 @@ const AmbassadorsPage = () => {
                 <span className="text-sm font-medium">Student Ambassadors Program</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              {/* <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="block text-white">Our Amazing</span>
                 <span className="block text-white">Ambassadors</span>
-              </h1>
+              </h1> */}
 
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Student leaders who champion innovation and inspire the next generation of tech innovators.
