@@ -40,6 +40,11 @@ const AdminSidebar = () => {
       icon: Users
     },
     {
+      name: "Ambassadors",
+      href: "/admin/ambassadors",
+      icon: Users
+    },
+    {
       name: "Blog Posts",
       href: "/admin/blogs",
       icon: FileText

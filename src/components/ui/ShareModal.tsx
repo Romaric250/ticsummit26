@@ -68,40 +68,41 @@ export const ShareModal = ({ isOpen, onClose, url, title }: ShareModalProps) => 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={onClose}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-white rounded-xl shadow-xl w-full max-w-md"
+            className="bg-white rounded-xl shadow-xl w-full max-w-md my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Share Article</h3>
+            <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-200">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Share Article</h3>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 ml-2"
+                aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Copy URL */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Copy Link
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <input
                     type="text"
                     value={shareUrl}
                     readOnly
-                    className="flex-1 px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="flex-1 px-3 py-2.5 text-xs sm:text-sm bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent truncate"
                   />
                   <button
                     onClick={handleCopy}
-                    className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
+                    className={`px-4 py-2.5 rounded-lg text-white text-sm font-medium transition-colors whitespace-nowrap ${
                       copied ? 'bg-green-600' : 'bg-gray-900 hover:bg-gray-800'
                     }`}
                   >
@@ -125,17 +126,17 @@ export const ShareModal = ({ isOpen, onClose, url, title }: ShareModalProps) => 
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Share on Social Media
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   {shareLinks.map((link) => {
                     const Icon = link.icon
                     return (
                       <button
                         key={link.name}
                         onClick={() => handleShare(link.url)}
-                        className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-white font-medium transition-colors ${link.color}`}
+                        className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors ${link.color}`}
                       >
-                        <Icon className="w-5 h-5" />
-                        <span>{link.name}</span>
+                        <Icon className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{link.name}</span>
                       </button>
                     )
                   })}

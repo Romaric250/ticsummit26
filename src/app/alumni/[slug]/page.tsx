@@ -35,7 +35,8 @@ import {
   Linkedin,
   Twitter,
   Facebook,
-  MessageSquare
+  MessageSquare,
+  X
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"

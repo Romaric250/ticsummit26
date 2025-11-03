@@ -563,18 +563,19 @@ const MentorProfilePage = () => {
       {/* Share Modal */}
       <AnimatePresence>
         {showShareModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-gray-800 rounded-xl p-6 w-full max-w-md"
+              className="bg-gray-800 rounded-xl p-4 sm:p-6 w-full max-w-md my-auto"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Share Mentor Profile</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-white">Share Mentor Profile</h3>
                 <button
                   onClick={() => setShowShareModal(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors flex-shrink-0 ml-2"
+                  aria-label="Close"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -585,64 +586,64 @@ const MentorProfilePage = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Profile URL
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 truncate"
                     />
                     <Button
                       onClick={() => {
                         navigator.clipboard.writeText(`${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`)
                       }}
-                      className="px-4 py-2 text-sm"
+                      className="px-4 py-2.5 text-sm whitespace-nowrap"
                     >
                       Copy
                     </Button>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <Button
                     onClick={() => {
                       const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
                       window.open(`https://twitter.com/intent/tweet?text=Check out this amazing mentor: ${mentor?.name}&url=${encodeURIComponent(url)}`, '_blank')
                     }}
-                    className="py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white"
+                    className="py-2.5 text-xs sm:text-sm bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center"
                   >
-                    <Twitter className="w-4 h-4 mr-2" />
-                    Twitter
+                    <Twitter className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Twitter</span>
                   </Button>
                   <Button
                     onClick={() => {
                       const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
                       window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
                     }}
-                    className="py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white"
+                    className="py-2.5 text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center"
                   >
-                    <Linkedin className="w-4 h-4 mr-2" />
-                    LinkedIn
+                    <Linkedin className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">LinkedIn</span>
                   </Button>
                   <Button
                     onClick={() => {
                       const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
                       window.open(`https://wa.me/?text=Check out this amazing mentor: ${mentor?.name} - ${encodeURIComponent(url)}`, '_blank')
                     }}
-                    className="py-2 text-sm bg-green-500 hover:bg-green-600 text-white"
+                    className="py-2.5 text-xs sm:text-sm bg-green-500 hover:bg-green-600 text-white flex items-center justify-center"
                   >
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    WhatsApp
+                    <MessageSquare className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">WhatsApp</span>
                   </Button>
                   <Button
                     onClick={() => {
                       const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/mentors/${mentor?.slug}`
                       window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank')
                     }}
-                    className="py-2 text-sm bg-blue-700 hover:bg-blue-800 text-white"
+                    className="py-2.5 text-xs sm:text-sm bg-blue-700 hover:bg-blue-800 text-white flex items-center justify-center"
                   >
-                    <Facebook className="w-4 h-4 mr-2" />
-                    Facebook
+                    <Facebook className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Facebook</span>
                   </Button>
                 </div>
               </div>
