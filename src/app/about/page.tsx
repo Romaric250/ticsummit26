@@ -720,16 +720,19 @@ const AboutPage = () => {
             <div className="max-w-4xl mx-auto">
               <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-white">
                 <div className="text-center mb-8">
-                  <div className="w-24 h-24 bg-white rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden relative">
+                  <div className="w-40 h-40 md:w-48 md:h-48 bg-white rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden relative">
                     {founderQuote.imageUrl ? (
                       <Image
                         src={founderQuote.imageUrl}
                         alt={founderQuote.name}
-                        fill
-                        className="object-cover"
+                        width={192}
+                        height={192}
+                        className="object-cover rounded-full w-full h-full scale-110"
+                        style={{ objectPosition: 'center top' }}
+                        unoptimized
                       />
                     ) : (
-                      <span className="text-gray-900 font-bold text-3xl">{founderQuote.initial}</span>
+                      <span className="text-gray-900 font-bold text-4xl md:text-5xl">{founderQuote.initial}</span>
                     )}
                   </div>
                   
