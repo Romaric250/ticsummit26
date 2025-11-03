@@ -137,9 +137,9 @@ const BlogPage = () => {
               transition={{ duration: 0.6 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+              {/* <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
                 TIC Summit Blog
-              </h1>
+              </h1> */}
               <p className="text-xl text-white/90 mb-8">
                 Stay updated with the latest insights, stories, and innovations from the TIC Summit community
               </p>
