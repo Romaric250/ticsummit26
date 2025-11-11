@@ -50,6 +50,96 @@ const CarouselImage = ({ src, alt, className }: { src: string, alt: string, clas
   )
 }
 
+// Rubik's Cube Face Component
+const CubeFace = ({ 
+  image, 
+  position, 
+  isActive 
+}: { 
+  image: { src: string; title: string; subtitle: string; description: string }
+  position: 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom'
+  isActive: boolean
+}) => {
+  // translateZ should be half the cube size (150px for mobile, 200px for desktop)
+  // Using 175px as a middle ground that works reasonably for both
+  const translateZ = 175
+  
+  const positions: Record<string, { rotateX?: number; rotateY?: number }> = {
+    front: {},
+    back: { rotateY: 180 },
+    right: { rotateY: 90 },
+    left: { rotateY: -90 },
+    top: { rotateX: 90 },
+    bottom: { rotateX: -90 },
+  }
+  
+  const transform = positions[position]
+  
+  return (
+    <div
+      className="absolute w-full h-full"
+      style={{
+        transform: `
+          rotateX(${transform.rotateX || 0}deg) 
+          rotateY(${transform.rotateY || 0}deg) 
+          translateZ(${translateZ}px)
+        `,
+        transformStyle: 'preserve-3d',
+        backfaceVisibility: 'hidden',
+      }}
+    >
+      {/* Rubik's Cube Grid Pattern */}
+      <div className="relative w-full h-full bg-gray-800 border-2 border-gray-900 shadow-2xl overflow-hidden">
+        {/* 3x3 Grid */}
+        <div className="grid grid-cols-3 grid-rows-3 w-full h-full gap-0.5 p-0.5">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <div
+              key={i}
+              className="relative bg-gray-700 border border-gray-900/80 overflow-hidden"
+            >
+              {/* Image segment - each square shows a portion of the image */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url(${image.src})`,
+                  backgroundSize: '300% 300%',
+                  backgroundPosition: `
+                    ${(i % 3) * 33.33}% 
+                    ${Math.floor(i / 3) * 33.33}%
+                  `,
+                  filter: isActive ? 'brightness(1.1)' : 'brightness(0.8)',
+                }}
+              />
+              {/* Thin grid line overlay */}
+              <div className="absolute inset-0 border border-gray-900/30" style={{ borderWidth: '0.5px' }} />
+            </div>
+          ))}
+        </div>
+        
+        {/* Active face highlight */}
+        {isActive && (
+          <div className="absolute inset-0 border-2 border-white/50 pointer-events-none" />
+        )}
+        
+        {/* Content overlay on active face */}
+        {isActive && (
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-transparent to-transparent flex flex-col justify-end p-6">
+            <h3 className="text-2xl font-bold text-white mb-2">
+              {image.title}
+            </h3>
+            <p className="text-lg text-white/90 mb-1">
+              {image.subtitle}
+            </p>
+            <p className="text-sm text-white/75">
+              {image.description}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // Animated Counter Hook
 const useCountUp = (end: number, duration: number = 2000, start: number = 0) => {
   const [count, setCount] = useState(start)
@@ -559,101 +649,85 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right Content - 3D Hero Slider */}
+          {/* Right Content - Rubik's Cube Carousel */}
           <motion.div
             variants={itemVariants}
             className="relative"
           >
-            <div className="relative h-[500px] perspective-1000">
-              {/* 3D Slider Container */}
-              <div className="relative w-full h-full">
+            <div className="relative h-[500px] flex items-center justify-center">
+              {/* 3D Cube Container */}
+              <div 
+                className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px]"
+                style={{
+                  perspective: '1200px',
+                  perspectiveOrigin: '50% 50%'
+                }}
+              >
                 {/* Loading Overlay */}
                 {isTransitioning && (
-                  <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm rounded-3xl flex items-center justify-center z-30">
+                  <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-30">
                     <Loader2 className="w-12 h-12 text-white animate-spin" />
                   </div>
                 )}
-                <AnimatePresence mode="wait">
-                  {heroImages.map((image, index) => {
-                    if (index !== currentSlide) return null
-                    
-                    return (
-                      <motion.div
-                        key={index}
-                        initial={{ 
-                          opacity: 0, 
-                          scale: 0.8, 
-                          rotateY: 45,
-                          z: -100
-                        }}
-                        animate={{ 
-                          opacity: 1, 
-                          scale: 1, 
-                          rotateY: 0,
-                          z: 0
-                        }}
-                        exit={{ 
-                          opacity: 0, 
-                          scale: 0.8, 
-                          rotateY: -45,
-                          z: -100
-                        }}
-                        transition={{ 
-                          duration: 0.8, 
-                          ease: "easeInOut" as const,
-                          type: "spring",
-                          stiffness: 100
-                        }}
-                        className="absolute inset-0"
-                        style={{
-                          transformStyle: "preserve-3d"
-                        }}
-                      >
-                        {/* Main Image Card */}
-                        <div className="relative w-full h-full group">
-                          <div className="w-full h-full rounded-3xl backdrop-blur-sm border border-white/20 overflow-hidden shadow-2xl transform-gpu">
-                            <CarouselImage 
-                              src={image.src}
-                              alt={image.title}
-                              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
-                            />
-                            
-                            {/* Image Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent" />
-                            
-                            {/* Image Info */}
-                            <div className="absolute bottom-6 left-6 right-6 text-white">
-                              <motion.h3
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="text-2xl font-bold mb-2"
-                              >
-                                {image.title}
-                              </motion.h3>
-                              <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className="text-lg opacity-90 mb-1"
-                              >
-                                {image.subtitle}
-                              </motion.p>
-                              <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.5 }}
-                                className="text-sm opacity-75"
-                              >
-                                {image.description}
-                              </motion.p>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )
-                  })}
-                </AnimatePresence>
+
+                {/* Rubik's Cube */}
+                <motion.div
+                  className="relative w-full h-full"
+                  style={{
+                    transformStyle: 'preserve-3d',
+                  }}
+                  animate={{
+                    rotateY: currentSlide * 90 + (currentSlide % 2 === 0 ? 0 : 10),
+                    rotateX: currentSlide % 2 === 0 ? 15 : -15 + (currentSlide % 3 === 0 ? 0 : currentSlide % 3 === 1 ? 5 : -5),
+                    rotateZ: currentSlide % 3 === 0 ? 0 : currentSlide % 3 === 1 ? 8 : -8,
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    ease: [0.16, 1, 0.3, 1] as const
+                  }}
+                >
+                  {/* Cube Face - Front (Slide 0) */}
+                  <CubeFace
+                    image={heroImages[0] || heroImages[heroImages.length - 1]}
+                    position="front"
+                    isActive={currentSlide === 0}
+                  />
+                  
+                  {/* Cube Face - Right (Slide 1) */}
+                  <CubeFace
+                    image={heroImages[1] || heroImages[0] || heroImages[heroImages.length - 1]}
+                    position="right"
+                    isActive={currentSlide === 1}
+                  />
+                  
+                  {/* Cube Face - Back (Slide 2) */}
+                  <CubeFace
+                    image={heroImages[2] || heroImages[0] || heroImages[heroImages.length - 1]}
+                    position="back"
+                    isActive={currentSlide === 2}
+                  />
+                  
+                  {/* Cube Face - Left (Slide 3) */}
+                  <CubeFace
+                    image={heroImages[3] || heroImages[0] || heroImages[heroImages.length - 1]}
+                    position="left"
+                    isActive={currentSlide === 3}
+                  />
+                  
+                  {/* Cube Face - Top (Decorative) */}
+                  <CubeFace
+                    image={heroImages[0] || heroImages[heroImages.length - 1]}
+                    position="top"
+                    isActive={false}
+                  />
+                  
+                  {/* Cube Face - Bottom (Decorative) */}
+                  <CubeFace
+                    image={heroImages[0] || heroImages[heroImages.length - 1]}
+                    position="bottom"
+                    isActive={false}
+                  />
+                </motion.div>
 
                 {/* Navigation Arrows */}
                 <motion.button
@@ -700,41 +774,6 @@ const HeroSection = () => {
                     />
                   ))}
                 </div>
-
-                {/* Floating Stats Cards */}
-                <motion.div
-                  initial={{ opacity: 0, x: -50, y: 50 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1 }}
-                  className="absolute -top-4 -left-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 z-10"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                      <Award className="w-5 h-5 text-gray-900" />
-                    </div>
-                    <div>
-                      <div className="text-white font-semibold">150+</div>
-                      <div className="text-white text-sm">Projects</div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, x: 50, y: -50 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1.2 }}
-                  className="absolute -bottom-4 -right-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 z-10"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                      <Calendar className="w-5 h-5 text-gray-900" />
-                    </div>
-                    <div>
-                      <div className="text-white font-semibold">3 Days</div>
-                      <div className="text-white text-sm">Intensive</div>
-                    </div>
-                  </div>
-                </motion.div>
               </div>
             </div>
           </motion.div>
