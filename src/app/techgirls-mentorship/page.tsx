@@ -489,7 +489,7 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                         { id: "age", label: "Age *", type: "number", placeholder: "15-17", required: true, min: 15, max: 17 },
                         { id: "phone", label: "Phone Number *", type: "tel", placeholder: "+237 XXX XXX XXX", required: true },
                         { id: "school", label: "School Name *", type: "text", placeholder: "Your school name", required: true },
-                        { id: "currentGrade", label: "Current Grade *", type: "select", required: true, options: ["Form 1", "Form 2", "Form 3", "Form 4", "Form 5", "Lower Sixth"] }
+                        { id: "currentGrade", label: "Current Grade *", type: "select", required: true, options: [ "Grade 10", "Grade 11", "Grade 12", "Other"] }
                       ].map((field, index) => (
                         <motion.div
                           key={field.id}
@@ -507,9 +507,9 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                               required={field.required}
                               value={formData[field.id as keyof typeof formData]}
                               onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900"
                             >
-                              <option value="">Select grade</option>
+                              <option value="" className="text-gray-400">Select grade</option>
                               {field.options?.map(opt => (
                                 <option key={opt} value={opt}>{opt}</option>
                               ))}
@@ -523,7 +523,7 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                               max={field.max}
                               value={formData[field.id as keyof typeof formData]}
                               onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400"
                               placeholder={field.placeholder}
                             />
                           )}
@@ -544,7 +544,7 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                         rows={4}
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400 resize-none"
                         placeholder="Tell us about your passion for technology and what you hope to gain from this program..."
                       />
                     </motion.div>
