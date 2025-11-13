@@ -48,6 +48,7 @@ const Header = () => {
       href: "#",
       hasDropdown: true,
       dropdownItems: [
+        { name: "TechGirls Mentorship", href: "/techgirls-mentorship" },
         { name: "Alumni", href: "/alumni" },
         ...((session?.user as any)?.role === "ADMIN" ? [{ name: "Admin Dashboard", href: "/admin" }] : [])
       ]
