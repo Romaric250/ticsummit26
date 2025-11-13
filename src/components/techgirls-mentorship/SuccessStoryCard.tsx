@@ -21,26 +21,26 @@ export const SuccessStoryCard = ({ story, index, onClick }: SuccessStoryCardProp
   return (
     <div
       onClick={onClick}
-      className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-white/30 transition-colors cursor-pointer"
+      className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all cursor-pointer"
     >
       <div className="text-center mb-4">
-        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+        <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
           {story.icon}
         </div>
-        <h3 className="text-xl font-bold mb-1">{story.name}</h3>
-        <div className="text-sm text-white/70 mb-3">
+        <h3 className="text-xl font-bold mb-1 text-gray-900">{story.name}</h3>
+        <div className="text-sm text-gray-600 mb-3">
           Age {story.age} • {story.school}
         </div>
       </div>
 
-      <div className="bg-white/10 rounded-xl p-4 mb-4">
-        <p className="text-sm font-semibold flex items-center justify-center">
+      <div className="bg-gray-900 rounded-xl p-4 mb-4">
+        <p className="text-sm font-semibold flex items-center justify-center text-white">
           <Trophy className="w-4 h-4 mr-2 text-yellow-400" />
           {story.achievement}
         </p>
       </div>
 
-      <p className="text-white/90 italic text-center leading-relaxed">
+      <p className="text-gray-700 italic text-center leading-relaxed">
         "{story.quote}"
       </p>
     </div>

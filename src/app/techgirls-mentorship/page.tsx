@@ -400,9 +400,6 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-6">
-                <Trophy className="w-10 h-10 text-white" />
-              </div>
               <h2 className="text-4xl sm:text-5xl font-bold mb-4">
                 Success Stories
               </h2>
