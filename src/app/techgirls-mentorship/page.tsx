@@ -523,7 +523,7 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                               max={field.max}
                               value={formData[field.id as keyof typeof formData]}
                               onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400 text-gray-900"
                               placeholder={field.placeholder}
                             />
                           )}
@@ -544,7 +544,7 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                         rows={4}
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400 resize-none"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400 resize-none text-gray-900"
                         placeholder="Tell us about your passion for technology and what you hope to gain from this program..."
                       />
                     </motion.div>
