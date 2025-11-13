@@ -1,7 +1,5 @@
 "use client"
 
-import { Trophy } from "lucide-react"
-
 interface SuccessStory {
   name: string
   age: number
@@ -34,8 +32,7 @@ export const SuccessStoryCard = ({ story, index, onClick }: SuccessStoryCardProp
       </div>
 
       <div className="bg-gray-900 rounded-xl p-4 mb-4">
-        <p className="text-sm font-semibold flex items-center justify-center text-white">
-          <Trophy className="w-4 h-4 mr-2 text-yellow-400" />
+        <p className="text-sm font-semibold text-center text-white">
           {story.achievement}
         </p>
       </div>

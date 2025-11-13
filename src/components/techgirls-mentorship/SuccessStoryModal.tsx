@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronLeft, ChevronRight, Trophy, Star } from "lucide-react"
+import { X, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface SuccessStory {
   name: string
@@ -58,7 +58,7 @@ export const SuccessStoryModal = ({
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl"
+            className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto overflow-x-hidden border border-gray-200 shadow-2xl"
           >
             {/* Close Button */}
             <button
@@ -100,16 +100,18 @@ export const SuccessStoryModal = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="p-6 md:p-8 lg:p-12"
+                className="p-6 md:p-8 lg:p-12 overflow-x-hidden"
               >
                 <div className="text-center mb-6 md:mb-8">
+                  <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-4xl md:text-5xl">
+                    {currentStory.icon}
+                  </div>
                   <h3 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900">{currentStory.name}</h3>
                   <div className="text-gray-600 mb-4 text-sm md:text-base">
                     Age {currentStory.age} • {currentStory.school}
                   </div>
                   <div className="bg-gray-900 rounded-xl p-3 md:p-4 inline-block">
-                    <p className="text-base md:text-lg font-semibold flex items-center justify-center text-white">
-                      <Trophy className="w-4 h-4 md:w-5 md:h-5 mr-2 text-yellow-400" />
+                    <p className="text-base md:text-lg font-semibold text-center text-white">
                       {currentStory.achievement}
                     </p>
                   </div>
@@ -117,8 +119,7 @@ export const SuccessStoryModal = ({
 
                 <div className="space-y-4 md:space-y-6">
                   <div>
-                    <h4 className="text-lg md:text-xl font-bold mb-2 md:mb-3 flex items-center text-gray-900">
-                      <Star className="w-4 h-4 md:w-5 md:h-5 mr-2 text-yellow-400" />
+                    <h4 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-gray-900">
                       Their Story
                     </h4>
                     <p className="text-gray-700 leading-relaxed text-sm md:text-base">
