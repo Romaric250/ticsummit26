@@ -58,6 +58,8 @@ export async function POST(request: NextRequest) {
         linkedin: member.linkedin,
         twitter: member.twitter,
         github: member.github,
+        activities: member.activities || null,
+        achievements: member.achievements || null,
         order: member.order,
         active: member.active !== false
       }))

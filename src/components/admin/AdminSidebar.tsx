@@ -65,6 +65,11 @@ const AdminSidebar = () => {
       icon: Users
     },
     {
+      name: "Teams",
+      href: "/admin/teams",
+      icon: Users
+    },
+    {
       name: "Minor Updates",
       href: "/admin/minor-updates",
       icon: Edit

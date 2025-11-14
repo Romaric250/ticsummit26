@@ -657,6 +657,8 @@ model TeamMember {
   linkedin    String?
   twitter     String?
   github      String?
+  activities  Json?    // Array of activity objects: [{ description: string, date?: string, location?: string }]
+  achievements Json?   // Array of achievement objects: [{ title: string, description: string, images: string[], date?: string }]
   order       Int      @default(0) // For ordering members
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())

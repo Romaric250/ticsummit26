@@ -172,32 +172,12 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0) => 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [heroImages, setHeroImages] = useState([
-    {
-      src: "https://8gzcaj94vr.ufs.sh/f/97da1178-101d-4c13-aacf-c128f9005f90-yd0xy2.PNG",
-      title: "TIC Summit Program",
-      subtitle: "Students and Innovation",
-      description: "Cameroon's premier tech challenge"
-    },
-    {
-      src: "https://8gzcaj94vr.ufs.sh/f/btHfnDl3l94ioly0nL8n3I5tq8OQpHLErU6aMjx2eFAKGYW1",
-      title: "Hands-on Learning",
-      subtitle: "Workshops & Activities",
-      description: "Interactive tech sessions"
-    },
-    {
-      src: "https://4fptvpb3lg.ufs.sh/f/29760ee2-0cf7-41bd-bc1d-95234783d8f6-ald1u5.jpeg",
-      title: "Expert Mentorship",
-      subtitle: "Industry Leaders",
-      description: "Learn from the best"
-    },
-    {
-      src: "https://4fptvpb3lg.ufs.sh/f/2c5a6f75-c02f-49d3-a200-d751795036eb-2ak9.jpg",
-      title: "Innovation Showcase",
-      subtitle: "Student Projects",
-      description: "Amazing creations"
-    }
-  ])
+  const [heroImages, setHeroImages] = useState<Array<{
+    src: string
+    title: string
+    subtitle: string
+    description: string
+  }>>([])
   
   // Site Stats State
   const [siteStats, setSiteStats] = useState({
@@ -272,6 +252,8 @@ const HeroSection = () => {
 
   // Auto-rotate slides
   useEffect(() => {
+    if (heroImages.length === 0) return
+    
     const interval = setInterval(() => {
       setIsTransitioning(true)
       const nextIndex = (currentSlide + 1) % heroImages.length
@@ -288,6 +270,7 @@ const HeroSection = () => {
   }, [currentSlide, heroImages])
 
   const nextSlide = () => {
+    if (heroImages.length === 0) return
     setIsTransitioning(true)
     const nextIndex = (currentSlide + 1) % heroImages.length
     setCurrentSlide(nextIndex)
@@ -301,6 +284,7 @@ const HeroSection = () => {
   }
 
   const prevSlide = () => {
+    if (heroImages.length === 0) return
     setIsTransitioning(true)
     const prevIndex = (currentSlide - 1 + heroImages.length) % heroImages.length
     setCurrentSlide(prevIndex)
@@ -687,46 +671,50 @@ const HeroSection = () => {
                   }}
                 >
                   {/* Cube Face - Front (Slide 0) */}
-                  <CubeFace
-                    image={heroImages[0] || heroImages[heroImages.length - 1]}
-                    position="front"
-                    isActive={currentSlide === 0}
-                  />
-                  
-                  {/* Cube Face - Right (Slide 1) */}
-                  <CubeFace
-                    image={heroImages[1] || heroImages[0] || heroImages[heroImages.length - 1]}
-                    position="right"
-                    isActive={currentSlide === 1}
-                  />
-                  
-                  {/* Cube Face - Back (Slide 2) */}
-                  <CubeFace
-                    image={heroImages[2] || heroImages[0] || heroImages[heroImages.length - 1]}
-                    position="back"
-                    isActive={currentSlide === 2}
-                  />
-                  
-                  {/* Cube Face - Left (Slide 3) */}
-                  <CubeFace
-                    image={heroImages[3] || heroImages[0] || heroImages[heroImages.length - 1]}
-                    position="left"
-                    isActive={currentSlide === 3}
-                  />
-                  
-                  {/* Cube Face - Top (Decorative) */}
-                  <CubeFace
-                    image={heroImages[0] || heroImages[heroImages.length - 1]}
-                    position="top"
-                    isActive={false}
-                  />
-                  
-                  {/* Cube Face - Bottom (Decorative) */}
-                  <CubeFace
-                    image={heroImages[0] || heroImages[heroImages.length - 1]}
-                    position="bottom"
-                    isActive={false}
-                  />
+                  {heroImages.length > 0 && (
+                    <>
+                      <CubeFace
+                        image={heroImages[0] || heroImages[heroImages.length - 1]}
+                        position="front"
+                        isActive={currentSlide === 0}
+                      />
+                      
+                      {/* Cube Face - Right (Slide 1) */}
+                      <CubeFace
+                        image={heroImages[1] || heroImages[0] || heroImages[heroImages.length - 1]}
+                        position="right"
+                        isActive={currentSlide === 1}
+                      />
+                      
+                      {/* Cube Face - Back (Slide 2) */}
+                      <CubeFace
+                        image={heroImages[2] || heroImages[0] || heroImages[heroImages.length - 1]}
+                        position="back"
+                        isActive={currentSlide === 2}
+                      />
+                      
+                      {/* Cube Face - Left (Slide 3) */}
+                      <CubeFace
+                        image={heroImages[3] || heroImages[0] || heroImages[heroImages.length - 1]}
+                        position="left"
+                        isActive={currentSlide === 3}
+                      />
+                      
+                      {/* Cube Face - Top (Decorative) */}
+                      <CubeFace
+                        image={heroImages[0] || heroImages[heroImages.length - 1]}
+                        position="top"
+                        isActive={false}
+                      />
+                      
+                      {/* Cube Face - Bottom (Decorative) */}
+                      <CubeFace
+                        image={heroImages[0] || heroImages[heroImages.length - 1]}
+                        position="bottom"
+                        isActive={false}
+                      />
+                    </>
+                  )}
                 </motion.div>
 
                 {/* Navigation Arrows */}

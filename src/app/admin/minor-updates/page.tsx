@@ -582,22 +582,8 @@ const MinorUpdatesPage = () => {
               </div>
             </motion.div>
 
-            {/* Team Members Card */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer"
-              onClick={() => setShowTeamModal(true)}
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
-                  <p className="text-sm text-gray-600">{teamMembers.length} members</p>
-                </div>
-              </div>
-            </motion.div>
+            {/* Team Members Card - Moved to /admin/teams */}
+            {/* Team management has been moved to its own dedicated page at /admin/teams */}
 
             {/* FAQ Card */}
             <motion.div
@@ -797,15 +783,8 @@ const MinorUpdatesPage = () => {
           saving={saving}
         />
 
-        {/* Team Members Modal */}
-        <TeamMembersModal
-          isOpen={showTeamModal}
-          onClose={() => setShowTeamModal(false)}
-          teamMembers={teamMembers}
-          setTeamMembers={setTeamMembers}
-          onSave={handleSaveTeamMembers}
-          saving={saving}
-        />
+        {/* Team Members Modal - Moved to /admin/teams */}
+        {/* Team management has been moved to its own dedicated page at /admin/teams */}
 
         {/* FAQ Modal */}
         <FAQModal
