@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 import { 
   Users, 
   ArrowRight,
-  Mail,
   Linkedin,
   Twitter,
   Github
@@ -147,38 +146,48 @@ const TeamsPage = () => {
               <p className="text-gray-600 text-lg">No team members found</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
               {sortedMembers.map((member, index) => (
-                  <motion.div
-                    key={member.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                  >
-                    <Link href={`/team/${member.slug}`}>
-                      <div className="p-6">
-                        {/* Image */}
-                        <div className="flex justify-center mb-4">
-                          <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200">
-                            {member.imageUrl ? (
-                              <Image
-                                src={member.imageUrl}
-                                alt={member.name}
-                                fill
-                                className="object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white text-3xl font-bold">
-                                {member.name.charAt(0).toUpperCase()}
-                              </div>
-                            )}
+                <motion.div
+                  key={member.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                  className="group"
+                >
+                  <Link href={`/team/${member.slug}`}>
+                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer h-full flex flex-col">
+                      {/* Profile Image */}
+                      <div className="relative h-64 bg-gray-900">
+                        {member.imageUrl ? (
+                          <Image
+                            src={member.imageUrl}
+                            alt={member.name}
+                            fill
+                            className="object-cover"
+                            style={{ objectPosition: 'center top' }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-white font-bold text-6xl">
+                              {member.name.charAt(0).toUpperCase()}
+                            </span>
                           </div>
-                        </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
 
+                      {/* Content */}
+                      <div className="p-6 flex-1 flex flex-col">
                         {/* Name and Role */}
-                        <div className="text-center mb-4">
-                          <h3 className="text-xl font-bold text-gray-900 mb-1">
+                        <div className="mb-3">
+                          <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-900 transition-colors">
                             {member.name}
                           </h3>
                           <p className="text-gray-600 text-sm font-medium">
@@ -188,69 +197,71 @@ const TeamsPage = () => {
 
                         {/* Bio Preview */}
                         {member.bio && (
-                          <p className="text-gray-600 text-sm mb-4 line-clamp-3 text-center">
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
                             {member.bio}
                           </p>
                         )}
 
-                        {/* Social Links */}
-                        {(member.email || member.linkedin || member.twitter || member.github) && (
-                          <div className="flex items-center justify-center gap-3 mb-4">
-                            {member.email && (
-                              <a
-                                href={`mailto:${member.email}`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-gray-400 hover:text-gray-900 transition-colors"
-                              >
-                                <Mail className="w-5 h-5" />
-                              </a>
-                            )}
-                            {member.linkedin && (
-                              <a
-                                href={member.linkedin}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-gray-400 hover:text-blue-600 transition-colors"
-                              >
-                                <Linkedin className="w-5 h-5" />
-                              </a>
-                            )}
-                            {member.twitter && (
-                              <a
-                                href={member.twitter}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-gray-400 hover:text-blue-400 transition-colors"
-                              >
-                                <Twitter className="w-5 h-5" />
-                              </a>
-                            )}
-                            {member.github && (
-                              <a
-                                href={member.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-gray-400 hover:text-gray-900 transition-colors"
-                              >
-                                <Github className="w-5 h-5" />
-                              </a>
-                            )}
+                        {/* Social Links (without email) */}
+                        {(member.linkedin || member.twitter || member.github) && (
+                          <div className="mt-auto pt-4 border-t border-gray-100 bg-gray-50 -mx-6 -mb-6 px-6 pb-6 rounded-b-2xl">
+                            <div className="flex items-center gap-3 mb-3">
+                              {member.linkedin && (
+                                <a
+                                  href={member.linkedin}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-gray-400 hover:text-blue-600 transition-colors"
+                                >
+                                  <Linkedin className="w-5 h-5" />
+                                </a>
+                              )}
+                              {member.twitter && (
+                                <a
+                                  href={member.twitter}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                                >
+                                  <Twitter className="w-5 h-5" />
+                                </a>
+                              )}
+                              {member.github && (
+                                <a
+                                  href={member.github}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-gray-400 hover:text-gray-900 transition-colors"
+                                >
+                                  <Github className="w-5 h-5" />
+                                </a>
+                              )}
+                            </div>
+                            <div className="w-full flex items-center justify-center bg-gray-900 text-white font-medium text-sm group-hover:bg-gray-800 transition-colors px-6 py-2.5">
+                              View Profile
+                              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                            </div>
                           </div>
                         )}
 
-                        {/* View Profile Link */}
-                        <div className="flex items-center justify-center text-gray-900 font-medium text-sm group">
-                          View Profile
-                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                        </div>
+                        {/* View Profile Link (if no social links) */}
+                        {!(member.linkedin || member.twitter || member.github) && (
+                          <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-center bg-gray-50 -mx-6 -mb-6 px-6 pb-6 rounded-b-2xl">
+                            <div className="w-full flex items-center justify-center bg-gray-900 text-white font-medium text-sm group-hover:bg-gray-800 transition-colors px-6 py-2.5">
+                              View Profile
+                              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </Link>
-                  </motion.div>
-                ))}
-            </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
           )}
         </div>
       </div>
@@ -259,4 +270,3 @@ const TeamsPage = () => {
 }
 
 export default TeamsPage
-

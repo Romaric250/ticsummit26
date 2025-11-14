@@ -180,8 +180,8 @@ const TeamMemberPage = () => {
             >
               {/* Profile Image */}
               <div className="lg:col-span-1">
-                <div className="relative">
-                  <div className="w-64 h-64 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative w-full">
+                  <div className="relative w-full sm:w-80 md:w-96 aspect-square mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
                     {member.imageUrl ? (
                       <Image
                         src={member.imageUrl}
@@ -203,7 +203,11 @@ const TeamMemberPage = () => {
               {/* Profile Info */}
               <div className="lg:col-span-2 text-white">
                 <h1 className="text-4xl sm:text-5xl font-bold mb-4">{member.name}</h1>
-                <p className="text-2xl text-white/80 mb-6">{member.role}</p>
+                <div className="inline-block mb-6">
+                  <span className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-lg font-medium">
+                    {member.role}
+                  </span>
+                </div>
 
                 <div className="flex flex-wrap gap-4 mb-8">
                   <Button 
@@ -448,7 +452,7 @@ const TeamMemberPage = () => {
       {/* Achievements Modal */}
       <AnimatePresence>
         {showAchievementsModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4 pt-20 md:pt-24">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -472,41 +476,50 @@ const TeamMemberPage = () => {
               </div>
 
               {/* Content */}
-              <div className="flex-1 overflow-y-auto px-6 py-6">
-                <div className="space-y-8">
-                  {achievements.map((achievement, index) => (
-                    <div key={index} className="border-b border-gray-200 last:border-b-0 pb-8 last:pb-0">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-xl font-semibold text-gray-900">
-                          {achievement.title}
-                        </h3>
-                        {achievement.date && (
-                          <div className="flex items-center gap-1 text-sm text-gray-600">
-                            <Calendar className="w-4 h-4" />
-                            <span>{achievement.date}</span>
+              <div className="flex-1 overflow-y-auto px-6 py-6 overflow-x-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedAchievementIndex}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-8"
+                  >
+                    {achievements.map((achievement, index) => (
+                      <div key={index} className="border-b border-gray-200 last:border-b-0 pb-8 last:pb-0">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className="text-xl font-semibold text-gray-900">
+                            {achievement.title}
+                          </h3>
+                          {achievement.date && (
+                            <div className="flex items-center gap-1 text-sm text-gray-600">
+                              <Calendar className="w-4 h-4" />
+                              <span>{achievement.date}</span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-gray-700 mb-4 leading-relaxed">
+                          {achievement.description}
+                        </p>
+                        {achievement.images && achievement.images.length > 0 && (
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {achievement.images.map((img, imgIndex) => (
+                              <div key={imgIndex} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200">
+                                <Image
+                                  src={img}
+                                  alt={`${achievement.title} ${imgIndex + 1}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
-                      <p className="text-gray-700 mb-4 leading-relaxed">
-                        {achievement.description}
-                      </p>
-                      {achievement.images && achievement.images.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {achievement.images.map((img, imgIndex) => (
-                            <div key={imgIndex} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200">
-                              <Image
-                                src={img}
-                                alt={`${achievement.title} ${imgIndex + 1}`}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
               {/* Footer */}
@@ -547,7 +560,7 @@ const TeamMemberPage = () => {
       {/* Share Modal */}
       <AnimatePresence>
         {showShareModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4 overflow-y-auto pt-20 md:pt-24">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -621,3 +634,4 @@ const TeamMemberPage = () => {
 }
 
 export default TeamMemberPage
+
