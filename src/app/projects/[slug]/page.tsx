@@ -99,10 +99,8 @@ const ProjectDetailPage = () => {
         // Fetch similar projects
         await fetchSimilarProjects(projectData.id, projectData.category)
         
-        // Check if user liked this project (if authenticated)
-        if (session?.user) {
-          await checkLikeStatus(projectData.id)
-        }
+        // Check like status (no auth required)
+        await checkLikeStatus(projectData.id)
       } else {
         setError("Project not found")
       }
@@ -157,15 +155,6 @@ const ProjectDetailPage = () => {
 
   const handleLike = async () => {
     if (!project) return
-    
-    if (!session?.user) {
-      // Trigger Google sign-in directly
-      await signIn.social({
-        provider: "google",
-        callbackURL: `/projects/${slug}`
-      })
-      return
-    }
 
     try {
       setIsLiking(true)
@@ -179,12 +168,8 @@ const ProjectDetailPage = () => {
       if (data.success) {
         setIsLiked(data.data.liked)
         setLikesCount(data.data.likes)
-      } else if (data.error === "Authentication required") {
-        // Trigger Google sign-in directly
-        await signIn.social({
-          provider: "google",
-          callbackURL: `/projects/${slug}`
-        })
+      } else {
+        console.error("Error toggling like:", data.error)
       }
     } catch (error) {
       console.error("Error toggling like:", error)

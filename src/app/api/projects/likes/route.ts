@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { auth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
-// Toggle like (auth required)
+// Toggle like (no auth required - IP-based)
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: request.headers })
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Authentication required" },
-        { status: 401 }
-      )
-    }
-
     const { projectId } = await request.json()
     
     if (!projectId) {
@@ -25,11 +15,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user already liked this project
+    // Get IP address
+    const ipAddress = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request.headers.get('user-agent') || 'unknown'
+
+    // Check if this IP already liked this project
     const existingLike = await prisma.like.findFirst({
       where: {
-        userId: session.user.id,
-        projectId: projectId
+        projectId: projectId,
+        ipAddress: ipAddress
       }
     })
 
@@ -56,8 +52,9 @@ export async function POST(request: NextRequest) {
       // Like: create new like and increment count
       await prisma.like.create({
         data: {
-          userId: session.user.id,
-          projectId: projectId
+          projectId: projectId,
+          ipAddress: ipAddress,
+          userAgent: userAgent
         }
       })
       
@@ -110,18 +107,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Get like status (auth required)
+// Get like status (no auth required - IP-based)
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: request.headers })
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Authentication required" },
-        { status: 401 }
-      )
-    }
-
     const { searchParams } = new URL(request.url)
     const projectId = searchParams.get('projectId')
     
@@ -132,11 +120,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check if user liked this project
+    // Get IP address
+    const ipAddress = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown'
+
+    // Check if this IP liked this project
     const existingLike = await prisma.like.findFirst({
       where: {
-        userId: session.user.id,
-        projectId: projectId
+        projectId: projectId,
+        ipAddress: ipAddress
       }
     })
 

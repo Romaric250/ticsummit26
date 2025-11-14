@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-import { useSession, signIn } from "@/lib/auth-client"
 import { 
   ArrowLeft, 
   User, 
@@ -76,8 +75,6 @@ interface SimilarProject {
 const ProjectDetailPage = () => {
   const params = useParams()
   const slug = params.slug as string
-  const { data: session } = useSession()
-  
   const [project, setProject] = useState<Project | null>(null)
   const [similarProjects, setSimilarProjects] = useState<SimilarProject[]>([])
   const [loading, setLoading] = useState(true)
@@ -113,7 +110,7 @@ const ProjectDetailPage = () => {
         // Fetch similar projects
         await fetchSimilarProjects(projectData.id, projectData.category)
         
-        // Check if user liked this project (if authenticated)
+        // Check like status (no auth required)
         await checkLikeStatus(projectData.id)
       } else {
         setError("Project not found")
@@ -172,17 +169,7 @@ const ProjectDetailPage = () => {
 
   const handleLike = async () => {
     if (!project) return
-    
-    // Check if user is authenticated
-    if (!session?.user) {
-      // Trigger Google sign-in directly
-      await signIn.social({
-        provider: "google",
-        callbackURL: `/hall-of-fame/${slug}`
-      })
-      return
-    }
-    
+
     setIsLiking(true)
     try {
       const response = await fetch('/api/projects/likes', {
@@ -199,12 +186,6 @@ const ProjectDetailPage = () => {
         console.log('Like toggled successfully:', data.data)
         setLiked(data.data.liked)
         setLikesCount(data.data.likes)
-      } else if (data.error === "Authentication required") {
-        // Trigger Google sign-in directly
-        await signIn.social({
-          provider: "google",
-          callbackURL: `/hall-of-fame/${slug}`
-        })
       } else {
         console.error('Like toggle failed:', data.error)
       }

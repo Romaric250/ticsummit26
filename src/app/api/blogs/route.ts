@@ -59,9 +59,12 @@ export async function POST(request: NextRequest) {
       featured, 
       published, 
       publishedAt,
-      readTime 
+      readTime,
+      authorName 
     } = body
 
+    // If authorName is provided, use it and set authorId to null
+    // Otherwise, use the session user's ID
     const blogPost = await prisma.blogPost.create({
       data: {
         title,
@@ -75,7 +78,8 @@ export async function POST(request: NextRequest) {
         published: published || false,
         publishedAt: publishedAt ? new Date(publishedAt) : null,
         readTime,
-        authorId: session.user.id
+        authorName: authorName?.trim() || null,
+        authorId: authorName?.trim() ? null : session.user.id
       },
       include: {
         author: {

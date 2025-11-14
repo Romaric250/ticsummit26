@@ -39,7 +39,8 @@ interface BlogPostItem {
   readTime?: string
   createdAt: string
   updatedAt: string
-  author: { id: string; name: string | null; image: string | null }
+  author: { id: string; name: string | null; image: string | null } | null
+  authorName: string | null
 }
 
 const BlogPostPage = () => {
@@ -70,13 +71,11 @@ const BlogPostPage = () => {
           setPost(p)
           setLikeCount(p.likesCount || 0)
           
-          // Check like status if authenticated
-          if (session?.user) {
-            const likeStatusRes = await fetch(`/api/blogs/likes?blogId=${p.id}`)
-            const likeStatusData = await likeStatusRes.json()
-            if (likeStatusData.success) {
-              setIsLiked(likeStatusData.data.liked)
-            }
+          // Check like status (no auth required)
+          const likeStatusRes = await fetch(`/api/blogs/likes?blogId=${p.id}`)
+          const likeStatusData = await likeStatusRes.json()
+          if (likeStatusData.success) {
+            setIsLiked(likeStatusData.data.liked)
           }
           
           // increment views (no auth)
@@ -251,35 +250,19 @@ const BlogPostPage = () => {
   }
 
   const handleLike = async () => {
-    if (!session?.user) {
-      // Not authenticated - redirect to signup
-      try {
-        await signIn.social({
-          provider: "google",
-          callbackURL: `/blog/${slug}`
-        })
-      } catch (error) {
-        console.error("Sign in error:", error)
-        toast.error("Please sign in to like posts")
-      }
-      return
-    }
-
     try {
       const res = await fetch('/api/blogs/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ blogId: post.id })
       })
-      if (res.status === 401) {
-        toast.error("Please sign in to like posts")
-        return
-      }
       const json = await res.json()
       if (json?.success) {
         setIsLiked(json.data.liked)
         setLikeCount(json.data.likesCount)
         toast.success(json.data.liked ? "Post liked!" : "Post unliked.")
+      } else {
+        toast.error(json.error || "Failed to toggle like")
       }
     } catch (error) {
       console.error("Error toggling like:", error)
@@ -407,12 +390,16 @@ const BlogPostPage = () => {
                 {/* Meta Information */}
                 <div className="flex flex-wrap items-center gap-3 text-white/80 text-xs">
                   <div className="flex items-center space-x-2">
-                    <img
-                      src={post.author?.image || "https://placehold.co/80x80"}
-                      alt={post.author?.name || 'Author'}
-                      className="w-6 h-6 rounded-full"
-                    />
-                    <span className="font-medium text-white">{post.author?.name || 'Unknown Author'}</span>
+                    {post.author?.image && (
+                      <img
+                        src={post.author.image}
+                        alt={post.author.name || post.authorName || 'Author'}
+                        className="w-6 h-6 rounded-full"
+                      />
+                    )}
+                    <span className="font-medium text-white">
+                      {post.authorName || post.author?.name || 'Unknown Author'}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3 h-3" />

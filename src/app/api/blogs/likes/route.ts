@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { auth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
-// Toggle like (auth required)
+// Toggle like (no auth required - IP-based)
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: request.headers })
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Authentication required" },
-        { status: 401 }
-      )
-    }
-
     const { blogId } = await request.json()
 
     if (!blogId) {
@@ -25,8 +15,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get IP address
+    const fwd = request.headers.get("x-forwarded-for") || ""
+    const ip = (fwd.split(",")[0] || request.headers.get("x-real-ip") || (request as any).ip || "unknown").trim()
+    const userAgent = request.headers.get("user-agent") || undefined
+
     const existing = await prisma.blogLike.findFirst({
-      where: { blogId, userId: session.user.id }
+      where: { blogId, ipAddress: ip }
     })
 
     let likesCount
@@ -39,7 +34,13 @@ export async function POST(request: NextRequest) {
       })
       likesCount = updated.likesCount
     } else {
-      await prisma.blogLike.create({ data: { blogId, userId: session.user.id } })
+      await prisma.blogLike.create({ 
+        data: { 
+          blogId, 
+          ipAddress: ip,
+          userAgent 
+        } 
+      })
       const updated = await prisma.blogPost.update({
         where: { id: blogId },
         data: { likesCount: { increment: 1 } },
@@ -58,29 +59,39 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Get like status (auth required)
+// Get like status (no auth required - IP-based)
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: request.headers })
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: "Authentication required" },
-        { status: 401 }
-      )
-    }
     const { searchParams } = new URL(request.url)
     const blogId = searchParams.get("blogId")
+    
     if (!blogId) {
       return NextResponse.json(
         { success: false, error: "Blog ID is required" },
         { status: 400 }
       )
     }
+
+    // Get IP address
+    const fwd = request.headers.get("x-forwarded-for") || ""
+    const ip = (fwd.split(",")[0] || request.headers.get("x-real-ip") || (request as any).ip || "unknown").trim()
+
     const existing = await prisma.blogLike.findFirst({
-      where: { blogId, userId: session.user.id }
+      where: { blogId, ipAddress: ip }
     })
-    const post = await prisma.blogPost.findUnique({ where: { id: blogId }, select: { likesCount: true } })
-    return NextResponse.json({ success: true, data: { likesCount: post?.likesCount ?? 0, liked: !!existing } })
+    
+    const post = await prisma.blogPost.findUnique({ 
+      where: { id: blogId }, 
+      select: { likesCount: true } 
+    })
+    
+    return NextResponse.json({ 
+      success: true, 
+      data: { 
+        likesCount: post?.likesCount ?? 0, 
+        liked: !!existing 
+      } 
+    })
   } catch (error) {
     console.error("Error getting like status:", error)
     return NextResponse.json(

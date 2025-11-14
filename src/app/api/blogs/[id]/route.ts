@@ -74,9 +74,12 @@ export async function PUT(
       featured, 
       published, 
       publishedAt,
-      readTime 
+      readTime,
+      authorName 
     } = body
 
+    // If authorName is provided, use it and set authorId to null
+    // Otherwise, use the session user's ID
     const blogPost = await prisma.blogPost.update({
       where: { id },
       data: {
@@ -90,7 +93,9 @@ export async function PUT(
         featured,
         published,
         publishedAt: publishedAt ? new Date(publishedAt) : null,
-        readTime
+        readTime,
+        authorName: authorName?.trim() || null,
+        authorId: authorName?.trim() ? null : session.user.id
       },
       include: {
         author: {

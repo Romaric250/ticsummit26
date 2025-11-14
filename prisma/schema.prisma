@@ -322,8 +322,6 @@ model User {
   // Custom relations
   blogPosts    BlogPost[]
   comments     Comment[]
-  likes        Like[]
-  blogLikes    BlogLike[]
   projects     Project[]
   applications Application[]
 
@@ -472,11 +470,12 @@ model BlogPost {
   views       Int      @default(0)
   likesCount  Int      @default(0)
   readTime    String?
+  authorName  String?  // Custom author name (when authorId is not set)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  authorId String
-  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String?
+  author   User?      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments Comment[]
   blogLikes BlogLike[]
   blogViews BlogView[]
@@ -486,14 +485,13 @@ model BlogPost {
 model BlogLike {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
+  ipAddress String
+  userAgent String?
 
   blogId String @db.ObjectId
-  userId String
-
   blog   BlogPost @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([blogId, userId])
+  @@unique([blogId, ipAddress])
   @@map("blog_likes")
 }
 
@@ -536,12 +534,12 @@ model Comment {
 model Like {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
+  ipAddress String
+  userAgent String?
 
   projectId String @db.String
-  userId    String
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([projectId, userId])
+  @@unique([projectId, ipAddress])
   @@map("likes")
 }
 

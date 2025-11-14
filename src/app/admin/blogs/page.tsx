@@ -31,7 +31,8 @@ interface BlogPost {
     id: string
     name: string | null
     image: string | null
-  }
+  } | null
+  authorName: string | null
   _count?: {
     comments: number
     likes: number
@@ -295,7 +296,7 @@ export default function AdminBlogsPage() {
                       </div>
                       <p className="text-gray-600 mt-1 line-clamp-2">{post.excerpt}</p>
                       <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 flex-wrap">
-                        <span>{post.author.name || 'Unknown Author'}</span>
+                        <span>{post.authorName || post.author?.name || 'Unknown Author'}</span>
                         <span>•</span>
                         <span>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : new Date(post.createdAt).toLocaleDateString()}</span>
                         {post.published && (

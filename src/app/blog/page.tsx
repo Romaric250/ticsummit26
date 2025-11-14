@@ -38,7 +38,8 @@ interface BlogPostItem {
   readTime?: string
   createdAt: string
   updatedAt: string
-  author: { id: string; name: string | null; image: string | null }
+  author: { id: string; name: string | null; image: string | null } | null
+  authorName: string | null
 }
 
 const categories = [
