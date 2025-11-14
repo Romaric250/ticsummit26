@@ -169,11 +169,22 @@ const EditAlumniPage = ({ params }: { params: Promise<{ id: string }> }) => {
     }))
   }
 
+  const countWords = (text: string): number => {
+    if (!text || !text.trim()) return 0
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!formData.name || !formData.email || !formData.slug) {
       toast.error("Name, email, and slug are required")
+      return
+    }
+
+    const wordCount = countWords(formData.bio)
+    if (wordCount > 75) {
+      toast.error(`Biography must not exceed 75 words. Current: ${wordCount} words`)
       return
     }
 
@@ -447,15 +458,36 @@ const EditAlumniPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
             {/* Bio */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Biography</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Biography *</h2>
+                <span className={`text-sm font-medium ${
+                  countWords(formData.bio) > 75 
+                    ? 'text-red-600' 
+                    : countWords(formData.bio) > 0 
+                    ? 'text-green-600' 
+                    : 'text-gray-500'
+                }`}>
+                  {countWords(formData.bio)} / 75 words max
+                </span>
+              </div>
               
               <textarea
                 value={formData.bio}
                 onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                placeholder="Tell us about this alumni's journey and achievements..."
+                rows={6}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
+                  countWords(formData.bio) > 75 
+                    ? 'border-red-500' 
+                    : countWords(formData.bio) > 0 
+                    ? 'border-green-500' 
+                    : 'border-gray-300'
+                }`}
+                placeholder="Tell us about this alumni's journey and achievements... (Maximum 75 words)"
+                required
               />
+              <p className="text-xs text-gray-500 mt-2">
+                Biography must not exceed 75 words. Current word count: {countWords(formData.bio)}
+              </p>
             </div>
 
             {/* Achievements */}
@@ -576,7 +608,7 @@ const EditAlumniPage = ({ params }: { params: Promise<{ id: string }> }) => {
               </Link>
               <Button 
                 type="submit" 
-                disabled={submitting || !formData.name || !formData.email || !formData.slug}
+                disabled={submitting || !formData.name || !formData.email || !formData.slug || countWords(formData.bio) > 75 || countWords(formData.bio) === 0}
                 className="bg-gray-900 hover:bg-gray-800 text-white"
               >
                 {submitting ? (

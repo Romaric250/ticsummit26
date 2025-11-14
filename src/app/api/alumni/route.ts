@@ -74,6 +74,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate biography word count (must not exceed 75 words)
+    if (!bio || !bio.trim()) {
+      return NextResponse.json(
+        { success: false, error: "Biography is required" },
+        { status: 400 }
+      )
+    }
+    
+    const wordCount = bio.trim().split(/\s+/).filter(word => word.length > 0).length
+    if (wordCount > 75) {
+      return NextResponse.json(
+        { success: false, error: `Biography must not exceed 75 words. Current: ${wordCount} words` },
+        { status: 400 }
+      )
+    }
+
     // Check if email is already taken
     const existingEmail = await prisma.alumniProfile.findFirst({
       where: { email }

@@ -101,6 +101,23 @@ export async function PUT(
       }
     }
 
+    // Validate biography word count (must not exceed 75 words)
+    if (bio !== undefined) {
+      if (!bio || bio.trim() === "") {
+        return NextResponse.json(
+          { success: false, error: "Biography is required" },
+          { status: 400 }
+        )
+      }
+      const wordCount = bio.trim().split(/\s+/).filter(word => word.length > 0).length
+      if (wordCount > 75) {
+        return NextResponse.json(
+          { success: false, error: `Biography must not exceed 75 words. Current: ${wordCount} words` },
+          { status: 400 }
+        )
+      }
+    }
+
     const alumni = await prisma.alumniProfile.update({
       where: { slug: id },
       data: {
