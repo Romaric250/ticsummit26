@@ -286,6 +286,7 @@ const AlumniPage = () => {
                               alt={alumnus.name}
                               fill
                               className="object-cover"
+                              style={{ objectPosition: 'center top' }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-700 flex items-center justify-center">

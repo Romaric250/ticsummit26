@@ -168,7 +168,7 @@ const AmbassadorProfilePage = () => {
                         src={ambassador.profileImage}
                         alt={ambassador.name}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-700 flex items-center justify-center">
@@ -176,9 +176,7 @@ const AmbassadorProfilePage = () => {
                       </div>
                     )}
                   </div>
-                  <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
-                    <Trophy className="w-6 h-6 text-gray-900" />
-                  </div>
+            
                 </div>
               </div>
 

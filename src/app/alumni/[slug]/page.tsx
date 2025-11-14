@@ -184,7 +184,7 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
                         alt={alumnus.name}
                         width={400}
                         height={500}
-                        className="w-full h-96 object-cover rounded-2xl shadow-2xl"
+                        className="w-full h-96 object-contain rounded-2xl shadow-2xl"
                       />
                     ) : (
                       <div className="w-full h-96 bg-gray-700 rounded-2xl flex items-center justify-center">

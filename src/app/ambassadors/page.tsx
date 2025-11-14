@@ -125,10 +125,6 @@ const AmbassadorsPage = () => {
               transition={{ duration: 0.8 }}
               className="text-center text-white"
             >
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <Trophy className="w-5 h-5 text-white" />
-                <span className="text-sm font-medium">Student Ambassadors Program</span>
-              </div>
 
               {/* <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="block text-white">Our Amazing</span>
@@ -249,6 +245,7 @@ const AmbassadorsPage = () => {
                               alt={ambassador.name}
                               fill
                               className="object-cover"
+                              style={{ objectPosition: 'center top' }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
@@ -259,7 +256,6 @@ const AmbassadorsPage = () => {
                           
                           {/* TIC Points Badge */}
                           <div className="absolute top-4 left-4 bg-gray-900/90 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center space-x-1">
-                            <Star className="w-4 h-4" />
                             <span>{ambassador.ticPoints} Points</span>
                           </div>
 
@@ -272,8 +268,7 @@ const AmbassadorsPage = () => {
                           {ambassador.spotlightContributions && 
                            Array.isArray(ambassador.spotlightContributions) && 
                            ambassador.spotlightContributions.length > 0 && (
-                            <div className="absolute bottom-4 left-4 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
-                              <Sparkles className="w-3 h-3" />
+                            <div className="absolute bottom-4 left-4 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
                               <span>Featured</span>
                             </div>
                           )}
@@ -291,7 +286,6 @@ const AmbassadorsPage = () => {
                           )}
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-1 text-gray-600">
-                              <Star className="w-4 h-4" />
                               <span className="text-sm font-medium">{ambassador.ticPoints} TIC Points</span>
                             </div>
                             <Button variant="outline" size="sm">

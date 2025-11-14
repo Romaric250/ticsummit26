@@ -171,16 +171,6 @@ const MentorsPage = () => {
               transition={{ duration: 0.8 }}
               className="text-center text-white"
             >
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <Users className="w-5 h-5 text-white" />
-                <span className="text-sm font-medium">Expert Mentors Program</span>
-              </div>
-
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                <span className="block text-white">Our Expert</span>
-                <span className="block text-white">Mentors</span>
-              </h1>
-
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Connect with industry leaders, tech professionals, and innovators who guide and inspire young tech talents.
               </p>
@@ -314,6 +304,7 @@ const MentorsPage = () => {
                               alt={mentor.name}
                               fill
                               className="object-cover"
+                              style={{ objectPosition: 'center top' }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
