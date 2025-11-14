@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
 import { StructuredData } from "@/components/seo/StructuredData"
-import { generateBreadcrumbSchema } from "@/lib/seo"
+import { generateBreadcrumbSchema, generateFAQSchema } from "@/lib/seo"
 import Image from "next/image"
 import { SuccessStoryCard } from "@/components/techgirls-mentorship/SuccessStoryCard"
 import { SuccessStoryModal } from "@/components/techgirls-mentorship/SuccessStoryModal"
@@ -66,6 +66,9 @@ const TechGirlsMentorshipPage = () => {
   const [submitted, setSubmitted] = useState(false)
   const [selectedStoryIndex, setSelectedStoryIndex] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [successStories, setSuccessStories] = useState<any[]>([])
+  const [allStories, setAllStories] = useState<any[]>([])
+  const [storiesLoading, setStoriesLoading] = useState(true)
 
   // Animated stats
   const participantsCount = useCountUp(50, 2000)
@@ -76,41 +79,69 @@ const TechGirlsMentorshipPage = () => {
     participantsCount.setIsVisible(true)
     successRateCount.setIsVisible(true)
     programsCount.setIsVisible(true)
+    fetchSuccessStories()
   }, [])
+
+  const fetchSuccessStories = async () => {
+    try {
+      setStoriesLoading(true)
+      // Fetch 3 random stories for display
+      const response = await fetch("/api/techgirls-success-stories")
+      const data = await response.json()
+      
+      if (data.success) {
+        setSuccessStories(data.data)
+      }
+      
+      // Fetch all active stories for modal navigation
+      const allResponse = await fetch("/api/techgirls-success-stories?all=true")
+      const allData = await allResponse.json()
+      
+      if (allData.success) {
+        setAllStories(allData.data)
+      }
+    } catch (error) {
+      console.error("Error fetching success stories:", error)
+    } finally {
+      setStoriesLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     
-    const subject = "TechGirls Mentorship Program - Interest Expression"
-    const body = `
-Name: ${formData.name}
-Email: ${formData.email}
-Age: ${formData.age}
-School: ${formData.school}
-Current Grade: ${formData.currentGrade}
-Phone: ${formData.phone}
-
-Message:
-${formData.message || "I'm interested in joining the TechGirls Mentorship Program!"}
-    `.trim()
-    
-    const mailtoLink = `mailto:info@ticsummit.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-    window.location.href = mailtoLink
-    
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmitted(true)
-      setFormData({
-        name: "",
-        email: "",
-        age: "",
-        school: "",
-        currentGrade: "",
-        phone: "",
-        message: ""
+    try {
+      const response = await fetch("/api/techgirls-applicants", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       })
-    }, 1000)
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSubmitted(true)
+        setFormData({
+          name: "",
+          email: "",
+          age: "",
+          school: "",
+          currentGrade: "",
+          phone: "",
+          message: ""
+        })
+      } else {
+        alert(data.error || "Failed to submit application. Please try again.")
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      alert("An error occurred. Please try again later.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const benefits = [
@@ -136,45 +167,14 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
     }
   ]
 
-  const successStories = [
-    {
-      name: "Sarah M.",
-      age: 17,
-      school: "Bilingual Grammar School",
-      achievement: "Selected for TechGirls Program 2024",
-      quote: "The mentorship program prepared me perfectly for the TechGirls application process. I gained confidence and skills that helped me succeed.",
-      icon: "🎓",
-      fullStory: "Sarah joined the TechGirls Mentorship Program in 2023 with a passion for web development but limited experience. Through the program's structured mentorship and hands-on projects, she developed strong technical skills and leadership abilities. Her mentor helped her prepare a compelling application for the TechGirls Program, focusing on her unique perspective and growth journey. Sarah was selected as one of the program's success stories and is now pursuing Computer Science at university.",
-      programYear: "2023-2024",
-      currentStatus: "Studying Computer Science at University"
-    },
-    {
-      name: "Amina K.",
-      age: 16,
-      school: "Sacred Heart College",
-      achievement: "TechGirls Program Participant",
-      quote: "I learned so much about technology and leadership. The program opened doors I never imagined possible.",
-      icon: "💻",
-      fullStory: "Amina discovered her interest in technology through the mentorship program's workshops and coding sessions. She participated in several team projects that built her confidence and technical expertise. The program's focus on leadership development helped her become a team leader in her school's tech club. Amina successfully applied to the TechGirls Program and was accepted, representing Cameroon in the international exchange program.",
-      programYear: "2023-2024",
-      currentStatus: "TechGirls Program Participant 2024"
-    },
-    {
-      name: "Fatima B.",
-      age: 17,
-      school: "St. Joseph's College",
-      achievement: "TechGirls Program Graduate",
-      quote: "This program changed my life. I'm now studying Computer Science at university and pursuing my dreams in tech.",
-      icon: "🚀",
-      fullStory: "Fatima was one of the first participants in the TechGirls Mentorship Program. Starting with basic programming knowledge, she quickly advanced through the program's curriculum and mentorship sessions. Her dedication and the support from her mentor led to her acceptance into the TechGirls Program, where she excelled. After completing the program, Fatima returned to Cameroon with enhanced skills and a clear vision for her future. She's now studying Computer Science and mentoring other young girls interested in technology.",
-      programYear: "2022-2023",
-      currentStatus: "Computer Science Student & Mentor"
-    }
-  ]
-
   const openStoryModal = (index: number) => {
-    setSelectedStoryIndex(index)
-    setIsModalOpen(true)
+    // Find the index in allStories array
+    const story = successStories[index]
+    if (story) {
+      const allIndex = allStories.findIndex(s => s.id === story.id)
+      setSelectedStoryIndex(allIndex >= 0 ? allIndex : 0)
+      setIsModalOpen(true)
+    }
   }
 
   const closeStoryModal = () => {
@@ -183,14 +183,14 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
   }
 
   const nextStory = () => {
-    if (selectedStoryIndex !== null) {
-      setSelectedStoryIndex((selectedStoryIndex + 1) % successStories.length)
+    if (selectedStoryIndex !== null && allStories.length > 0) {
+      setSelectedStoryIndex((selectedStoryIndex + 1) % allStories.length)
     }
   }
 
   const prevStory = () => {
-    if (selectedStoryIndex !== null) {
-      setSelectedStoryIndex((selectedStoryIndex - 1 + successStories.length) % successStories.length)
+    if (selectedStoryIndex !== null && allStories.length > 0) {
+      setSelectedStoryIndex((selectedStoryIndex - 1 + allStories.length) % allStories.length)
     }
   }
 
@@ -228,12 +228,39 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
     },
   }
 
+  // FAQ structured data
+  const faqSchema = generateFAQSchema([
+    {
+      question: "What is the TechGirls Mentorship Program?",
+      answer: "The TechGirls Mentorship Program is designed to help young girls aged 15-17 explore technological opportunities, build personal and academic growth, and develop strong leadership skills. Our goal is to mentor and prepare participants to apply for the TechGirls Program — a fully funded U.S. Department of State exchange program."
+    },
+    {
+      question: "Who is eligible for the TechGirls Mentorship Program?",
+      answer: "Girls aged 15-17 who are currently in Lower Sixth or below and passionate about technology are eligible to apply for the program."
+    },
+    {
+      question: "What are the benefits of joining the TechGirls Mentorship Program?",
+      answer: "Participants will explore tech opportunities, build academic growth, develop leadership skills, and receive mentorship to prepare for the fully funded U.S. Department of State TechGirls Program exchange opportunity."
+    },
+    {
+      question: "How do I apply for the TechGirls Mentorship Program?",
+      answer: "You can express your interest by filling out the application form on this page. The form requires your name, email, age, school, current grade, phone number, and a message explaining your interest."
+    },
+    {
+      question: "What is the TechGirls Program?",
+      answer: "The TechGirls Program is a fully funded U.S. Department of State exchange program that empowers girls globally with technology, leadership, and career-building skills."
+    }
+  ])
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ticsummit.org'}/` },
+    { name: "TechGirls Mentorship", url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ticsummit.org'}/techgirls-mentorship` }
+  ])
+
   return (
     <Layout>
-      <StructuredData data={generateBreadcrumbSchema([
-        { name: "Home", url: "/" },
-        { name: "TechGirls Mentorship", url: "/techgirls-mentorship" }
-      ])} />
+      <StructuredData data={breadcrumbSchema} />
+      <StructuredData data={faqSchema} />
       
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section - Modern Split Layout */}
@@ -408,27 +435,40 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-              {successStories.map((story, index) => (
-                <SuccessStoryCard
-                  key={index}
-                  story={story}
-                  index={index}
-                  onClick={() => openStoryModal(index)}
-                />
-              ))}
-            </div>
+            {storiesLoading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                <p className="mt-4 text-white/80">Loading success stories...</p>
+              </div>
+            ) : successStories.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-white/80">No success stories available at the moment.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+                  {successStories.map((story, index) => (
+                    <SuccessStoryCard
+                      key={story.id || index}
+                      story={story}
+                      index={index}
+                      onClick={() => openStoryModal(index)}
+                    />
+                  ))}
+                </div>
 
-            {/* Success Story Modal */}
-            <SuccessStoryModal
-              isOpen={isModalOpen}
-              stories={successStories}
-              selectedIndex={selectedStoryIndex}
-              onClose={closeStoryModal}
-              onNext={nextStory}
-              onPrev={prevStory}
-              onSelectStory={setSelectedStoryIndex}
-            />
+                {/* Success Story Modal */}
+                <SuccessStoryModal
+                  isOpen={isModalOpen}
+                  stories={allStories}
+                  selectedIndex={selectedStoryIndex}
+                  onClose={closeStoryModal}
+                  onNext={nextStory}
+                  onPrev={prevStory}
+                  onSelectStory={setSelectedStoryIndex}
+                />
+              </>
+            )}
           </div>
         </section>
 
@@ -474,10 +514,10 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                       <CheckCircle className="w-16 h-16 text-gray-900 mx-auto mb-4" />
                     </motion.div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      Thank You!
+                      Application Submitted Successfully!
                     </h3>
                     <p className="text-gray-700">
-                      Your email client should open shortly. Please send the email to express your interest!
+                      Thank you for your interest in the TechGirls Mentorship Program. We have received your application and will review it shortly. You will be contacted via email or whatsapp with further information.
                     </p>
                   </motion.div>
                 ) : (
@@ -486,7 +526,7 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                       {[
                         { id: "name", label: "Full Name *", type: "text", placeholder: "Your full name", required: true },
                         { id: "email", label: "Email Address *", type: "email", placeholder: "your.email@example.com", required: true },
-                        { id: "age", label: "Age *", type: "number", placeholder: "15-17", required: true, min: 15, max: 17 },
+                        { id: "age", label: "Age *", type: "number", placeholder: "Enter your age", required: true },
                         { id: "phone", label: "Phone Number *", type: "tel", placeholder: "+237 XXX XXX XXX", required: true },
                         { id: "school", label: "School Name *", type: "text", placeholder: "Your school name", required: true },
                         { id: "currentGrade", label: "Current Grade *", type: "select", required: true, options: [ "Grade 10", "Grade 11", "Grade 12", "Other"] }
@@ -519,8 +559,8 @@ ${formData.message || "I'm interested in joining the TechGirls Mentorship Progra
                               type={field.type}
                               id={field.id}
                               required={field.required}
-                              min={field.min}
-                              max={field.max}
+                              {...('min' in field && typeof field.min === 'number' ? { min: field.min } : {})}
+                              {...('max' in field && typeof field.max === 'number' ? { max: field.max } : {})}
                               value={formData[field.id as keyof typeof formData]}
                               onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
                               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400 text-gray-900"

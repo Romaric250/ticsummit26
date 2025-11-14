@@ -60,6 +60,11 @@ const AdminSidebar = () => {
       icon: GraduationCap
     },
     {
+      name: "Tech Girls",
+      href: "/admin/applicants",
+      icon: Users
+    },
+    {
       name: "Minor Updates",
       href: "/admin/minor-updates",
       icon: Edit

@@ -16,11 +16,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Get counts
-    const [blogsCount, projectsCount, mentorsCount, alumniCount] = await Promise.all([
+    const [blogsCount, projectsCount, mentorsCount, alumniCount, applicantsCount] = await Promise.all([
       prisma.blogPost.count(),
       prisma.project.count(),
       prisma.mentorProfile.count(),
       prisma.alumniProfile.count(),
+      prisma.techGirlsApplicant.count(),
     ])
 
     // Get published blogs count
@@ -143,6 +144,7 @@ export async function GET(request: NextRequest) {
           projects: projectsCount,
           mentors: mentorsCount,
           alumni: alumniCount,
+          applicants: applicantsCount,
           totalViews: totalBlogViews._count.id + totalProjectViews._count.id,
           totalLikes: totalBlogLikes._count.id + totalProjectLikes._count.id,
         },

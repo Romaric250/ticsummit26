@@ -9,7 +9,7 @@ interface SuccessStory {
   school: string
   achievement: string
   quote: string
-  icon: string
+  profilePhoto?: string
   fullStory: string
   programYear: string
   currentStatus: string
@@ -103,9 +103,17 @@ export const SuccessStoryModal = ({
                 className="p-6 md:p-8 lg:p-12 overflow-x-hidden"
               >
                 <div className="text-center mb-6 md:mb-8">
-                  <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-4xl md:text-5xl">
-                    {currentStory.icon}
-                  </div>
+                  {currentStory.profilePhoto ? (
+                    <img 
+                      src={currentStory.profilePhoto} 
+                      alt={currentStory.name}
+                      className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover mx-auto mb-4 md:mb-6"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-3xl md:text-4xl font-semibold text-white">
+                      {currentStory.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <h3 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900">{currentStory.name}</h3>
                   <div className="text-gray-600 mb-4 text-sm md:text-base">
                     Age {currentStory.age} • {currentStory.school}

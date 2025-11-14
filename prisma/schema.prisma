@@ -626,6 +626,13 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum ApplicantStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
 // ===================== CONTENT MANAGEMENT =====================
 
 model FounderQuote {
@@ -670,6 +677,41 @@ model SiteStats {
   updatedAt   DateTime @updatedAt
 
   @@map("site_stats")
+}
+
+model TechGirlsApplicant {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String
+  age           String
+  phone         String
+  school        String
+  currentGrade  String
+  message       String?
+  status        ApplicantStatus @default(PENDING)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("techgirls_applicants")
+}
+
+model TechGirlsSuccessStory {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  age           Int
+  school        String
+  achievement   String
+  quote         String
+  profilePhoto  String?  // Profile photo URL
+  fullStory     String
+  programYear   String
+  currentStatus String
+  order         Int      @default(0) // For ordering stories
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("techgirls_success_stories")
 }
 
 model SiteFeature {

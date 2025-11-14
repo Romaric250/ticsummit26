@@ -52,6 +52,7 @@ const AdminDashboard = () => {
     projects: 0,
     mentors: 0,
     alumni: 0,
+    applicants: 0,
     totalViews: 0,
     totalLikes: 0,
   })
@@ -112,6 +113,14 @@ const AdminDashboard = () => {
       color: "text-primary",
       bgColor: "bg-primary/10",
       href: "/admin/alumni"
+    },
+    {
+      title: "TechGirls Applicants",
+      count: stats.applicants || 0,
+      icon: Users,
+      color: "text-primary",
+      bgColor: "bg-primary/10",
+      href: "/admin/applicants"
     }
   ]
 
