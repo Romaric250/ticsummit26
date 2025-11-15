@@ -129,7 +129,7 @@ const TeamsPage = () => {
                 TiC summit 2026 Team
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Meet the passionate individuals driving innovation and empowering the next generation of tech leaders this {new Date().getFullYear()}.
+                Meet the passionate individuals driving innovation and empowering the next generation of tech leaders this {new Date().getFullYear()+1}.
               </p>
             </motion.div>
           </div>
