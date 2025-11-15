@@ -125,14 +125,11 @@ const TeamsPage = () => {
               transition={{ duration: 0.6 }}
               className="text-center"
             >
-              <div className="flex items-center justify-center mb-4">
-                <Users className="w-12 h-12 text-white" />
-              </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Our Team
+                TiC summit 2026 Team
               </h1>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Meet the passionate individuals driving innovation and empowering the next generation of tech leaders
+                Meet the passionate individuals driving innovation and empowering the next generation of tech leaders this {new Date().getFullYear()}.
               </p>
             </motion.div>
           </div>
@@ -190,9 +187,9 @@ const TeamsPage = () => {
                           <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-900 transition-colors">
                             {member.name}
                           </h3>
-                          <p className="text-gray-600 text-sm font-medium">
+                          <span className="inline-block bg-gray-900 text-white text-sm font-medium px-4 py-1.5 rounded-full">
                             {member.role}
-                          </p>
+                          </span>
                         </div>
 
                         {/* Bio Preview */}

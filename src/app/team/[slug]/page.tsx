@@ -179,9 +179,9 @@ const TeamMemberPage = () => {
               className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center"
             >
               {/* Profile Image */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 lg:flex lg:justify-start">
                 <div className="relative w-full">
-                  <div className="relative w-full sm:w-80 md:w-96 aspect-square mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
+                  <div className="relative w-full sm:w-[32rem] md:w-[36rem] lg:w-[42rem] h-80 md:h-96 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
                     {member.imageUrl ? (
                       <Image
                         src={member.imageUrl}

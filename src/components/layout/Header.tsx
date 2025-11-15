@@ -92,8 +92,8 @@ const Header = () => {
                   href={item.href}
                   className={`flex items-center space-x-1 px-3 py-2 transition-colors relative ${
                     pathname === item.href 
-                      ? 'text-white bg-white/10 rounded-lg font-semibold text-sm' 
-                      : 'text-white hover:text-white text-sm'
+                      ? 'text-white bg-white/10 rounded-lg font-semibold text-base' 
+                      : 'text-white hover:text-white text-base'
                   }`}
                   onMouseEnter={() => item.hasDropdown && setIsMoreOpen(true)}
                   onMouseLeave={() => item.hasDropdown && setIsMoreOpen(false)}

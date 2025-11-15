@@ -199,12 +199,12 @@ const MentorProfilePage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center"
             >
               {/* Profile Image */}
               <div className="lg:col-span-1">
                 <div className="relative">
-                  <div className="w-64 h-64 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
+                  <div className="w-80 h-80 md:w-96 md:h-96 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
                     {mentor.profileImage ? (
                       <Image
                         src={mentor.profileImage}
@@ -218,9 +218,9 @@ const MentorProfilePage = () => {
                       </div>
                     )}
                   </div>
-                  <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
+                  {/* <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
                     <GraduationCap className="w-6 h-6 text-gray-900" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
