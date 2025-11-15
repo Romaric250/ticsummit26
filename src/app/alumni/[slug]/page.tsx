@@ -44,6 +44,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { toast } from "sonner"
 import { AlumniDetailSkeleton } from "@/components/ui/AlumniSkeleton"
+import { StructuredData } from "@/components/seo/StructuredData"
+import { generateBreadcrumbSchema, generateAlumniSchema } from "@/lib/seo"
 
 interface Alumni {
   id: string
@@ -160,8 +162,23 @@ const AlumniProfilePage = ({ params }: { params: Promise<{ slug: string }> }) =>
     )
   }
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Alumni', url: '/alumni' },
+    { name: alumnus.name, url: `/alumni/${alumnus.slug}` },
+  ])
+
+  const alumniSchema = generateAlumniSchema({
+    name: alumnus.name,
+    bio: alumnus.bio,
+    image: alumnus.profileImage,
+    slug: alumnus.slug,
+  })
+
   return (
     <Layout>
+      <StructuredData data={breadcrumbSchema} />
+      <StructuredData data={alumniSchema} />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative py-20 bg-gray-900 overflow-hidden">

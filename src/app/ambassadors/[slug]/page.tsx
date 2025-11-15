@@ -27,6 +27,8 @@ import Layout from "@/components/layout/Layout"
 import Link from "next/link"
 import Image from "next/image"
 import { toast } from "sonner"
+import { StructuredData } from "@/components/seo/StructuredData"
+import { generateBreadcrumbSchema, generateAmbassadorSchema } from "@/lib/seo"
 
 interface Ambassador {
   id: string
@@ -137,8 +139,24 @@ const AmbassadorProfilePage = () => {
     },
   }
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Ambassadors', url: '/ambassadors' },
+    { name: ambassador.name, url: `/ambassadors/${ambassador.slug}` },
+  ])
+
+  const ambassadorSchema = generateAmbassadorSchema({
+    name: ambassador.name,
+    bio: ambassador.bio,
+    school: ambassador.school,
+    image: ambassador.profileImage,
+    slug: ambassador.slug,
+  })
+
   return (
     <Layout>
+      <StructuredData data={breadcrumbSchema} />
+      <StructuredData data={ambassadorSchema} />
       <div className="min-h-screen bg-gray-50">
         {/* Back Button */}
         <div className="bg-white border-b border-gray-200">

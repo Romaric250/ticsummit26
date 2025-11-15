@@ -66,6 +66,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { toast } from "sonner"
 import { MentorDetailSkeleton } from "@/components/ui/MentorSkeleton"
+import { StructuredData } from "@/components/seo/StructuredData"
+import { generateBreadcrumbSchema, generateMentorSchema } from "@/lib/seo"
 
 interface Mentor {
   id: string
@@ -179,8 +181,26 @@ const MentorProfilePage = () => {
     },
   }
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Mentors', url: '/mentors' },
+    { name: mentor.name, url: `/mentors/${mentor.slug}` },
+  ])
+
+  const mentorSchema = generateMentorSchema({
+    name: mentor.name,
+    bio: mentor.bio,
+    specialties: mentor.specialties,
+    company: mentor.company,
+    location: mentor.location,
+    image: mentor.profileImage,
+    slug: mentor.slug,
+  })
+
   return (
     <Layout>
+      <StructuredData data={breadcrumbSchema} />
+      <StructuredData data={mentorSchema} />
       <div className="min-h-screen bg-gray-50">
         {/* Back Button */}
         <div className="bg-white border-b border-gray-200">

@@ -25,8 +25,11 @@ export async function generateMetadata({
     name: mentor.name,
     bio: mentor.bio || undefined,
     expertise: mentor.specialties,
+    specialties: mentor.specialties,
     slug: mentor.slug,
     image: mentor.profileImage || undefined,
+    company: mentor.company || undefined,
+    location: mentor.location || undefined,
   })
 }
 

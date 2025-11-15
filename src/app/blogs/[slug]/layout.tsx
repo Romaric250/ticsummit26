@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         createdAt: true,
         updatedAt: true,
         readTime: true,
+        authorName: true, // Include authorName field
         author: {
           select: {
             name: true,
@@ -41,6 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ...post,
       views: 0,
       likesCount: 0,
+      authorName: post.authorName || null, // Include authorName if available
       author: {
         id: '',
         name: post.author?.name,

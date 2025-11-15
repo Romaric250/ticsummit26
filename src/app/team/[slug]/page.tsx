@@ -28,7 +28,7 @@ import Layout from "@/components/layout/Layout"
 import Link from "next/link"
 import Image from "next/image"
 import { StructuredData } from "@/components/seo/StructuredData"
-import { generateBreadcrumbSchema, generatePersonSchema } from "@/lib/seo"
+import { generateBreadcrumbSchema, generateTeamMemberSchema } from "@/lib/seo"
 import { toast } from "sonner"
 
 interface TeamMember {
@@ -110,12 +110,16 @@ const TeamMemberPage = () => {
     { name: member?.name || "Team Member", url: `/team/${slug}` }
   ])
 
-  const personSchema = member ? generatePersonSchema({
+  const personSchema = member ? generateTeamMemberSchema({
     name: member.name,
-    jobTitle: member.role,
-    description: member.bio,
+    role: member.role,
+    bio: member.bio,
     image: member.imageUrl,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ticsummit.org'}/team/${member.slug}`
+    email: member.email,
+    linkedin: member.linkedin,
+    twitter: member.twitter,
+    github: member.github,
+    slug: member.slug,
   }) : null
 
   const containerVariants = {
