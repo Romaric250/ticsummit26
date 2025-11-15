@@ -44,7 +44,8 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
     featured: false,
     published: false,
     publishedAt: "",
-    readTime: ""
+    readTime: "",
+    authorName: ""
   })
 
   const categories = ["Technology", "AI", "Web Development", "Mobile", "Design", "Business", "Other"]

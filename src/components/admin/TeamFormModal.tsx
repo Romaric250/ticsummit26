@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Save, AlertCircle, Plus, Trash2, Calendar, MapPin, Award, Activity, Image as ImageIcon } from "lucide-react"
+import { Button } from "@/components/ui/Button"
 import { ImageUpload } from "@/components/ui/ImageUpload"
 import { MultipleImageUpload } from "@/components/ui/MultipleImageUpload"
 import { toast } from "sonner"

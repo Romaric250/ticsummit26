@@ -109,7 +109,7 @@ export async function PUT(
           { status: 400 }
         )
       }
-      const wordCount = bio.trim().split(/\s+/).filter(word => word.length > 0).length
+      const wordCount = bio.trim().split(/\s+/).filter((word: string) => word.length > 0).length
       if (wordCount > 75) {
         return NextResponse.json(
           { success: false, error: `Biography must not exceed 75 words. Current: ${wordCount} words` },
