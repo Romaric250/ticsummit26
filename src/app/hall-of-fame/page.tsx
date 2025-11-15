@@ -122,8 +122,13 @@ const HallOfFamePage = () => {
       const windowHeight = window.innerHeight
       const documentHeight = document.documentElement.scrollHeight
 
-      // Load more when user is 200px from bottom
-      if (scrollTop + windowHeight >= documentHeight - 200) {
+      // Calculate scroll percentage
+      const totalScrollableHeight = documentHeight - windowHeight
+      const scrolledHeight = scrollTop
+      const scrollPercentage = totalScrollableHeight > 0 ? scrolledHeight / totalScrollableHeight : 0
+
+      // Load more when user has scrolled 80% (20% remaining to bottom)
+      if (scrollPercentage >= 0.8) {
         loadMoreProjects()
       }
     }
@@ -136,14 +141,6 @@ const HallOfFamePage = () => {
 
   // Projects are already filtered by the API, no need for client-side filtering
   const filteredProjects = projects
-
-  if (loading) {
-    return (
-      <Layout>
-        <HallOfFameSkeleton count={6} />
-      </Layout>
-    )
-  }
 
   return (
     <Layout>
@@ -188,7 +185,52 @@ const HallOfFamePage = () => {
         {/* Projects Grid */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {filteredProjects.length === 0 ? (
+            {loading ? (
+              // Show skeleton only in projects area when loading
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, index) => (
+                  <div
+                    key={`loading-skeleton-${index}`}
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 animate-pulse"
+                  >
+                    {/* Image Skeleton */}
+                    <div className="h-40 bg-gray-200"></div>
+                    
+                    {/* Content Skeleton */}
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-6 bg-gray-200 rounded w-16"></div>
+                      </div>
+                      
+                      <div className="space-y-2 mb-3">
+                        <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                      </div>
+                      
+                      {/* Tech Stack Skeleton */}
+                      <div className="flex gap-2 mb-3">
+                        <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-14"></div>
+                      </div>
+                      
+                      {/* Stats Skeleton */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div className="h-4 bg-gray-200 rounded w-12"></div>
+                          <div className="h-4 bg-gray-200 rounded w-12"></div>
+                        </div>
+                        <div className="h-4 bg-gray-200 rounded w-16"></div>
+                      </div>
+                      
+                      {/* Button Skeleton */}
+                      <div className="h-10 bg-gray-200 rounded-lg"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredProjects.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -203,20 +245,21 @@ const HallOfFamePage = () => {
                 </p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredProjects.map((project, index) => (
-                  <motion.div
-                    key={project.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-2xl cursor-pointer"
-                    onClick={() => {
-                      if (project.slug) {
-                        window.location.href = `/hall-of-fame/${project.slug}`
-                      }
-                    }}
-                  >
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredProjects.map((project, index) => (
+                    <motion.div
+                      key={project.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-2xl cursor-pointer"
+                      onClick={() => {
+                        if (project.slug) {
+                          window.location.href = `/hall-of-fame/${project.slug}`
+                        }
+                      }}
+                    >
                     {/* Project Image */}
                     <div className="relative h-40 bg-gray-100 flex items-center justify-center">
                       {project.images && project.images.length > 0 ? (
@@ -356,56 +399,57 @@ const HallOfFamePage = () => {
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-
-            {/* Loading More Skeleton Cards */}
-            {loadingMore && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-                {[...Array(6)].map((_, index) => (
-                  <div
-                    key={`skeleton-${index}`}
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 animate-pulse"
-                  >
-                    {/* Image Skeleton */}
-                    <div className="h-40 bg-gray-200"></div>
-                    
-                    {/* Content Skeleton */}
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-6 bg-gray-200 rounded w-16"></div>
-                      </div>
-                      
-                      <div className="space-y-2 mb-3">
-                        <div className="h-4 bg-gray-200 rounded w-full"></div>
-                        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                      </div>
-                      
-                      {/* Tech Stack Skeleton */}
-                      <div className="flex gap-2 mb-3">
-                        <div className="h-6 bg-gray-200 rounded-full w-16"></div>
-                        <div className="h-6 bg-gray-200 rounded-full w-20"></div>
-                        <div className="h-6 bg-gray-200 rounded-full w-14"></div>
-                      </div>
-                      
-                      {/* Stats Skeleton */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex gap-4">
-                          <div className="h-4 bg-gray-200 rounded w-12"></div>
-                          <div className="h-4 bg-gray-200 rounded w-12"></div>
+                    </motion.div>
+                  ))}
+                  
+                  {/* Loading More Skeleton Cards - Only show when loading more pages, not during search */}
+                  {loadingMore && !loading && (
+                    <>
+                      {[...Array(6)].map((_, index) => (
+                        <div
+                          key={`skeleton-${index}`}
+                          className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 animate-pulse"
+                        >
+                          {/* Image Skeleton */}
+                          <div className="h-40 bg-gray-200"></div>
+                          
+                          {/* Content Skeleton */}
+                          <div className="p-6">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                              <div className="h-6 bg-gray-200 rounded w-16"></div>
+                            </div>
+                            
+                            <div className="space-y-2 mb-3">
+                              <div className="h-4 bg-gray-200 rounded w-full"></div>
+                              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                            </div>
+                            
+                            {/* Tech Stack Skeleton */}
+                            <div className="flex gap-2 mb-3">
+                              <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+                              <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                              <div className="h-6 bg-gray-200 rounded-full w-14"></div>
+                            </div>
+                            
+                            {/* Stats Skeleton */}
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex gap-4">
+                                <div className="h-4 bg-gray-200 rounded w-12"></div>
+                                <div className="h-4 bg-gray-200 rounded w-12"></div>
+                              </div>
+                              <div className="h-4 bg-gray-200 rounded w-16"></div>
+                            </div>
+                            
+                            {/* Button Skeleton */}
+                            <div className="h-10 bg-gray-200 rounded-lg"></div>
+                          </div>
                         </div>
-                        <div className="h-4 bg-gray-200 rounded w-16"></div>
-                      </div>
-                      
-                      {/* Button Skeleton */}
-                      <div className="h-10 bg-gray-200 rounded-lg"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </>
             )}
 
             {/* End of Results */}
