@@ -120,7 +120,7 @@ const BlogPage = () => {
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: '/' },
-    { name: 'Blog', url: '/blog' },
+    { name: 'Blogs', url: '/blog' },
   ])
 
   return (

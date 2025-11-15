@@ -296,7 +296,7 @@ const TechGirlsMentorshipPage = () => {
                 className="space-y-8 text-center"
               >
                 {/* Main Headline */}
-                <h1 className="text-5xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white">
                   Launch Your Tech-Driven Future Today
                 </h1>
 

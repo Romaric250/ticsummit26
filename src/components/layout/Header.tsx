@@ -42,7 +42,7 @@ const Header = () => {
     { name: "Mentors", href: "/mentors" },
     { name: "Team", href: "/team" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
-    { name: "Blog", href: "/blog" },
+    { name: "Blogs", href: "/blog" },
     { 
       name: "More", 
       href: "#",
@@ -168,7 +168,7 @@ const Header = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden bg-white/95 backdrop-blur-md border-t border-white/20 rounded-b-2xl"
+              className="lg:hidden bg-white/95 backdrop-blur-md border-t border-white/20 rounded-b-2xl max-h-[calc(100vh-4rem)] overflow-y-auto"
             >
               <div className="px-4 py-6 space-y-4">
                 {navItems.map((item) => (

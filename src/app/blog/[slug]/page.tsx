@@ -674,7 +674,7 @@ const BlogPostPage = () => {
           <StructuredData data={generateBlogPostSchema(post)} />
           <StructuredData data={generateBreadcrumbSchema([
             { name: 'Home', url: '/' },
-            { name: 'Blog', url: '/blog' },
+            { name: 'Blogs', url: '/blog' },
             { name: post.title, url: `/blog/${post.slug}` },
           ])} />
         </>

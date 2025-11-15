@@ -72,14 +72,20 @@ export function AuthButton() {
         {/* Dropdown Menu */}
         <AnimatePresence>
           {isDropdownOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-              onMouseLeave={() => setIsDropdownOpen(false)}
-            >
+            <>
+              {/* Backdrop for mobile */}
+              <div
+                className="fixed inset-0 z-40 lg:hidden"
+                onClick={() => setIsDropdownOpen(false)}
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute lg:absolute lg:top-full lg:right-0 lg:mt-2 fixed bottom-4 left-4 right-4 lg:left-auto lg:w-64 w-auto bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[60]"
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
               {/* User Info */}
               <div className="px-4 py-3 border-b border-gray-100">
                 <p className="font-semibold text-gray-900 text-sm">
@@ -98,7 +104,8 @@ export function AuthButton() {
                 <LogOut className="w-4 h-4" />
                 <span>Sign out</span>
               </button>
-            </motion.div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>

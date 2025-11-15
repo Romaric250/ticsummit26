@@ -9,6 +9,7 @@ import {
   Twitter, 
   Instagram, 
   Linkedin, 
+  Youtube,
   Mail, 
   Phone, 
   MapPin
@@ -44,7 +45,7 @@ const Footer = () => {
       { name: "Partners", href: "/" },
     ],
     resources: [
-      { name: "Blog", href: "/blog" },
+      { name: "Blogs", href: "/blog" },
       { name: "Resources", href: "/blog" },
       { name: "Hall of Fame", href: "/hall-of-fame" },
       { name: "FAQ", href: "/" },
@@ -59,8 +60,7 @@ const Footer = () => {
 
   const socialLinks = [
     { name: "Facebook", icon: Facebook, href: "https://www.facebook.com/TiCFoundation237/" },
-
-
+    {name:"Youtube", icon: Youtube, href: "https://www.youtube.com/@ticsummit"},
     { name: "LinkedIn", icon: Linkedin, href: "linkedin.com/showcase/tic-summit/" },
   ]
 
