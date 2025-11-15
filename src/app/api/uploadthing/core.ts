@@ -55,31 +55,44 @@ export const ourFileRouter = {
       return { uploadedBy: metadata.userId }
     }),
 
-      // Mentor profile image uploader
-      mentorImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
-        .middleware(async ({ req }) => {
-          // For now, allow all uploads - we can add auth later if needed
-          return { userId: "anonymous" }
-        })
-        .onUploadComplete(async ({ metadata, file }) => {
-          console.log("Mentor image upload complete for userId:", metadata.userId)
-          console.log("file url", file.url)
+  // Mentor profile image uploader
+  mentorImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      // For now, allow all uploads - we can add auth later if needed
+      return { userId: "anonymous" }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Mentor image upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
 
-          return { uploadedBy: metadata.userId }
-        }),
+      return { uploadedBy: metadata.userId }
+    }),
 
-      // Alumni profile image uploader
-      alumniImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
-        .middleware(async ({ req }) => {
-          // For now, allow all uploads - we can add auth later if needed
-          return { userId: "anonymous" }
-        })
-        .onUploadComplete(async ({ metadata, file }) => {
-          console.log("Alumni image upload complete for userId:", metadata.userId)
-          console.log("file url", file.url)
+  // Alumni profile image uploader
+  alumniImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      // For now, allow all uploads - we can add auth later if needed
+      return { userId: "anonymous" }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Alumni image upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
 
-          return { uploadedBy: metadata.userId }
-        }),
+      return { uploadedBy: metadata.userId }
+    }),
+
+  // Team member profile image uploader
+  teamImage: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      // For now, allow all uploads - we can add auth later if needed
+      return { userId: "anonymous" }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Team image upload complete for userId:", metadata.userId)
+      console.log("file url", file.url)
+
+      return { uploadedBy: metadata.userId }
+    }),
 
   // Document uploader (for project files, resumes, etc.)
   document: f({ 

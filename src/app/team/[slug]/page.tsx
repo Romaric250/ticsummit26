@@ -17,7 +17,11 @@ import {
   ChevronRight,
   Share2,
   ExternalLink,
-  Briefcase
+  Briefcase,
+  ArrowLeft,
+  Globe,
+  Building,
+  Users
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Layout from "@/components/layout/Layout"
@@ -169,6 +173,16 @@ const TeamMemberPage = () => {
       {personSchema && <StructuredData data={personSchema} />}
       
       <div className="min-h-screen bg-gray-50">
+        {/* Back Button */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Link href="/team" className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Team</span>
+            </Link>
+          </div>
+        </div>
+
         {/* Hero Section */}
         <section className="relative py-16 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,12 +190,12 @@ const TeamMemberPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center"
             >
               {/* Profile Image */}
-              <div className="lg:col-span-1 lg:flex lg:justify-start">
-                <div className="relative w-full">
-                  <div className="relative w-full sm:w-[32rem] md:w-[36rem] lg:w-[42rem] h-80 md:h-96 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="lg:col-span-1">
+                <div className="relative">
+                  <div className="w-80 h-80 md:w-96 md:h-96 mx-auto lg:mx-0 rounded-2xl overflow-hidden shadow-2xl">
                     {member.imageUrl ? (
                       <Image
                         src={member.imageUrl}
@@ -191,9 +205,7 @@ const TeamMemberPage = () => {
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-                        <span className="text-white font-bold text-6xl">
-                          {member.name.charAt(0).toUpperCase()}
-                        </span>
+                        <Users className="w-16 h-16 text-gray-400" />
                       </div>
                     )}
                   </div>
@@ -202,14 +214,15 @@ const TeamMemberPage = () => {
 
               {/* Profile Info */}
               <div className="lg:col-span-2 text-white">
-                <h1 className="text-4xl sm:text-5xl font-bold mb-4">{member.name}</h1>
-                <div className="inline-block mb-6">
+                <div className="inline-block mb-4">
                   <span className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-lg font-medium">
                     {member.role}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap gap-4 mb-8">
+                <h1 className="text-4xl sm:text-5xl font-bold mb-4">{member.name}</h1>
+
+                <div className="flex flex-wrap gap-4">
                   <Button 
                     variant="outline" 
                     className="border-white text-white hover:bg-transparent hover:text-white"
@@ -249,7 +262,7 @@ const TeamMemberPage = () => {
                     <Activity className="w-6 h-6 text-gray-900" />
                     <h2 className="text-2xl font-bold text-gray-900">Activities</h2>
                   </div>
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {activities.map((activity, index) => (
                       <div key={index} className="border-l-4 border-gray-900 pl-4">
                         <p className="text-gray-900 font-medium mb-2">
@@ -390,7 +403,7 @@ const TeamMemberPage = () => {
                         className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                       >
                         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                          <Linkedin className="w-4 h-4 text-white" />
+                          <span className="text-white font-bold text-sm">in</span>
                         </div>
                         <span className="text-gray-700">LinkedIn</span>
                         <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />
@@ -404,7 +417,7 @@ const TeamMemberPage = () => {
                         className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                       >
                         <div className="w-8 h-8 bg-blue-400 rounded-lg flex items-center justify-center">
-                          <Twitter className="w-4 h-4 text-white" />
+                          <span className="text-white font-bold text-sm">𝕏</span>
                         </div>
                         <span className="text-gray-700">Twitter</span>
                         <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />
@@ -417,8 +430,8 @@ const TeamMemberPage = () => {
                         rel="noopener noreferrer"
                         className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                       >
-                        <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                          <Github className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                          <span className="text-white font-bold text-sm">GH</span>
                         </div>
                         <span className="text-gray-700">GitHub</span>
                         <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />

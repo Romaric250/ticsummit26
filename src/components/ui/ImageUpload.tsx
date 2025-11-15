@@ -10,7 +10,7 @@ interface ImageUploadProps {
   value?: string
   onChange: (url: string) => void
   disabled?: boolean
-  endpoint?: "blogImage" | "projectImage" | "projectImages" | "profileImage" | "mentorImage" | "alumniImage"
+  endpoint?: "blogImage" | "projectImage" | "projectImages" | "profileImage" | "mentorImage" | "alumniImage" | "teamImage"
 }
 
 export const ImageUpload = ({ value, onChange, disabled, endpoint = "blogImage" }: ImageUploadProps) => {
@@ -25,7 +25,17 @@ export const ImageUpload = ({ value, onChange, disabled, endpoint = "blogImage" 
     },
     onUploadError: (error: Error) => {
       console.error("Upload error:", error)
+      console.error("Error details:", {
+        message: error.message,
+        name: error.name,
+        endpoint: endpoint
+      })
       setIsUploading(false)
+      // Show user-friendly error message
+      alert(`Upload failed: ${error.message || "Please check file size (max 4MB for profile images) and try again."}`)
+    },
+    onUploadBegin: (name) => {
+      console.log("Upload started for:", name, "endpoint:", endpoint)
     },
   })
 
@@ -46,7 +56,11 @@ export const ImageUpload = ({ value, onChange, disabled, endpoint = "blogImage" 
       "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp"]
     },
     maxFiles: 1,
-    maxSize: 8 * 1024 * 1024 // 8MB
+    maxSize: endpoint === "mentorImage" || endpoint === "alumniImage" || endpoint === "profileImage" 
+      ? 4 * 1024 * 1024 // 4MB for profile images
+      : endpoint === "teamImage"
+      ? 8 * 1024 * 1024 // 8MB for team images
+      : 8 * 1024 * 1024 // 8MB for blog/project images
   })
 
   const removeImage = () => {

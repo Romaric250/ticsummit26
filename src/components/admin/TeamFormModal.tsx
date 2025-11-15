@@ -290,7 +290,7 @@ export const TeamFormModal = ({ isOpen, onClose, onSuccess, member }: TeamFormMo
                     value={formData.imageUrl}
                     onChange={(url) => handleInputChange("imageUrl", url)}
                     disabled={loading}
-                    endpoint="mentorImage"
+                    endpoint="teamImage"
                   />
                 </div>
 
