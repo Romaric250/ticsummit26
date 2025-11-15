@@ -46,24 +46,64 @@ interface Project {
 const HallOfFameAdmin = () => {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [projectsLoading, setProjectsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingProjectId, setEditingProjectId] = useState<string | undefined>(undefined)
+  const [projectStats, setProjectStats] = useState({
+    total: 0,
+    winners: 0,
+    approved: 0,
+    underReview: 0
+  })
 
   const categories = ["all", "Web", "Mobile", "IoT", "AI", "Blockchain", "Other"]
   const statuses = ["all", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED", "FINALIST", "WINNER"]
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  // Fetch projects when filters change (using debounced search term)
   useEffect(() => {
     fetchProjects()
+  }, [debouncedSearchTerm, selectedCategory, selectedStatus])
+
+  useEffect(() => {
+    fetchProjectStats()
   }, [])
 
   const fetchProjects = async () => {
     try {
-      setLoading(true)
-      const response = await fetch("/api/projects")
+      // Use projectsLoading for search/filter updates, loading for initial load
+      if (projects.length === 0) {
+        setLoading(true)
+      } else {
+        setProjectsLoading(true)
+      }
+      
+      // Build query parameters for database search
+      const params = new URLSearchParams()
+      if (debouncedSearchTerm) {
+        params.append('search', debouncedSearchTerm)
+      }
+      if (selectedCategory !== 'all') {
+        params.append('category', selectedCategory)
+      }
+      if (selectedStatus !== 'all') {
+        params.append('status', selectedStatus)
+      }
+      
+      const response = await fetch(`/api/projects?${params.toString()}`)
       const data = await response.json()
       if (data.success) {
         setProjects(data.data)
@@ -73,6 +113,24 @@ const HallOfFameAdmin = () => {
       toast.error("Failed to load projects")
     } finally {
       setLoading(false)
+      setProjectsLoading(false)
+    }
+  }
+
+  const fetchProjectStats = async () => {
+    try {
+      const response = await fetch(`/api/admin/project-stats?t=${Date.now()}`)
+      const data = await response.json()
+      if (data.success && data.data) {
+        setProjectStats({
+          total: data.data.total,
+          winners: data.data.winners,
+          approved: data.data.approved,
+          underReview: data.data.underReview
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching project stats:", error)
     }
   }
 
@@ -85,6 +143,7 @@ const HallOfFameAdmin = () => {
       if (data.success) {
         setProjects(projects.filter(project => project.id !== id))
         setDeleteProjectId(null)
+        fetchProjectStats() // Refresh stats after deletion
         toast.success("Project deleted successfully")
       } else {
         toast.error("Failed to delete project")
@@ -95,14 +154,8 @@ const HallOfFameAdmin = () => {
     }
   }
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || project.category === selectedCategory
-    const matchesStatus = selectedStatus === "all" || project.status === selectedStatus
-    
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  // Projects are already filtered by search, category, and status from API
+  const filteredProjects = projects
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -201,7 +254,7 @@ const HallOfFameAdmin = () => {
                 <div className="flex flex-col items-center text-center">
                   <Trophy className="w-6 h-6 text-yellow-600 mb-1.5" />
                   <p className="text-xs font-medium text-yellow-600">Total Projects</p>
-                  <p className="text-xl font-bold text-yellow-900">{projects.length}</p>
+                  <p className="text-xl font-bold text-yellow-900">{projectStats.total}</p>
                 </div>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 border border-purple-200">
@@ -209,7 +262,7 @@ const HallOfFameAdmin = () => {
                   <Star className="w-6 h-6 text-purple-600 mb-1.5" />
                   <p className="text-xs font-medium text-purple-600">Winners</p>
                   <p className="text-xl font-bold text-purple-900">
-                    {projects.filter(p => p.status === "WINNER").length}
+                    {projectStats.winners}
                   </p>
                 </div>
               </div>
@@ -218,7 +271,7 @@ const HallOfFameAdmin = () => {
                   <Award className="w-6 h-6 text-green-600 mb-1.5" />
                   <p className="text-xs font-medium text-green-600">Approved</p>
                   <p className="text-xl font-bold text-green-900">
-                    {projects.filter(p => p.status === "APPROVED").length}
+                    {projectStats.approved}
                   </p>
                 </div>
               </div>
@@ -227,7 +280,7 @@ const HallOfFameAdmin = () => {
                   <Eye className="w-6 h-6 text-gray-600 mb-1.5" />
                   <p className="text-xs font-medium text-gray-600">Under Review</p>
                   <p className="text-xl font-bold text-gray-900">
-                    {projects.filter(p => p.status === "UNDER_REVIEW").length}
+                    {projectStats.underReview}
                   </p>
                 </div>
               </div>
@@ -247,6 +300,11 @@ const HallOfFameAdmin = () => {
                   placeholder="Search projects..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                    }
+                  }}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-gray-900"
                 />
               </div>
@@ -288,7 +346,14 @@ const HallOfFameAdmin = () => {
 
         {/* Projects List */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          {filteredProjects.length === 0 ? (
+          {loading ? (
+            <div className="bg-white rounded-lg shadow-sm p-12">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                <p className="mt-4 text-gray-600">Loading projects...</p>
+              </div>
+            </div>
+          ) : filteredProjects.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm p-12">
               <div className="text-center">
                 <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -311,7 +376,15 @@ const HallOfFameAdmin = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden relative">
+              {projectsLoading && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                    <p className="mt-2 text-sm text-gray-600">Searching...</p>
+                  </div>
+                </div>
+              )}
               <div className="divide-y divide-gray-200">
                 {filteredProjects.map((project, index) => (
                   <motion.div
@@ -493,6 +566,7 @@ const HallOfFameAdmin = () => {
           }}
           onSuccess={() => {
             fetchProjects()
+            fetchProjectStats()
           }}
           projectId={editingProjectId}
         />

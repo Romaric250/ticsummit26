@@ -15,6 +15,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Prevent caching to ensure fresh data
+    const headers = new Headers()
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    headers.set('Pragma', 'no-cache')
+    headers.set('Expires', '0')
+
     // Get counts
     const [blogsCount, projectsCount, mentorsCount, alumniCount, applicantsCount] = await Promise.all([
       prisma.blogPost.count(),
@@ -161,7 +167,7 @@ export async function GET(request: NextRequest) {
           })),
         }
       }
-    })
+    }, { headers })
   } catch (error) {
     console.error("Error fetching admin stats:", error)
     return NextResponse.json(

@@ -10,7 +10,8 @@ import {
   Eye,
   Heart,
   BarChart3,
-  Loader2
+  Loader2,
+  RefreshCw
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
@@ -46,6 +47,16 @@ interface AdminStats {
   }
 }
 
+interface ProjectStatusCounts {
+  total: number
+  winners: number
+  approved: number
+  underReview: number
+  finalists: number
+  submitted: number
+  rejected: number
+}
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({
     blogs: 0,
@@ -58,16 +69,27 @@ const AdminDashboard = () => {
     totalLikes: 0,
   })
   const [chartData, setChartData] = useState<AdminStats["charts"] | null>(null)
+  const [projectStatusCounts, setProjectStatusCounts] = useState<ProjectStatusCounts>({
+    total: 0,
+    winners: 0,
+    approved: 0,
+    underReview: 0,
+    finalists: 0,
+    submitted: 0,
+    rejected: 0
+  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchStats()
+    fetchProjectStats()
   }, [])
 
   const fetchStats = async () => {
     try {
       setLoading(true)
-      const response = await fetch("/api/admin/stats")
+      // Add timestamp to prevent caching
+      const response = await fetch(`/api/admin/stats?t=${Date.now()}`)
       const data = await response.json()
 
       if (data.success && data.data) {
@@ -79,6 +101,32 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchProjectStats = async () => {
+    try {
+      // Fetch project status counts from dedicated API
+      const response = await fetch(`/api/admin/project-stats?t=${Date.now()}`)
+      const data = await response.json()
+
+      if (data.success && data.data) {
+        setProjectStatusCounts({
+          total: data.data.total,
+          winners: data.data.winners,
+          approved: data.data.approved,
+          underReview: data.data.underReview,
+          finalists: data.data.finalists,
+          submitted: data.data.submitted,
+          rejected: data.data.rejected,
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching project stats:", error)
+    }
+  }
+
+  const refreshAllStats = async () => {
+    await Promise.all([fetchStats(), fetchProjectStats()])
   }
 
   const statCards = [
@@ -214,10 +262,21 @@ const AdminDashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="flex items-center justify-between"
             >
               <p className="text-gray-600">
                 Overview of your TIC Summit content and analytics
               </p>
+              <Button
+                onClick={refreshAllStats}
+                disabled={loading}
+                variant="outline"
+                size="sm"
+                className="cursor-pointer"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh Stats
+              </Button>
             </motion.div>
           </div>
         </div>
@@ -271,11 +330,47 @@ const AdminDashboard = () => {
             })}
           </motion.div>
 
-          {/* Additional Stats */}
+          {/* Project Status Breakdown */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm mb-8"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Trophy className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Project Status Breakdown</h2>
+                <p className="text-sm text-gray-600">Current distribution of projects</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <p className="text-3xl font-bold text-gray-900">{projectStatusCounts.total}</p>
+                <p className="text-sm text-gray-600 mt-1">Total Projects</p>
+              </div>
+              <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                <p className="text-3xl font-bold text-yellow-700">{projectStatusCounts.winners}</p>
+                <p className="text-sm text-gray-600 mt-1">Winners</p>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <p className="text-3xl font-bold text-green-700">{projectStatusCounts.approved}</p>
+                <p className="text-sm text-gray-600 mt-1">Approved</p>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <p className="text-3xl font-bold text-blue-700">{projectStatusCounts.underReview}</p>
+                <p className="text-sm text-gray-600 mt-1">Under Review</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Additional Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
           >
             <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">

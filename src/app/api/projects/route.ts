@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, ProjectStatus } from "@prisma/client"
 import { auth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
@@ -40,19 +40,33 @@ export async function GET(request: NextRequest) {
       const skip = (page - 1) * limit
       const search = searchParams.get('search') || ''
       const category = searchParams.get('category') || ''
+      const status = searchParams.get('status') || ''
       
-      // Build category filter
-      const categoryFilter: any = {}
+      // Build where clause for database filtering
+      const whereClause: any = {}
+      
       if (category && category !== 'all') {
-        categoryFilter.category = category
+        whereClause.category = category
+      }
+      
+      if (status && status !== 'all') {
+        whereClause.status = status as ProjectStatus
+      }
+      
+      // Database-level search for title and description
+      if (search) {
+        whereClause.OR = [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } }
+        ]
       }
       
       // Get total count for all projects (for placeholder)
       const totalCount = await prisma.project.count({})
       
-      // Get all projects (we'll filter search client-side to include members)
-      const allProjects = await prisma.project.findMany({
-        where: Object.keys(categoryFilter).length > 0 ? categoryFilter : undefined,
+      // Get projects with database filtering
+      let dbFilteredProjects = await prisma.project.findMany({
+        where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
         orderBy: { createdAt: "desc" },
         include: {
           author: {
@@ -65,24 +79,50 @@ export async function GET(request: NextRequest) {
         }
       })
 
-      // Filter by search term (title, description, or members)
-      let filteredProjects = allProjects
+      // If searching, also find projects matching members (since members is an array field)
+      let memberMatchedProjects: typeof dbFilteredProjects = []
       if (search) {
         const searchLower = search.toLowerCase()
-        filteredProjects = allProjects.filter(p => {
-          // Check if search matches title
-          const matchesTitle = p.title.toLowerCase().includes(searchLower)
-          
-          // Check if search matches description
-          const matchesDescription = p.description.toLowerCase().includes(searchLower)
-          
-          // Check if search matches any member name
-          const matchesMembers = p.members && Array.isArray(p.members) && 
+        // Get all projects (without search filter) to check members
+        const memberSearchWhere: any = {}
+        if (category && category !== 'all') {
+          memberSearchWhere.category = category
+        }
+        if (status && status !== 'all') {
+          memberSearchWhere.status = status as ProjectStatus
+        }
+        const allProjectsForMemberSearch = await prisma.project.findMany({
+          where: Object.keys(memberSearchWhere).length > 0 ? memberSearchWhere : undefined,
+          orderBy: { createdAt: "desc" },
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                image: true
+              }
+            }
+          }
+        })
+        
+        // Filter by members
+        memberMatchedProjects = allProjectsForMemberSearch.filter(p => {
+          return p.members && Array.isArray(p.members) && 
             p.members.some(member => member.toLowerCase().includes(searchLower))
-          
-          return matchesTitle || matchesDescription || matchesMembers
         })
       }
+
+      // Combine DB results with member matches, removing duplicates
+      const projectIds = new Set(dbFilteredProjects.map(p => p.id))
+      const combinedProjects = [...dbFilteredProjects]
+      memberMatchedProjects.forEach(p => {
+        if (!projectIds.has(p.id)) {
+          combinedProjects.push(p)
+          projectIds.add(p.id)
+        }
+      })
+      
+      const filteredProjects = combinedProjects
 
       // Separate projects with images and without images
       const projectsWithImages = filteredProjects.filter(p => p.images && Array.isArray(p.images) && p.images.length > 0)
