@@ -324,153 +324,10 @@ const Schedule26Page = () => {
             </div>
           </div>
         </section>
-
-        {/* Current Phase Section */}
-        <section className="py-8 sm:py-12 md:py-16 bg-gray-900" id="current-phase">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              {/* LIVE NOW Badge */}
-              <div className="inline-block bg-gray-800 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium mb-4 sm:mb-6">
-                LIVE NOW
-              </div>
-              
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-8 px-4">
-                {activePhases.length > 1 ? 'Current Phases' : 'Current Phase'}
-              </h2>
-              
-              {/* Navigation for multiple active phases */}
-              {activePhases.length > 1 && (
-                <div className="flex justify-center gap-2 mb-6 px-4">
-                  {activePhases.map((phaseIndex, idx) => (
-                    <button
-                      key={phaseIndex}
-                      onClick={() => setActivePhase(phaseIndex)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        activePhase === phaseIndex
-                          ? 'bg-white text-gray-900'
-                          : 'bg-white/20 text-white hover:bg-white/30'
-                      }`}
-                    >
-                      Phase {idx + 1}: {timeline[phaseIndex]?.title}
-                    </button>
-                  ))}
-                </div>
-              )}
-              
-              {/* Current Phase Card */}
-              <div className="max-w-4xl mx-auto relative overflow-hidden">
-                {/* Border */}
-                <div
-                  className="absolute inset-0 rounded-xl sm:rounded-2xl"
-                  style={{
-                    padding: "2px",
-                    background: "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)",
-                    backgroundSize: "400% 400%"
-                  }}
-                >
-                  <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-gray-200 relative">
-                    {/* Content */}
-                    <div className="relative z-10">
-                  {/* Phase Header */}
-                  {timeline.length > 0 && timeline[activePhase] && (
-                    <>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 ${timeline[activePhase]?.color || 'bg-gray-900'} rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0`}>
-                      {(() => {
-                        const IconComponent = timeline[activePhase]?.icon || BookOpen
-                        return <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
-                      })()}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{timeline[activePhase]?.title || 'Current Phase'}</h3>
-                      <p className="text-sm sm:text-base text-gray-600 mt-1">{timeline[activePhase]?.duration || ''}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Description */}
-                  <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
-                    {timeline[activePhase]?.description || 'No description available'}
-                  </p>
-                  
-                  {/* Stats */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                    <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 text-center">
-                      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">12+</div>
-                      <div className="text-gray-600 text-xs sm:text-sm">Schools Visited</div>
-                    </div>
-                    <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 text-center">
-                      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">2,500+</div>
-                      <div className="text-gray-600 text-xs sm:text-sm">Students Reached</div>
-                    </div>
-                    <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 text-center sm:col-span-2 lg:col-span-1">
-                      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">18</div>
-                      <div className="text-gray-600 text-xs sm:text-sm">Days Remaining</div>
-                    </div>
-                  </div>
-                  
-                  {/* Activities */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                    {(timeline[activePhase]?.details || []).map((detail, index) => (
-                      <div key={index} className="flex items-start space-x-2 sm:space-x-3 bg-gray-100 rounded-lg p-3 sm:p-4">
-                        <div className={`w-2 h-2 rounded-full mt-1.5 sm:mt-2 flex-shrink-0 ${(timeline[activePhase]?.color || 'bg-gray-900').replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
-                        <span className="text-gray-700 text-xs sm:text-sm leading-relaxed">{detail}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="flex justify-center">
-                    <Button 
-                      className="bg-gray-900 hover:bg-gray-800 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base"
-                      onClick={() => {
-                        const emailSubject = 'TIC Summit 2026 Volunteer Application'
-                        const emailBody = `Dear TIC Summit Team,
-
-I am writing to express my interest in volunteering for TIC Summit 2026.
-
-Personal Information:
-- Name: [Your Full Name]
-- Email: [Your Email Address]
-- Phone: [Your Phone Number]
-
-Volunteer Application Details:
-- Preferred Role: [e.g., Event Coordinator, Mentor, Technical Support, etc.]
-
-Relevant Experience:
-[Briefly describe your relevant experience, skills, or background]
-
-Motivation:
-[Tell us what motivates you to volunteer for TIC Summit 2026]
-
-Availability:
-[When are you available? (e.g., Weekends, Evenings, Specific dates...)]
-
-I am excited about the opportunity to contribute to TIC Summit 2026 and help make it a success. I look forward to hearing from you.
-
-Best regards,
-[Your Name]
-[Your Email]
-[Your Phone Number]`
-                        const mailtoLink = `mailto:info@ticsummit.org?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`
-                        window.open(mailtoLink)
-                      }}
-                    >
-                      Do you want to volunteer? Apply here
-                    </Button>
-                  </div>
-                  </>
-                  )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
+      
         {/* Call to Action */}
-        <section className="py-8 sm:py-12 md:py-16 pb-24 sm:pb-32 md:pb-48 bg-gray-900">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-4 sm:py-12 md:py-6 pb-24 sm:pb-32 md:pb-20 bg-gray-900 min-h-[200px] sm:min-h-[500px] flex items-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="text-center">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 px-4">Ready to Join the Journey?</h2>
               <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
@@ -513,8 +370,9 @@ Best regards,
                     window.open(mailtoLink)
                   }}
                 >
-                  Do you want to volunteer? Apply here
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  Do you want to volunteer?
+                  <span className="ml-2 font-bold bg-white text-gray-900 px-2 py-1 rounded-md"> Apply here</span>
+                  
                 </Button>
               </div>
             </div>
