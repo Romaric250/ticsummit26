@@ -38,7 +38,7 @@ const Header = () => {
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Schedule26", href: "/schedule26" },
+    { name: "Techgirls", href: "/techgirls-mentorship" },
     { name: "Mentors", href: "/mentors" },
     { name: "Team", href: "/team" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
@@ -48,8 +48,8 @@ const Header = () => {
       href: "#",
       hasDropdown: true,
       dropdownItems: [
+        { name: "Schedule26", href: "/schedule26" },
         { name: "Ambassadors", href: "/ambassadors" },
-        { name: "TechGirls Mentorship", href: "/techgirls-mentorship" },
         { name: "Alumni", href: "/alumni" },
         ...((session?.user as any)?.role === "ADMIN" ? [{ name: "Admin Dashboard", href: "/admin" }] : [])
       ]

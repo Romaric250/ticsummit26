@@ -201,52 +201,52 @@ const Schedule26Page = () => {
     <Layout>
       <div className="min-h-screen bg-gray-50 pb-24">
         {/* Hero Section */}
-        <section className="relative py-20 bg-gray-900 overflow-hidden">
+        <section className="relative py-12 sm:py-16 md:py-20 bg-gray-900 overflow-hidden">
           {/* Background Elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
-            <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+            <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl hidden sm:block" />
+            <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full blur-xl hidden sm:block" />
             <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
           </div>
 
-          <div className="container mx-auto px-4 sm:px-6 lg:px-2 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center text-white">
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <Calendar className="w-5 h-5 text-white" />
-                <span className="text-sm font-medium">TIC Summit 2026 Timeline</span>
+              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2 mb-4 sm:mb-6">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                <span className="text-xs sm:text-sm font-medium">TIC Summit 2026 Timeline</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* Timeline Overview */}
-        <section className="py-16 bg-white">
+        <section className="py-8 sm:py-12 md:py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Timeline Overview</h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4 px-4">Timeline Overview</h2>
+              <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
                 Visual representation of the complete TIC Summit 2026 journey
               </p>
             </div>
 
             {/* Timeline */}
             <div className="relative max-w-4xl mx-auto">
-              {/* Timeline Line */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-300"></div>
+              {/* Timeline Line - Hidden on mobile, visible on md+ */}
+              <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-300"></div>
               
               {/* Timeline Items */}
-              <div className="space-y-16">
+              <div className="space-y-8 md:space-y-16">
                 {timeline.map((phase, index) => {
                   const isActive = phase.status === "active"
                   return (
                   <div
                     key={phase.id}
-                    className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
+                    className={`flex flex-col md:flex-row items-start md:items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                   >
-                    {/* Timeline Card */}
-                    <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
+                    {/* Timeline Card - Full width on mobile, 5/12 on desktop */}
+                    <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-8' : 'md:pl-8'} order-2 md:order-1`}>
                       <div 
-                        className={`rounded-2xl p-6 shadow-xl border-2 hover:shadow-2xl transition-shadow duration-300 ${
+                        className={`rounded-2xl p-4 sm:p-6 shadow-xl border-2 hover:shadow-2xl transition-shadow duration-300 ${
                           isActive 
                             ? 'bg-gray-100 border-gray-900 ring-4 ring-gray-300 ring-opacity-50' 
                             : 'bg-white border-gray-200'
@@ -254,14 +254,14 @@ const Schedule26Page = () => {
                       >
                         {/* Active Badge */}
                         {isActive && (
-                          <div className="inline-block bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-bold mb-4 mr-2">
+                          <div className="inline-block bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-bold mb-3 sm:mb-4 mr-2">
                             LIVE NOW
                           </div>
                         )}
                         
                         {/* Date Badge */}
                         <div 
-                          className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 ${
+                          className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 ${
                             isActive ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700'
                           }`}
                         >
@@ -269,12 +269,12 @@ const Schedule26Page = () => {
                         </div>
                         
                         {/* Title */}
-                        <h3 className="text-2xl font-bold mb-3 text-gray-900">
+                        <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">
                           {phase.title}
                         </h3>
                         
                         {/* Description */}
-                        <p className="text-gray-600 mb-4">
+                        <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
                           {phase.description}
                         </p>
                         
@@ -285,29 +285,31 @@ const Schedule26Page = () => {
                               key={detailIndex} 
                               className="flex items-center space-x-2"
                             >
-                              <div className={`w-2 h-2 rounded-full ${phase.color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
-                              <span className="text-gray-600 text-sm">{detail}</span>
+                              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${phase.color.replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
+                              <span className="text-gray-600 text-xs sm:text-sm">{detail}</span>
                             </div>
                           ))}
                         </div>
                       </div>
                     </div>
                     
-                    {/* Timeline Node */}
-                    <div className="flex-shrink-0 w-16 h-16 flex items-center justify-center relative">
+                    {/* Timeline Node - Positioned differently on mobile */}
+                    <div className={`flex-shrink-0 w-12 h-12 md:w-16 md:h-16 flex items-center justify-center relative order-1 md:order-2 mb-4 md:mb-0 ${index % 2 === 0 ? 'self-start md:self-center' : 'self-start md:self-center'}`}>
                       <div 
-                        className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg ${
+                        className={`w-10 h-10 md:w-12 md:h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg ${
                           isActive ? 'ring-4 ring-gray-400 ring-offset-2' : ''
                         }`}
                       >
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-white font-bold text-sm md:text-lg">
                           {index + 1}
                         </span>
                       </div>
+                      {/* Mobile timeline line */}
+                      <div className="md:hidden absolute left-1/2 top-full transform -translate-x-1/2 w-0.5 h-8 bg-gray-300"></div>
                     </div>
                     
-                    {/* Spacer */}
-                    <div className="w-5/12"></div>
+                    {/* Spacer - Hidden on mobile */}
+                    <div className="hidden md:block w-5/12 order-3"></div>
                   </div>
                   )
                 })}
@@ -317,73 +319,73 @@ const Schedule26Page = () => {
         </section>
 
         {/* Current Phase Section */}
-        <section className="py-16 bg-gray-900" id="current-phase">
+        <section className="py-8 sm:py-12 md:py-16 bg-gray-900" id="current-phase">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               {/* LIVE NOW Badge */}
-              <div className="inline-block bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium mb-6">
+              <div className="inline-block bg-gray-800 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                 LIVE NOW
               </div>
               
-              <h2 className="text-4xl font-bold text-white mb-8">Current Phase</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-8 px-4">Current Phase</h2>
               
               {/* Current Phase Card */}
               <div className="max-w-4xl mx-auto relative overflow-hidden">
                 {/* Border */}
                 <div
-                  className="absolute inset-0 rounded-2xl"
+                  className="absolute inset-0 rounded-xl sm:rounded-2xl"
                   style={{
                     padding: "2px",
                     background: "linear-gradient(45deg, #111827, #374151, #6b7280, #111827)",
                     backgroundSize: "400% 400%"
                   }}
                 >
-                  <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-200 relative">
+                  <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-gray-200 relative">
                     {/* Content */}
                     <div className="relative z-10">
                   {/* Phase Header */}
                   {timeline.length > 0 && timeline[activePhase] && (
                     <>
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className={`w-16 h-16 ${timeline[activePhase]?.color || 'bg-gray-900'} rounded-2xl flex items-center justify-center`}>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 ${timeline[activePhase]?.color || 'bg-gray-900'} rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0`}>
                       {(() => {
                         const IconComponent = timeline[activePhase]?.icon || BookOpen
-                        return <IconComponent className="w-8 h-8 text-white" />
+                        return <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
                       })()}
                     </div>
-                    <div>
-                      <h3 className="text-3xl font-bold text-gray-900">{timeline[activePhase]?.title || 'Current Phase'}</h3>
-                      <p className="text-gray-600">{timeline[activePhase]?.duration || ''}</p>
+                    <div className="flex-1">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{timeline[activePhase]?.title || 'Current Phase'}</h3>
+                      <p className="text-sm sm:text-base text-gray-600 mt-1">{timeline[activePhase]?.duration || ''}</p>
                     </div>
                   </div>
                   
                   {/* Description */}
-                  <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                  <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
                     {timeline[activePhase]?.description || 'No description available'}
                   </p>
                   
                   {/* Stats */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 text-center">
-                      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">12+</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                    <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 text-center">
+                      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">12+</div>
                       <div className="text-gray-600 text-xs sm:text-sm">Schools Visited</div>
                     </div>
-                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 text-center">
-                      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">2,500+</div>
+                    <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 text-center">
+                      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">2,500+</div>
                       <div className="text-gray-600 text-xs sm:text-sm">Students Reached</div>
                     </div>
-                    <div className="bg-gray-100 rounded-xl p-4 sm:p-6 text-center sm:col-span-2 lg:col-span-1">
-                      <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">18</div>
+                    <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 text-center sm:col-span-2 lg:col-span-1">
+                      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">18</div>
                       <div className="text-gray-600 text-xs sm:text-sm">Days Remaining</div>
                     </div>
                   </div>
                   
                   {/* Activities */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
                     {(timeline[activePhase]?.details || []).map((detail, index) => (
-                      <div key={index} className="flex items-start space-x-3 bg-gray-100 rounded-lg p-4">
-                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${(timeline[activePhase]?.color || 'bg-gray-900').replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
-                        <span className="text-gray-700 text-sm leading-relaxed">{detail}</span>
+                      <div key={index} className="flex items-start space-x-2 sm:space-x-3 bg-gray-100 rounded-lg p-3 sm:p-4">
+                        <div className={`w-2 h-2 rounded-full mt-1.5 sm:mt-2 flex-shrink-0 ${(timeline[activePhase]?.color || 'bg-gray-900').replace('bg-', 'bg-').replace('-500', '-400')}`}></div>
+                        <span className="text-gray-700 text-xs sm:text-sm leading-relaxed">{detail}</span>
                       </div>
                     ))}
                   </div>
@@ -391,7 +393,7 @@ const Schedule26Page = () => {
                   {/* Action Buttons */}
                   <div className="flex justify-center">
                     <Button 
-                      className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg"
+                      className="bg-gray-900 hover:bg-gray-800 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base"
                       onClick={() => {
                         const emailSubject = 'TIC Summit 2026 Volunteer Application'
                         const emailBody = `Dear TIC Summit Team,
@@ -439,11 +441,11 @@ Best regards,
         </section>
 
         {/* Call to Action */}
-        <section className="py-16 pb-48 bg-gray-900">
+        <section className="py-8 sm:py-12 md:py-16 pb-24 sm:pb-32 md:pb-48 bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h2 className="text-4xl font-bold text-white mb-6">Ready to Join the Journey?</h2>
-              <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 px-4">Ready to Join the Journey?</h2>
+              <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
                 Be part of TIC Summit 2026 and shape the future of technology and innovation.
               </p>
               <div className="flex justify-center">
