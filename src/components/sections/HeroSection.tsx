@@ -88,33 +88,19 @@ const CubeFace = ({
         backfaceVisibility: 'hidden',
       }}
     >
-      {/* Rubik's Cube Grid Pattern */}
+      {/* Cube Face with Full Image */}
       <div className="relative w-full h-full bg-gray-800 border-2 border-gray-900 shadow-2xl overflow-hidden">
-        {/* 3x3 Grid */}
-        <div className="grid grid-cols-3 grid-rows-3 w-full h-full gap-0.5 p-0.5">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <div
-              key={i}
-              className="relative bg-gray-700 border border-gray-900/80 overflow-hidden"
-            >
-              {/* Image segment - each square shows a portion of the image */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `url(${image.src})`,
-                  backgroundSize: '300% 300%',
-                  backgroundPosition: `
-                    ${(i % 3) * 33.33}% 
-                    ${Math.floor(i / 3) * 33.33}%
-                  `,
-                  filter: isActive ? 'brightness(1.1)' : 'brightness(0.8)',
-                }}
-              />
-              {/* Thin grid line overlay */}
-              <div className="absolute inset-0 border border-gray-900/30" style={{ borderWidth: '0.5px' }} />
-            </div>
-          ))}
-        </div>
+        {/* Full Image - consistent cover for all faces */}
+        <div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${image.src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: isActive ? 'brightness(1.1)' : 'brightness(0.8)',
+          }}
+        />
         
         {/* Active face highlight */}
         {isActive && (
