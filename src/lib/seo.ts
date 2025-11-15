@@ -24,6 +24,7 @@ export interface BlogPostItem {
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://ticsummit.org'
 const SITE_NAME = 'TIC Summit'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`
+const FAVICON_URL = `${SITE_URL}/tic.ico`
 const TWITTER_HANDLE = '@ticsummit'
 
 export interface SEOConfig {
@@ -127,6 +128,11 @@ export function generateMetadata(config: SEOConfig): Metadata {
       address: false,
       telephone: false,
     },
+    icons: {
+      icon: FAVICON_URL,
+      shortcut: FAVICON_URL,
+      apple: FAVICON_URL,
+    },
   }
 }
 
@@ -209,7 +215,7 @@ export function generateOrganizationSchema() {
     '@type': 'Organization',
     name: 'TIC Summit',
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/tic.ico`,
     description: "Cameroon's premier tech innovation program for Secondary and High school students.",
     foundingDate: '2020',
     foundingLocation: {
