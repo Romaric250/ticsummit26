@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma"
 // GET - Get all stories for modal (public endpoint)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await params // Not used but required for Next.js 15
     const stories = await prisma.techGirlsSuccessStory.findMany({
       where: {
         isActive: true
@@ -33,10 +34,10 @@ export async function GET(
 // PATCH - Update a success story (admin only)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
     const { name, age, school, achievement, quote, profilePhoto, fullStory, programYear, currentStatus, order, isActive } = body
 
@@ -74,10 +75,10 @@ export async function PATCH(
 // DELETE - Delete a success story (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     await prisma.techGirlsSuccessStory.delete({
       where: { id }

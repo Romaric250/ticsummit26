@@ -38,11 +38,11 @@ export const ImageSlider = ({ images, title }: ImageSliderProps) => {
   return (
     <>
       {/* Main Image Display */}
-      <div className="relative w-full h-96 bg-gray-800 rounded-lg overflow-hidden group">
+      <div className="relative w-full h-96 bg-gray-800 rounded-lg overflow-hidden group flex items-center justify-center">
         <img
           src={images[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
-          className="w-full h-full object-cover cursor-pointer"
+          className="max-w-full max-h-full object-contain cursor-pointer"
           onClick={() => setIsFullscreen(true)}
         />
 

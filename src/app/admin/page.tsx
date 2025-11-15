@@ -26,6 +26,7 @@ interface Stats {
   projects: number
   mentors: number
   alumni: number
+  applicants: number
   totalViews: number
   totalLikes: number
 }

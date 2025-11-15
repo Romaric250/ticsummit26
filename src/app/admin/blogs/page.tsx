@@ -422,7 +422,25 @@ export default function AdminBlogsPage() {
           setIsPreviewOpen(false)
           setPreviewPost(null)
         }}
-        post={previewPost || undefined}
+        post={previewPost ? {
+          id: previewPost.id,
+          title: previewPost.title,
+          slug: previewPost.slug,
+          excerpt: previewPost.excerpt,
+          content: previewPost.content,
+          image: previewPost.image,
+          category: previewPost.category,
+          tags: previewPost.tags,
+          featured: previewPost.featured,
+          published: previewPost.published,
+          publishedAt: previewPost.publishedAt,
+          views: previewPost.views,
+          likesCount: previewPost.likesCount,
+          readTime: previewPost.readTime,
+          createdAt: previewPost.createdAt,
+          updatedAt: previewPost.updatedAt,
+          author: previewPost.author !== null ? previewPost.author : undefined
+        } : undefined}
       />
 
       {/* Delete Confirmation Modal */}
