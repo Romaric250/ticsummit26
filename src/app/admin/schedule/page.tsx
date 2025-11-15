@@ -157,9 +157,29 @@ const ScheduleAdminPage = () => {
   }
 
   const handleSetActive = (phaseIndex: number) => {
+    const currentActiveCount = phases.filter(p => p.status === "ACTIVE").length
+    const isCurrentlyActive = phases[phaseIndex].status === "ACTIVE"
+    
+    // If clicking on an active phase, deactivate it
+    if (isCurrentlyActive) {
+      const updated = phases.map((phase, index) => ({
+        ...phase,
+        status: (index === phaseIndex ? "UPCOMING" : phase.status) as "COMPLETED" | "ACTIVE" | "UPCOMING"
+      }))
+      setPhases(updated)
+      return
+    }
+    
+    // If already 2 active phases, prevent adding more
+    if (currentActiveCount >= 2) {
+      toast.error("You can only have 1 or 2 active phases at a time. Please deactivate one first.")
+      return
+    }
+    
+    // Set the phase as active
     const updated = phases.map((phase, index) => ({
       ...phase,
-      status: (index === phaseIndex ? "ACTIVE" : phase.status === "ACTIVE" ? "UPCOMING" : phase.status) as "COMPLETED" | "ACTIVE" | "UPCOMING"
+      status: (index === phaseIndex ? "ACTIVE" : phase.status) as "COMPLETED" | "ACTIVE" | "UPCOMING"
     }))
     setPhases(updated)
   }
@@ -181,14 +201,24 @@ const ScheduleAdminPage = () => {
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <h1 className="text-3xl font-bold text-gray-900">Schedule Management</h1>
-            <p className="text-gray-600 mt-1">Manage timeline phases and set active phase</p>
+            <p className="text-gray-600 mt-1">Manage timeline phases and set 1-2 active phases</p>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Timeline Phases</h2>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Timeline Phases</h2>
+                {(() => {
+                  const activeCount = phases.filter(p => p.status === "ACTIVE").length
+                  return activeCount > 0 && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {activeCount} active phase{activeCount !== 1 ? 's' : ''} set (max 2)
+                    </p>
+                  )
+                })()}
+              </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -241,12 +271,21 @@ const ScheduleAdminPage = () => {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleSetActive(index)}
+                          disabled={phases.filter(p => p.status === "ACTIVE").length >= 2 && phase.status !== "ACTIVE"}
                           className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                             phase.status === "ACTIVE"
                               ? "bg-primary text-white"
+                              : phases.filter(p => p.status === "ACTIVE").length >= 2
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           }`}
-                          title="Set as active"
+                          title={
+                            phase.status === "ACTIVE"
+                              ? "Click to deactivate"
+                              : phases.filter(p => p.status === "ACTIVE").length >= 2
+                              ? "Maximum 2 active phases allowed"
+                              : "Set as active (max 2)"
+                          }
                         >
                           {phase.status === "ACTIVE" ? "Active" : "Set Active"}
                         </motion.button>

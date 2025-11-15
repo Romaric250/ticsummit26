@@ -41,6 +41,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
 const Schedule26Page = () => {
   const [activePhase, setActivePhase] = useState(0)
+  const [activePhases, setActivePhases] = useState<number[]>([])
   const [isPlaying, setIsPlaying] = useState(false)
   const [timeline, setTimeline] = useState<Array<{
     id: string
@@ -86,13 +87,19 @@ const Schedule26Page = () => {
           
           setTimeline(mappedPhases)
           
-          // Set active phase index
-          const activeIndex = mappedPhases.findIndex((p: any) => p.status === "active")
-          if (activeIndex !== -1) {
-            setActivePhase(activeIndex)
+          // Find all active phases (can be 1 or 2)
+          const activeIndices = mappedPhases
+            .map((p: any, index: number) => p.status === "active" ? index : -1)
+            .filter((index: number) => index !== -1)
+          
+          if (activeIndices.length > 0) {
+            setActivePhases(activeIndices)
+            // Set the first active phase as the displayed one
+            setActivePhase(activeIndices[0])
           } else {
             // If no active phase, default to first phase
             setActivePhase(0)
+            setActivePhases([])
           }
         }
       } catch (error) {
@@ -327,7 +334,28 @@ const Schedule26Page = () => {
                 LIVE NOW
               </div>
               
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-8 px-4">Current Phase</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-8 px-4">
+                {activePhases.length > 1 ? 'Current Phases' : 'Current Phase'}
+              </h2>
+              
+              {/* Navigation for multiple active phases */}
+              {activePhases.length > 1 && (
+                <div className="flex justify-center gap-2 mb-6 px-4">
+                  {activePhases.map((phaseIndex, idx) => (
+                    <button
+                      key={phaseIndex}
+                      onClick={() => setActivePhase(phaseIndex)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        activePhase === phaseIndex
+                          ? 'bg-white text-gray-900'
+                          : 'bg-white/20 text-white hover:bg-white/30'
+                      }`}
+                    >
+                      Phase {idx + 1}: {timeline[phaseIndex]?.title}
+                    </button>
+                  ))}
+                </div>
+              )}
               
               {/* Current Phase Card */}
               <div className="max-w-4xl mx-auto relative overflow-hidden">
