@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { 
   Share2, 
@@ -42,36 +42,100 @@ interface Project {
 const HallOfFamePage = () => {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
-  // Removed unused sortBy state
-  useEffect(() => {
-    fetchProjects()
-  }, [])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async (pageNum: number = 1, reset: boolean = false) => {
     try {
-      const response = await fetch("/api/projects")
+      if (reset) {
+        setLoading(true)
+        setProjects([])
+      } else {
+        setLoadingMore(true)
+      }
+
+      // Build query params
+      const params = new URLSearchParams({
+        page: pageNum.toString(),
+        limit: '6'
+      })
+      
+      if (searchTerm.trim()) {
+        params.append('search', searchTerm.trim())
+      }
+      
+      if (selectedCategory !== 'all') {
+        params.append('category', selectedCategory)
+      }
+
+      const response = await fetch(`/api/projects?${params.toString()}`)
       const data = await response.json()
+      
       if (data.success) {
-        setProjects(data.data)
+        if (reset) {
+          setProjects(data.data)
+        } else {
+          setProjects(prev => [...prev, ...data.data])
+        }
+        setHasMore(data.pagination?.hasMore || false)
+        setPage(pageNum)
+        // Update total count from DB (for placeholder)
+        if (data.pagination?.totalCount !== undefined) {
+          setTotalCount(data.pagination.totalCount)
+        }
       }
     } catch (error) {
       console.error("Error fetching projects:", error)
     } finally {
       setLoading(false)
+      setLoadingMore(false)
     }
-  }
+  }, [searchTerm, selectedCategory])
+
+  const loadMoreProjects = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchProjects(page + 1, false)
+    }
+  }, [loadingMore, hasMore, page, fetchProjects])
+
+  useEffect(() => {
+    fetchProjects(1, true)
+  }, [fetchProjects])
+
+  useEffect(() => {
+    // Reset to page 1 when category or search changes
+    setPage(1)
+    setHasMore(true)
+    fetchProjects(1, true)
+  }, [selectedCategory, searchTerm, fetchProjects])
+
+  // Infinite scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loadingMore || !hasMore) return
+
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+
+      // Load more when user is 200px from bottom
+      if (scrollTop + windowHeight >= documentHeight - 200) {
+        loadMoreProjects()
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [loadingMore, hasMore, loadMoreProjects])
 
   const categories = ["all", "Web", "Mobile", "IoT", "AI", "Blockchain", "Other"]
 
-  const filteredProjects = projects.filter(project => {
-    const matchesCategory = selectedCategory === "all" || project.category === selectedCategory
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.techStack.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()))
-    return matchesCategory && matchesSearch
-  })
+  // Projects are already filtered by the API, no need for client-side filtering
+  const filteredProjects = projects
 
   if (loading) {
     return (
@@ -94,7 +158,7 @@ const HallOfFamePage = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
-                    placeholder={loading ? "Search projects..." : `Search from ${projects.length} project${projects.length !== 1 ? 's' : ''}...`}
+                    placeholder={loading ? "Search projects..." : `Search from ${totalCount} project${totalCount !== 1 ? 's' : ''}...`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-900"
@@ -294,6 +358,60 @@ const HallOfFamePage = () => {
                     </div>
                   </motion.div>
                 ))}
+              </div>
+            )}
+
+            {/* Loading More Skeleton Cards */}
+            {loadingMore && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                {[...Array(6)].map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 animate-pulse"
+                  >
+                    {/* Image Skeleton */}
+                    <div className="h-40 bg-gray-200"></div>
+                    
+                    {/* Content Skeleton */}
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-6 bg-gray-200 rounded w-16"></div>
+                      </div>
+                      
+                      <div className="space-y-2 mb-3">
+                        <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                      </div>
+                      
+                      {/* Tech Stack Skeleton */}
+                      <div className="flex gap-2 mb-3">
+                        <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-14"></div>
+                      </div>
+                      
+                      {/* Stats Skeleton */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex gap-4">
+                          <div className="h-4 bg-gray-200 rounded w-12"></div>
+                          <div className="h-4 bg-gray-200 rounded w-12"></div>
+                        </div>
+                        <div className="h-4 bg-gray-200 rounded w-16"></div>
+                      </div>
+                      
+                      {/* Button Skeleton */}
+                      <div className="h-10 bg-gray-200 rounded-lg"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* End of Results */}
+            {!hasMore && filteredProjects.length > 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <p>No more projects to load</p>
               </div>
             )}
           </div>

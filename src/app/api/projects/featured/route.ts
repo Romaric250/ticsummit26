@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
 
     const projects = []
 
-    // Get one random project from each selected category
+    // Get one random project from each selected category (only with images)
     for (const category of selectedCategories) {
-      const categoryProjects = await prisma.project.findMany({
+      const allCategoryProjects = await prisma.project.findMany({
         where: {
           category: category
         },
@@ -62,6 +62,9 @@ export async function GET(request: NextRequest) {
         }
       })
 
+      // Filter to only projects with images
+      const categoryProjects = allCategoryProjects.filter(p => p.images && Array.isArray(p.images) && p.images.length > 0)
+
       if (categoryProjects.length > 0) {
         // Get a random project from this category
         const randomProject = categoryProjects[Math.floor(Math.random() * categoryProjects.length)]
@@ -74,7 +77,7 @@ export async function GET(request: NextRequest) {
       const remainingCount = 4 - projects.length
       const usedIds = projects.map(p => p.id)
       
-      const additionalProjects = await prisma.project.findMany({
+      const allAdditionalProjects = await prisma.project.findMany({
         where: {
           id: {
             notIn: usedIds
@@ -103,8 +106,11 @@ export async function GET(request: NextRequest) {
             }
           }
         },
-        take: remainingCount
+        take: remainingCount * 2 // Get more to filter
       })
+
+      // Filter to only projects with images
+      const additionalProjects = allAdditionalProjects.filter(p => p.images && Array.isArray(p.images) && p.images.length > 0).slice(0, remainingCount)
 
       projects.push(...additionalProjects)
     }

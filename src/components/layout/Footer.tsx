@@ -40,14 +40,14 @@ const Footer = () => {
     about: [
       { name: "Our Story", href: "/about" },
       { name: "Mission & Vision", href: "/about" },
-      { name: "Team", href: "/about" },
+      { name: "Team", href: "/team" },
       { name: "Partners", href: "/" },
     ],
     resources: [
       { name: "Blog", href: "/blog" },
-      { name: "Resources", href: "/resources" },
+      { name: "Resources", href: "/blog" },
       { name: "Hall of Fame", href: "/hall-of-fame" },
-      { name: "FAQ", href: "/faq" },
+      { name: "FAQ", href: "/" },
     ],
     support: [
       { name: "Contact Us", href: "/contact" },
@@ -58,10 +58,10 @@ const Footer = () => {
   }
 
   const socialLinks = [
-    { name: "Facebook", icon: Facebook, href: "https://facebook.com/ticsummit" },
-    { name: "Twitter", icon: Twitter, href: "https://twitter.com/ticsummit" },
-    { name: "Instagram", icon: Instagram, href: "https://instagram.com/ticsummit" },
-    { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com/company/ticsummit" },
+    { name: "Facebook", icon: Facebook, href: "https://www.facebook.com/TiCFoundation237/" },
+
+
+    { name: "LinkedIn", icon: Linkedin, href: "linkedin.com/showcase/tic-summit/" },
   ]
 
   return (
