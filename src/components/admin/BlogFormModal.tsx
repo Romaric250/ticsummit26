@@ -303,6 +303,26 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
                     )}
                   </div>
 
+                  {/* Author Name */}
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Author Name <span className="text-gray-500 font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.authorName}
+                      onChange={(e) => handleInputChange("authorName", e.target.value)}
+                      className="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Enter author name (leave blank to use your account name)"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {blogId 
+                        ? "Update the author name or leave blank to use your account name as the author."
+                        : "If left blank, your account name will be used as the author."
+                      }
+                    </p>
+                  </div>
+
                   {/* Slug */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -356,23 +376,6 @@ export const BlogFormModal = ({ isOpen, onClose, onSuccess, blogId }: BlogFormMo
                       className="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="e.g., 5 min read"
                     />
-                  </div>
-
-                  {/* Author Name */}
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Author Name (Optional - leave blank to use your account name)
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.authorName}
-                      onChange={(e) => handleInputChange("authorName", e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                      placeholder="e.g., John Doe (if different from your account)"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      If left blank, your account name will be used as the author.
-                    </p>
                   </div>
                 </div>
 

@@ -68,6 +68,16 @@ const BlogPostPage = () => {
         const json = await res.json()
         if (json?.success) {
           const p: BlogPostItem = json.data
+          // Debug: Check author data
+          console.log('Blog post data:', {
+            authorName: p.authorName,
+            author: p.author,
+            authorNameType: typeof p.authorName,
+            authorNameValue: p.authorName,
+            authorNameTrimmed: p.authorName?.trim(),
+            authorNameCheck: p.authorName && p.authorName.trim(),
+            authorNameCheckResult: (p.authorName && p.authorName.trim()) || p.author?.name || 'Unknown Author'
+          })
           setPost(p)
           setLikeCount(p.likesCount || 0)
           
@@ -390,15 +400,29 @@ const BlogPostPage = () => {
                 {/* Meta Information */}
                 <div className="flex flex-wrap items-center gap-3 text-white/80 text-xs">
                   <div className="flex items-center space-x-2">
-                    {post.author?.image && (
-                      <img
-                        src={post.author.image}
-                        alt={post.author.name || post.authorName || 'Author'}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    )}
+                    {(() => {
+                      const authorName = post.authorName || post.author?.name || ''
+                      const authorImage = post.authorName ? null : post.author?.image
+                      
+                      if (authorImage) {
+                        return (
+                          <img
+                            src={authorImage}
+                            alt={authorName || 'Author'}
+                            className="w-6 h-6 rounded-full"
+                          />
+                        )
+                      } else {
+                        const firstLetter = authorName ? authorName.charAt(0).toUpperCase() : '?'
+                        return (
+                          <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
+                            <span className="text-white text-xs font-semibold">{firstLetter}</span>
+                          </div>
+                        )
+                      }
+                    })()}
                     <span className="font-medium text-white">
-                      {post.authorName || post.author?.name || 'Unknown Author'}
+                      {(post.authorName && post.authorName.trim()) || post.author?.name || 'Unknown Author'}
                     </span>
                   </div>
                   <div className="flex items-center space-x-1">
@@ -581,13 +605,32 @@ const BlogPostPage = () => {
               <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">About the Author</h3>
                 <div className="flex items-start space-x-4">
-                  <img
-                    src={post.author?.image || "https://placehold.co/80x80"}
-                    alt={post.author?.name || 'Author'}
-                    className="w-16 h-16 rounded-full"
-                  />
+                  {(() => {
+                    // Use exact same logic as hero section
+                    const authorName = post.authorName || post.author?.name || ''
+                    const authorImage = post.authorName ? null : post.author?.image
+                    
+                    if (authorImage) {
+                      return (
+                        <img
+                          src={authorImage}
+                          alt={authorName || 'Author'}
+                          className="w-16 h-16 rounded-full"
+                        />
+                      )
+                    } else {
+                      const firstLetter = authorName ? authorName.charAt(0).toUpperCase() : '?'
+                      return (
+                        <div className="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-xl font-semibold">{firstLetter}</span>
+                        </div>
+                      )
+                    }
+                  })()}
                   <div>
-                    <h4 className="font-semibold text-gray-900">{post.author?.name || 'Unknown Author'}</h4>
+                    <h4 className="font-semibold text-gray-900">
+                      {(post.authorName && post.authorName.trim()) || post.author?.name || 'Unknown Author'}
+                    </h4>
                     <p className="text-sm text-gray-600 mt-1">&nbsp;</p>
                   </div>
                 </div>

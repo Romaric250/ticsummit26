@@ -93,8 +93,10 @@ export async function PUT(
     }
 
     // Prepare author data: either authorName OR authorId, never both
-    const trimmedAuthorName = authorName?.trim() || null
-    const authorData = trimmedAuthorName
+    // If authorName is provided (non-empty string), use it and set authorId to null
+    // Otherwise, use the session user's ID and set authorName to null
+    const trimmedAuthorName = authorName && typeof authorName === 'string' ? authorName.trim() : null
+    const authorData = trimmedAuthorName && trimmedAuthorName.length > 0
       ? {
           authorName: trimmedAuthorName,
           authorId: null
