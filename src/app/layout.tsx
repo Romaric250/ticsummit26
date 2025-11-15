@@ -6,27 +6,34 @@ import { generateMetadata as generateSEO } from "@/lib/seo";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo";
 import { StructuredData } from "@/components/seo/StructuredData";
 
-export const metadata: Metadata = generateSEO({
-  title: "TIC Summit - Empowering Young Innovators",
-  description: "Cameroon's premier tech innovation program for Secondary and High school students. Now in its 6th edition, TIC Summit connects young minds with industry experts and celebrates innovative ideas.",
-  keywords: [
-    "TIC Summit",
-    "Cameroon",
-    "tech challenge",
-    "innovation",
-    "students",
-    "technology",
-    "education",
-    "technology conference",
-    "innovation summit",
-    "tech education",
-    "student tech challenge",
-    "secondary school tech",
-    "high school innovation",
-    "tech mentorship",
-    "student projects",
-  ],
-});
+export const metadata: Metadata = {
+  ...generateSEO({
+    title: "TIC Summit - Empowering Young Innovators",
+    description: "Cameroon's premier tech innovation program for Secondary and High school students. Now in its 6th edition, TIC Summit connects young minds with industry experts and celebrates innovative ideas.",
+    keywords: [
+      "TIC Summit",
+      "Cameroon",
+      "tech challenge",
+      "innovation",
+      "students",
+      "technology",
+      "education",
+      "technology conference",
+      "innovation summit",
+      "tech education",
+      "student tech challenge",
+      "secondary school tech",
+      "high school innovation",
+      "tech mentorship",
+      "student projects",
+    ],
+  }),
+  icons: {
+    icon: '/tic.ico',
+    shortcut: '/tic.ico',
+    apple: '/tic.ico',
+  },
+};
 
 export default function RootLayout({
   children,
