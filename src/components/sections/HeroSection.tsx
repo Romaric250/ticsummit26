@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Play, Users, Award, Calendar, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { ArrowRight, Play, Users, Award, Calendar, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { useState, useEffect } from "react"
 
@@ -158,6 +158,7 @@ const useCountUp = (end: number, duration: number = 2000, start: number = 0) => 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [showVideoModal, setShowVideoModal] = useState(false)
   const [heroImages, setHeroImages] = useState<Array<{
     src: string
     title: string
@@ -546,6 +547,7 @@ const HeroSection = () => {
               <Button
                 size="xl"
                 className="group border-2 border-white bg-transparent text-white hover:bg-white hover:text-gray-900 cursor-pointer"
+                onClick={() => setShowVideoModal(true)}
               >
                 <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span>Watch Video</span>
@@ -773,6 +775,45 @@ const HeroSection = () => {
           />
         </motion.div>
       </motion.div>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {showVideoModal && (
+          <div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4"
+            onClick={() => setShowVideoModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowVideoModal(false)}
+                className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                aria-label="Close video"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
+
+              {/* YouTube Video Embed */}
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src="https://www.youtube.com/embed/RnpiV1QN0mY?autoplay=1"
+                  className="absolute top-0 left-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="TIC Summit Video"
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
