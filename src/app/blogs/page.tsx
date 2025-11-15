@@ -75,6 +75,7 @@ const BlogPage = () => {
       const data = await response.json()
       
       if (data.success) {
+        // API already filters published posts, but keep this as a safety check
         const publishedPosts = data.data.filter((post: BlogPostItem) => post.published)
         setPosts(publishedPosts)
       } else {
@@ -213,7 +214,7 @@ const BlogPage = () => {
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
                     >
-                      <Link href={`/blog/${post.slug}`}>
+                      <Link href={`/blogs/${post.slug}`}>
                         <div className="relative h-48 bg-gray-200 overflow-hidden">
                           {post.image ? (
                             <img

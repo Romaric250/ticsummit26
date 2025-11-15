@@ -42,7 +42,7 @@ const Header = () => {
     { name: "Mentors", href: "/mentors" },
     { name: "Team", href: "/team" },
     { name: "Hall of Fame", href: "/hall-of-fame" },
-    { name: "Blogs", href: "/blog" },
+    { name: "Blogs", href: "/blogs" },
     { 
       name: "More", 
       href: "#",

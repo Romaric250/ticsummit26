@@ -19,6 +19,19 @@ export async function POST(request: NextRequest) {
     const ip = (fwd.split(",")[0] || request.headers.get("x-real-ip") || (request as any).ip || "unknown").trim()
     const userAgent = request.headers.get("user-agent") || undefined
 
+    // Check if blog exists and is published
+    const blogPost = await prisma.blogPost.findUnique({
+      where: { id: blogId },
+      select: { published: true, views: true }
+    })
+    
+    if (!blogPost || !blogPost.published) {
+      return NextResponse.json(
+        { success: false, error: "Blog post not found" },
+        { status: 404 }
+      )
+    }
+
     // If already viewed from this IP, return current views without incrementing
     const existing = await prisma.blogView.findFirst({
       where: { blogId, ipAddress: ip }

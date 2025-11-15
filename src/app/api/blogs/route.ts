@@ -4,10 +4,13 @@ import { auth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
-// GET all blog posts
+// GET all blog posts (only published)
 export async function GET() {
   try {
     const blogPosts = await prisma.blogPost.findMany({
+      where: {
+        published: true
+      },
       orderBy: { createdAt: "desc" },
       include: {
         author: {

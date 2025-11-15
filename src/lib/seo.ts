@@ -134,7 +134,7 @@ export function generateMetadata(config: SEOConfig): Metadata {
  * Generate metadata for blog posts
  */
 export function generateBlogMetadata(post: BlogPostItem): Metadata {
-  const url = `${SITE_URL}/blog/${post.slug}`
+  const url = `${SITE_URL}/blogs/${post.slug}`
   const image = post.image || DEFAULT_OG_IMAGE
 
   return generateMetadata({
@@ -277,7 +277,7 @@ export function generateEventSchema(eventData?: {
  * Generate JSON-LD structured data for BlogPosting
  */
 export function generateBlogPostSchema(post: BlogPostItem) {
-  const url = `${SITE_URL}/blog/${post.slug}`
+  const url = `${SITE_URL}/blogs/${post.slug}`
   const image = post.image || DEFAULT_OG_IMAGE
 
   return {

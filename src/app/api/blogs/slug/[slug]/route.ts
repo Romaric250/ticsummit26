@@ -10,7 +10,10 @@ export async function GET(
   try {
     const { slug } = await params
     const blogPost = await prisma.blogPost.findFirst({
-      where: { slug },
+      where: { 
+        slug,
+        published: true // Only return published posts
+      },
       include: {
         author: { select: { id: true, name: true, image: true } },
         _count: { select: { comments: true } }

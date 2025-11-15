@@ -363,7 +363,7 @@ const HeroSection = () => {
         />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-24 sm:pt-16">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -524,7 +524,7 @@ const HeroSection = () => {
 
             <motion.h1
               variants={itemVariants}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
             >
               <span className="block">TIC Summit</span>
             </motion.h1>

@@ -20,6 +20,19 @@ export async function POST(request: NextRequest) {
     const ip = (fwd.split(",")[0] || request.headers.get("x-real-ip") || (request as any).ip || "unknown").trim()
     const userAgent = request.headers.get("user-agent") || undefined
 
+    // Check if blog exists and is published
+    const blogPost = await prisma.blogPost.findUnique({
+      where: { id: blogId },
+      select: { published: true }
+    })
+    
+    if (!blogPost || !blogPost.published) {
+      return NextResponse.json(
+        { success: false, error: "Blog post not found" },
+        { status: 404 }
+      )
+    }
+
     const existing = await prisma.blogLike.findFirst({
       where: { blogId, ipAddress: ip }
     })
@@ -82,8 +95,16 @@ export async function GET(request: NextRequest) {
     
     const post = await prisma.blogPost.findUnique({ 
       where: { id: blogId }, 
-      select: { likesCount: true } 
+      select: { likesCount: true, published: true } 
     })
+    
+    // Don't allow likes on unpublished posts
+    if (!post || !post.published) {
+      return NextResponse.json(
+        { success: false, error: "Blog post not found" },
+        { status: 404 }
+      )
+    }
     
     return NextResponse.json({ 
       success: true, 
