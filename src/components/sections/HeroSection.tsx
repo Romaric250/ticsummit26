@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, Play, Users, Award, Calendar, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import Link from "next/link"
 import { useState, useEffect } from "react"
 
 // Carousel Image Component with Loading State
@@ -536,13 +537,19 @@ const HeroSection = () => {
               variants={itemVariants}
               className="flex flex-col sm:flex-row gap-4 mb-12"
             >
-              <Button
-                size="xl"
-                className="bg-white hover:bg-white text-gray-900 group cursor-pointer"
+              <Link 
+                href="https://ticsummit-pink.vercel.app/blogs/how-to-apply-for-tic-summit-2026" 
+                target="_blank"
+                className="inline-block"
               >
-                <span>Apply Now</span>
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+                <Button
+                  size="xl"
+                  className="bg-white hover:bg-white text-gray-900 group cursor-pointer"
+                >
+                  <span>Apply Now</span>
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
               
               <Button
                 size="xl"
@@ -788,7 +795,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden"
+              className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden h-[70vh] sm:h-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
@@ -801,7 +808,7 @@ const HeroSection = () => {
               </button>
 
               {/* YouTube Video Embed */}
-              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+              <div className="relative w-full h-full sm:h-auto sm:pb-[56.25%]">
                 <iframe
                   src="https://www.youtube.com/embed/RnpiV1QN0mY?autoplay=1"
                   className="absolute top-0 left-0 w-full h-full"
